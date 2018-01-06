@@ -26,23 +26,10 @@ Route::post('/posts', 'PostsController@store');
 
 // PATCH 
 // DELETE
-Route::get('/reconcile', function(){
-
-});
-Route::get('/reconcile/create', 'ReconcileController@create');
-Route::post('/reconcile/store', 'ReconcileController@store');
-
-Route::get('/reconcile', function () {
-	$reconciles = DB::table('reconcile')->get();
-    return view('reconcile', compact('reconciles'));
-    // return $tasks;
-});
+Route::get('/reconcile/create', 'ReconcilesController@create');
+Route::get('/reconcile/add', 'ReconcilesController@add');
+Route::post('/reconcile/store', 'ReconcilesController@store');
+Route::get('/reconcile', 'ReconcilesController@index');
 
 
-Route::get('/reconcile/delete/{id}', function ($id) {
-
-	$reconcile = DB::table('reconcile')->delete($id);
-	// dd($reconcile);
-    return "deleted!";//view('welcome', compact('reconcile'));
-    // return $reconcile;
-});
+Route::get('/reconcile/delete/{id}','ReconcilesController@destroy');

@@ -16,6 +16,8 @@
 </tbody>
 
 	</table>
+
+    <a class="btn btn-primary" href="/reconcile/add" role="button">Link</a>
 </ul>
 
 </body></html>

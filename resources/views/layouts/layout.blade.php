@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
   <head>
@@ -32,7 +31,9 @@
     </main>
 
     <footer class="text-muted">
+
       @include('layouts.footer')
+
     </footer>
 
     <!-- Bootstrap core JavaScript

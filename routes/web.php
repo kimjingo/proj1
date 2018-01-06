@@ -15,7 +15,9 @@
 
 // Route::get('/tasks/{task}','TasksController@show');
 
-Route::get('/', 'PostsController@index');
+Route::get('/', function(){
+	return view('index');
+});
 
 //Route::get('/posts/{post}', 'PostsController@show');
 Route::get('/posts/create', 'PostsController@create');

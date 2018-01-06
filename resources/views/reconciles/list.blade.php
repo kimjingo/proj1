@@ -1,23 +1,34 @@
-<!DOCTYPE html>
-<html><head><title></title></head><body>
-<ul>
-	<table border=1><thead><th>parent</th><th>child</th><th>Delete</th></thead>
-<tbody>
-	
-    @foreach($reconciles as $reconcile)
-    	<tr>
-    		
-        <td>{{ $reconcile->accid }}</td>
-        <td>{{ $reconcile->toreconcile }}</td>
-        <td><a href="/reconcile/delete/{{ $reconcile->id }}">X</a></td>
+@extends('layouts.master')
 
-    	</tr>
-    @endforeach
-</tbody>
+@section('content')
+<div class="col-sm-8 blog-main">
+    <table class="table">
+        <thead>
+            <th>Parent</th><th>Child</th><th>Delete</th>
+        </thead>
+        <tbody>
+            
+            @foreach($reconciles as $reconcile)
+                <tr>
+                    
+                <td>{{ $reconcile->accid }}</td>
+                <td>{{ $reconcile->toreconcile }}</td>
+                <td><a href="/reconcile/delete/{{ $reconcile->id }}">X</a></td>
 
-	</table>
+                </tr>
+            @endforeach
 
-    <a class="btn btn-primary" href="/reconcile/add" role="button">Link</a>
-</ul>
+        </tbody>
 
-</body></html>
+    </table>
+
+    <a class="btn btn-primary" href="/reconcile/add" role="button">Add</a>
+</div>
+@endsection
+
+
+@section('layouts.footer')
+
+<script type="text/javascript"></script>
+
+@endsection

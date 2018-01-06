@@ -1,9 +1,12 @@
-@extens('layout')
+@extends('layouts.master')
 
 @section('content')
-	dkfjdkjfd
+  <h1>Welcome to My application</h1>
 @endsection
 
-@section('footer')
-	<script src="/js/file.js"></script>
+
+@section('layouts.footer')
+
+<script type="text/javascript"></script>
+
 @endsection

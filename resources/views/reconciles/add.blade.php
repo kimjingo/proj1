@@ -4,11 +4,11 @@
 
 	<h1>Add account to reconcile</h1>
 
-	<form method='POST' action='/add'>
+	<form method='POST' action='/reconcile/store'>
 		{{csrf_field()}}
 
     <div class="form-group">
-      <label for="acc">Select Accout</label>
+      <label for="acc">Select Account</label>
       <select class="form-control" id="acc" name="acc">
       	    @foreach($parent as $acc)
 

@@ -15,9 +15,11 @@ class CreateTableReconcile extends Migration
     {
         Schema::create('reconcile', function (Blueprint $table) {
             $table->increments('id');
+
             $table->string('toreconcile');
+
             $table->string('accid',20);
-            $table->foreign('accid')->reference('accid')->on('gacc');
+
             $table->timestamps();
         });
     }

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
-class ReconcilesController extends Controller
+class BSCheckPointsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,8 +16,10 @@ class ReconcilesController extends Controller
     public function index()
     {
         //
-        $reconciles = DB::table('reconcile')->get();
-        return view('reconciles.list', compact('reconciles'));
+        $bscheckpoints = DB::table('bscheckpoints')
+            ->join('reconcile', 'bscheckpoints.recid','=','reconcile.id')
+            ->orderby('checkdate')->get();
+        return view('bscheckpoints.list', compact('bscheckpoints'));
     }
 
     /**
@@ -28,8 +30,14 @@ class ReconcilesController extends Controller
     public function add()
     {
         //
-        $parent = DB::table('gacc')->where('bc','=',1)->get();
-        return view('reconciles.add',compact('parent'));
+        $cdate = new Carbon('last day of last month');
+
+        // dd($cdate);
+        $bscheckpoints = DB::table('reconcile')->get();
+        return view('bscheckpoints.add',[
+            'cdate' => $cdate,
+            'bscheckpoints' => $bscheckpoints
+        ]);
     }
 
     /**
@@ -41,16 +49,18 @@ class ReconcilesController extends Controller
     public function store(Request $request)
     {
         //
+
         $this->validate(request(),[
-            'acc' => 'required',
-            'child' => 'required'
+            'checkdate' => 'required',
+            'accid' => 'required',
+            'amt' => 'required'
         ]);
 
-        DB::table('reconcile')->insert([
+        DB::table('bscheckpoints')->insert([
 
-            'accid' => $request->acc,
-
-            'toreconcile' => $request->child,
+            'checkdate' => $request->checkdate,
+            'recid' => $request->accid,
+            'amt' => $request->amt,
 
             //composer require nesbot/carbon
 
@@ -67,7 +77,9 @@ class ReconcilesController extends Controller
         // Post::create(request()->all());
 
         // And then redirect to the home page
-        return redirect('/reconcile');
+        return redirect('/bscheckpoint');
+
+
     }
 
     /**
@@ -113,9 +125,5 @@ class ReconcilesController extends Controller
     public function destroy($id)
     {
         //
-        $reconcile = DB::table('reconcile')->delete($id);
-    // dd($reconcile);
-        return redirect('reconcile');
-    
     }
 }

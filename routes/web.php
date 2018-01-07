@@ -44,3 +44,10 @@ Route::get('/bscheckpoint/create', 'BSCheckPointsController@create');
 Route::get('/bscheckpoint/add', 'BSCheckPointsController@add');
 Route::post('/bscheckpoint/store', 'BSCheckPointsController@store');
 Route::get('/bscheckpoint/delete/{id}','BSCheckPointsController@destroy');
+
+
+Route::get('/bscompares', 'BSComparesController@index');
+Route::get('/bscompares/accupdate/{ddate}/{accid}', 'BSComparesController@accupdate');
+// Route::get('/bscompares/accupdate/{ddate}/acc/{accid}', function(){
+// 	dd($ddate);
+// });

@@ -14,7 +14,7 @@
                 <td>{{ $bscheckpoint->checkdate }}</td>
                 <td>{{ $bscheckpoint->accid }}</td>
                 <td>{{ $bscheckpoint->toreconcile }}</td>
-                <td>{{ $bscheckpoint->amt }}</td>
+                <td class="number-align">{{ $bscheckpoint->amt }}</td>
                 <td><a href="/bscheckpoint/delete/{{ $bscheckpoint->id }}">X</a></td>
 
                 </tr>

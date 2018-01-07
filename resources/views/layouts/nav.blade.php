@@ -12,7 +12,11 @@
     <ul class="nav">
     <li class="active"><a href="/">Home</a></li>
     <li><a href="/reconcile">Reconcile</a></li>
-    <li><a href="bscheckpoint">Add Check Point</a></li>
+    <li><a href="/bscheckpoint">Check Point</a></li>
+    <li><a href="/bscompares">Compare</a></li>
+    <li><a href="/manualinputs">Manual Input</a></li>
+
     </ul>
+
   </div><!--/.nav-collapse -->
 </div>

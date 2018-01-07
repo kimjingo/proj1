@@ -18,7 +18,8 @@ class BSCheckPointsController extends Controller
         //
         $bscheckpoints = DB::table('bscheckpoints')
             ->join('reconcile', 'bscheckpoints.recid','=','reconcile.id')
-            ->orderby('checkdate')->get();
+            ->orderby('checkdate')->orderby('accid')->get();
+            // dd($bscheckpoints);
         return view('bscheckpoints.list', compact('bscheckpoints'));
     }
 
@@ -30,12 +31,17 @@ class BSCheckPointsController extends Controller
     public function add()
     {
         //
+        $bscheckpoints = DB::table('bscheckpoints')
+            ->join('reconcile', 'bscheckpoints.recid','=','reconcile.id')
+            ->orderby('checkdate')->get();
+
         $cdate = new Carbon('last day of last month');
 
         // dd($cdate);
-        $bscheckpoints = DB::table('reconcile')->get();
+        $bstochecks = DB::table('reconcile')->get();
         return view('bscheckpoints.add',[
             'cdate' => $cdate,
+            'bstochecks' => $bstochecks,
             'bscheckpoints' => $bscheckpoints
         ]);
     }
@@ -125,5 +131,8 @@ class BSCheckPointsController extends Controller
     public function destroy($id)
     {
         //
+       $reconcile = DB::table('bscheckpoints')->delete($id);
+    // dd($bscheckpoints);
+        return redirect('/bscheckpoint');
     }
 }

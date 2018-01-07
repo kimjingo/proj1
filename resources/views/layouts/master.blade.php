@@ -26,6 +26,9 @@
           padding-right: 5px;
         }
       }
+
+      td.number-align { xt-align: right; }
+      
     </style>
     <link href="http://getbootstrap.com/2.3.2/assets/css/bootstrap-responsive.css" rel="stylesheet">
 

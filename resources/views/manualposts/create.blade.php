@@ -4,9 +4,10 @@
 <div class="blog-main">
 
 
-	<h1>Add receipt, check, invoice and etc</h1>
+  <h1>Add receipt, check, invoice and etc</h1>
 
-
+	<form method='POST' action='/manualposts/store' id="form_add" onsubmit="return confirm('Do you really want to submit the form?');">
+    {{csrf_field()}}
 
     <table class="table" id="myTable">
         <thead>
@@ -83,8 +84,6 @@
 
         </tr>
 
-	<form method='POST' action='/manualposts/store' id="form_add">
-    {{csrf_field()}}
         <tr>
           <td class="col-md-5">
             <input style="width:150px;" type="date" class="form-control" id="pdate" name="pdate[]" value="{{ $pdate->toDateString() }}" >

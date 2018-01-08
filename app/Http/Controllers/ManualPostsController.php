@@ -59,8 +59,17 @@ class ManualPostsController extends Controller
         //     'paidbys' => 'required',
         //     'amt' => 'required'
         // ]);
+        
+        // $aa ="";
         $len = count($request->pdate);
+        // $aa .= $len.";";
+
         for($i=0; $i<$len; $i++){
+
+        // $aa .= $request->pdate[$i].",";
+        // $aa .= $request->amt[$i].",";
+        // $aa .= $request->mp[$i].";";
+
             if($request->amt[$i] != 0){
 
                 DB::table('manualposts')->insert([

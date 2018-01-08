@@ -25,12 +25,12 @@ class CreateTableBscheckpoints extends Migration
             
             $table->decimal('amt',8,2);
 
-            $table->foreign('recid')->references('id')->on('reconcile');
-            // $table->integer('userid')->unsigned();
-            // $table->foreign('userid')->references('id')->on('users');
-            $table->unique('checkdate','recid');
+        //     // $table->integer('userid')->unsigned();
+        //     // $table->foreign('userid')->references('id')->on('users');
 
             $table->timestamps();
+            $table->unique(['checkdate','recid']);
+            $table->foreign('recid')->references('id')->on('reconcile');
         });
     }
 

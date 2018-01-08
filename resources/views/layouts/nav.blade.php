@@ -14,7 +14,7 @@
     <li><a href="/reconcile">Reconcile</a></li>
     <li><a href="/bscheckpoint">Check Point</a></li>
     <li><a href="/bscompares">Compare</a></li>
-    <li><a href="/manualinputs">Manual Input</a></li>
+    <li><a href="/manualposts">Manual Input</a></li>
 
     </ul>
 

@@ -48,6 +48,13 @@ Route::get('/bscheckpoint/delete/{id}','BSCheckPointsController@destroy');
 
 Route::get('/bscompares', 'BSComparesController@index');
 Route::get('/bscompares/accupdate/{ddate}/{accid}', 'BSComparesController@accupdate');
-// Route::get('/bscompares/accupdate/{ddate}/acc/{accid}', function(){
-// 	dd($ddate);
+
+
+
+Route::get('/manualposts', 'ManualPostsController@index');
+Route::get('/manualposts/create', 'ManualPostsController@create');
+Route::post('/manualposts/store', 'ManualPostsController@store');
+// Route::post('/manualposts/store', function(){
+// 	dd("aa");
 // });
+Route::get('/manualposts/delete/{id}','ManualPostsController@destroy');

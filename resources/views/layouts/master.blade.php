@@ -54,15 +54,15 @@
     </div>
 
     <div class="container-fluid">
-      <div class="row-fluid">
-        <div class="span3">
+      <!-- <div class="row-fluid">
+        <div class="span2">
           <div class="well sidebar-nav">
 
             @include('layouts.sidebar')
 
-          </div><!--/.well -->
-        </div><!--/span-->
-        <div class="span9">
+          </div>
+        </div> -->
+        <div class="span12">
 
             @yield('content')
 
@@ -94,6 +94,8 @@
     <script src="http://getbootstrap.com/2.3.2/assets/js/bootstrap-collapse.js"></script>
     <script src="http://getbootstrap.com/2.3.2/assets/js/bootstrap-carousel.js"></script>
     <script src="http://getbootstrap.com/2.3.2/assets/js/bootstrap-typeahead.js"></script>
-
+    
+    @yield('footer')
+  
   </body>
 </html>

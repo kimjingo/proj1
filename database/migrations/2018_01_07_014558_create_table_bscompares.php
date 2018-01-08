@@ -27,7 +27,7 @@ class CreateTableBscompares extends Migration
             // $table->foreign('accid')->references('accid')->on('gacc');
 
             // $table->integer('userid')->unsigned();
-            $table->unique('yymm','accid');
+            $table->unique(['yymm','accid']);
 
             $table->timestamps();
         });

@@ -17,7 +17,6 @@
             <th>What</th>
             <th>Why</th>
             <th>Ref#</th>
-            <th>Posted at</th>
             <th>Who paid*</th>
             <th>BA</th>
             <th>Delete</th>
@@ -54,9 +53,12 @@
           <td>
             <input style="width:100px;" type="text" name="material[]" />
           </td>
-          <td><input type="text" name="remark[]" /></td>
-          <td><input style="width:100px;" type="text" class="form-control" id="checkno" name="checkno" placeholder="Ref#:check# or invoice#"</td>
-          <td><input style="width:150px;" type="date" class="form-control" id="posted_at" name="posted_at" value="{{ $pdate->toDateString() }}" ></td>
+          <td>
+            <input type="text" name="remark[]" />
+          </td>
+          <td>
+            <input style="width:50px;" type="text" class="form-control" id="checkno" name="checkno" placeholder="Ref#:check# or invoice#" />
+          </td>
           <td>
             <input style="width:100px;" type="text" list="paidbys" name="paidby[]" />
             <datalist id="paidbys">
@@ -68,7 +70,7 @@
             @endforeach  
           </td>
           <td>
-            <input style="width:10px;" type="text" list="bas" name="ba[]" />
+            <input style="width:20px;" type="text" list="bas" name="ba[]" />
             <datalist id="bas">
 
             @foreach($bas as $ba)
@@ -115,8 +117,7 @@
             <input style="width:100px;" type="text" name="material[]" />
           </td>
           <td><input type="text" name="remark[]" /></td>
-          <td><input style="width:100px;" type="text" class="form-control" id="checkno" name="checkno" placeholder="Ref#:check# or invoice#"</td>
-          <td><input style="width:150px;" type="date" class="form-control" id="posted_at" name="posted_at" value="{{ $pdate->toDateString() }}" ></td>
+          <td><input style="width:50px;" type="text" class="form-control" id="checkno" name="checkno" placeholder="Ref#:check# or invoice#"</td>
           <td>
             <input style="width:100px;" type="text" list="paidbys" name="paidby[]" />
             <datalist id="paidbys">
@@ -128,7 +129,7 @@
             @endforeach  
           </td>
           <td>
-            <input style="width:10px;" type="text" list="bas" name="ba[]" />
+            <input style="width:20px;" type="text" list="bas" name="ba[]" />
             <datalist id="bas">
 
             @foreach($bas as $ba)
@@ -137,7 +138,9 @@
 
             @endforeach  
           </td>
-          <td><input type="button" name="add" value="+" class="tr_clone_add"></td>
+          <td>
+            <input type="button" name="add" value="+" class="tr_clone_add ">
+          </td>
 
         </tr>
         <tbody>
@@ -157,7 +160,7 @@ $(document).ready(function() {
   // $form = $('#form_add');
   // $trsample = $form.find('.sample');
 
-  $('input.tr_clone_add').click( function() {
+  $('.tr_clone_add').click( function() {
     // console.log("aa");
     $ttr = $('#myTable tbody>tr:first').clone(true).insertAfter($('#myTable tbody>tr:last'));
     $ttr.show();

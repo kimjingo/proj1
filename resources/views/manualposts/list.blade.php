@@ -36,7 +36,7 @@
                     <td>{{ $manualinput->ba }}</td>
                     <td>{{ $manualinput->created_at }}</td>
                     <td>{{ $manualinput->updated_at }}</td>
-                    <td><a href="/manualinputs/delete/{{ $manualinput->id }}">X</a></td>
+                    <td><a href="/manualposts/delete/{{ $manualinput->id }}">X</a></td>
 
                 </tr>
             @endforeach

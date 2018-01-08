@@ -17,7 +17,7 @@ class ManualPostsController extends Controller
     {
         //
         // dd('aa');
-        $manualinputs = DB::table('manualposts')->orderby('pdate','desc')->limit(10)->get();
+        $manualinputs = DB::table('manualposts')->orderby('updated_at','desc')->limit(10)->get();
         return view('manualposts.list',compact('manualinputs') );
 
     }
@@ -51,7 +51,7 @@ class ManualPostsController extends Controller
     public function store(Request $request)
     {
         //
-        dd($request->pdate);
+        // dd($request->pdate);
         // $this->validate(request(),[
         //     'pdate' => 'required',
         //     'amt' => 'required',
@@ -59,41 +59,42 @@ class ManualPostsController extends Controller
         //     'paidbys' => 'required',
         //     'amt' => 'required'
         // ]);
-$aa = "";
-        foreach($request as $row){
-            $aa .= $row->pdate;
-            // DB::table('manualposts')->insert([
+        $len = count($request->pdate);
+        for($i=0; $i<$len; $i++){
+            if($request->amt[$i] != 0){
 
-            //     'pdate' => $row->pdate,
-            //     'amt' => $row->amt,
-            //     'ttype' => $row->ttype,
-            //     'mp' => $row->mp,
-            //     'material' => $row->material,
-            //     'remark' => $row->remark,
-            //     'checkno' => $row->checkno,
-            //     'posting' => $row->posted_at,
-            //     'paidbys' => $row->paidbys,
-            //     'ba' => $row->ba,
+                DB::table('manualposts')->insert([
 
+                    'pdate' => $request->pdate[$i],
+                    'amt' => $request->amt[$i],
+                    'ttype' => $request->ttype[$i],
+                    'mp' => $request->mp[$i],
+                    'material' => $request->material[$i],
+                    'remark' => $request->remark[$i],
+                    'checkno' => $request->checkno[$i],
+                    'posting' => $request->posted_at[$i],
+                    'paidby' => $request->paidby[$i],
+                    'ba' => $request->ba[$i],
 
-            //     //composer require nesbot/carbon
+                    //composer require nesbot/carbon
 
-            //     'created_at' => \Carbon\Carbon::now(),  // \Datetime()
+                    'created_at' => \Carbon\Carbon::now(),  // \Datetime()
 
-
-            //     'updated_at' => \Carbon\Carbon::now(),  // \Datetime()
-
+                    'updated_at' => \Carbon\Carbon::now(),  // \Datetime()
 
 
-            // ]);
+
+                ]);
+
+            }
         }
         // // Save it to the database
         // $post->save();
         // Post::create(request()->all());
 
         // And then redirect to the home page
-        dd($aa);
-        // return redirect('/manualposts');
+        // dd($aa);
+        return redirect('/manualposts');
     }
 
     /**
@@ -139,5 +140,8 @@ $aa = "";
     public function destroy($id)
     {
         //
+        $manualpost = DB::table('manualposts')->delete($id);
+    // dd($manualpost);
+        return redirect('/manualposts');
     }
 }

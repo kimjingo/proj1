@@ -17,7 +17,7 @@ class ManualPostsController extends Controller
     {
         //
         // dd('aa');
-        $manualinputs = DB::table('manualposts')->orderby('updated_at','desc')->limit(10)->get();
+        $manualinputs = DB::table('manualposts')->where('created_at','>','2018-01-08')->orderby('updated_at','desc')->limit(100)->get();
         return view('manualposts.list',compact('manualinputs') );
 
     }
@@ -126,6 +126,19 @@ class ManualPostsController extends Controller
     public function edit($id)
     {
         //
+        $ttypes = DB::table('manualposts')->distinct()->get(['ttype']);
+        // $ttypes = ['aa','bb','cc'];
+        $mps = DB::table('manualposts')->distinct()->get(['mp']);
+        $paidbys = DB::table('manualposts')->distinct()->get(['paidby']);
+        $pdate = new Carbon('last day of last month');
+        $bas = [1,2];
+
+        $manualinputs = DB::table('manualposts')->where('id','=', $id)->get();
+
+        $manualinput = $manualinputs[0];
+// dd($manualinput[0]->pdate);
+
+        return view('manualposts.edit',compact('ttypes', 'mps', 'paidbys','pdate','bas','manualinput','id') );
     }
 
     /**
@@ -135,9 +148,39 @@ class ManualPostsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         //
+        $this->validate(request(),[
+            'pdate' => 'required',
+            'amt' => 'required',
+            'mp' => 'required',
+            'paidby' => 'required',
+        ]);
+
+
+        DB::table('manualposts')->where('id',$request->id)
+            ->update([
+
+            'pdate' => $request->pdate,
+            'amt' => $request->amt,
+            'ttype' => $request->ttype,
+            'mp' => $request->mp,
+            'material' => $request->material,
+            'remark' => $request->remark,
+            'checkno' => $request->checkno,
+            'posting' => $request->posted_at,
+            'paidby' => $request->paidby,
+            'ba' => $request->ba,
+
+            //composer require nesbot/carbon
+
+            'updated_at' => \Carbon\Carbon::now(),  // \Datetime()
+
+        ]);
+
+        return redirect('/manualposts');
+
     }
 
     /**

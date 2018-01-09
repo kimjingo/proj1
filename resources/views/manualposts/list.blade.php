@@ -17,7 +17,7 @@
             <th>BA</th>
             <th>Created at</th>
             <th>Updated at</th>
-            <th>Delete</th>
+            <th>Action</th>
         </thead>
         <tbody>
             
@@ -36,7 +36,11 @@
                     <td>{{ $manualinput->ba }}</td>
                     <td>{{ $manualinput->created_at }}</td>
                     <td>{{ $manualinput->updated_at }}</td>
-                    <td><a href="/manualposts/delete/{{ $manualinput->id }}">X</a></td>
+                    <td>
+                        <a href="/manualposts/delete/{{ $manualinput->id }}">X</a>
+                        ||
+                        <a href="/manualposts/edit/{{ $manualinput->id }}">=3</a> 
+                    </td>
 
                 </tr>
             @endforeach

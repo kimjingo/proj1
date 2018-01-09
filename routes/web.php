@@ -58,3 +58,5 @@ Route::post('/manualposts/store', 'ManualPostsController@store');
 // 	dd("aa");
 // });
 Route::get('/manualposts/delete/{id}','ManualPostsController@destroy');
+Route::get('/manualposts/edit/{id}','ManualPostsController@edit');
+Route::post('/manualposts/update', 'ManualPostsController@update');

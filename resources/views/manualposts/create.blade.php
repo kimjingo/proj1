@@ -20,7 +20,7 @@
             <th>Ref#</th>
             <th>Who paid*</th>
             <th>BA</th>
-            <th>Delete</th>
+            <th>+/-</th>
         </thead>
         <tbody>
         <tr class="sample">

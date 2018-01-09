@@ -68,7 +68,7 @@ class ManualPostsController extends Controller
 
         // $aa .= $request->pdate[$i].",";
         // $aa .= $request->amt[$i].",";
-        // $aa .= $request->mp[$i].";";
+        // $aa .= $request->checkno[$i].";";
 
             if($request->amt[$i] != 0){
 

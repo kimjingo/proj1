@@ -58,7 +58,7 @@
             <input type="text" name="remark[]" />
           </td>
           <td>
-            <input style="width:50px;" type="text" class="form-control" id="checkno" name="checkno" placeholder="Ref#:check# or invoice#" />
+            <input style="width:50px;" type="text" class="form-control" id="checkno" name="checkno[]" placeholder="Ref#:check# or invoice#" />
           </td>
           <td>
             <input style="width:100px;" type="text" list="paidbys" name="paidby[]" />

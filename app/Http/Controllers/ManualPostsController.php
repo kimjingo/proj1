@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Pagination\Paginator;
 
 class ManualPostsController extends Controller
 {
@@ -17,7 +18,8 @@ class ManualPostsController extends Controller
     {
         //
         // dd('aa');
-        $manualinputs = DB::table('manualposts')->where('created_at','>','2018-01-08')->orderby('updated_at','desc')->limit(100)->get();
+        // $manualinputs = DB::table('manualposts')->where('created_at','>','2018-01-08')->orderby('updated_at','desc')->limit(100)->get();
+        $manualinputs = DB::table('manualposts')->orderby('updated_at','desc')->simplePaginate(10);
         return view('manualposts.list',compact('manualinputs') );
 
     }

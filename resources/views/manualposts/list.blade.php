@@ -3,7 +3,7 @@
 @section('content')
 <div class="col-sm-8 blog-main">
     <a class="btn btn-primary" href="/manualposts/create" role="button">Add</a>
-    <table class="table">
+    <table class="table table-bordered table-striped">
         <thead>
             <th>Date</th>
             <th>Amount</th>
@@ -50,6 +50,9 @@
     </table>
 
 </div>
+<ul class="pagination">
+    {{ $manualinputs->links() }}
+</ul>
 @endsection
 
 

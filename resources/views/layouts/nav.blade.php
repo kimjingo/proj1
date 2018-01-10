@@ -4,13 +4,13 @@
     <span class="icon-bar"></span>
     <span class="icon-bar"></span>
   </button>
-  <a class="brand" href="#">Project name</a>
+  <a class="brand" href="/">Acounting</a>
   <div class="nav-collapse collapse">
     <p class="navbar-text pull-right">
       Logged in as <a href="#" class="navbar-link">Username</a>
     </p>
     <ul class="nav">
-    <li class="active"><a href="/">Home</a></li>
+    <!-- <li class="active"><a href="/">Home</a></li> -->
     <li><a href="/reconcile">Reconcile</a></li>
     <li><a href="/bscheckpoint">Check Point</a></li>
     <li><a href="/bscompares">Compare</a></li>

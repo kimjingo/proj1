@@ -50,9 +50,11 @@
     </table>
 
 </div>
+
 <ul class="pagination">
     {{ $manualinputs->links() }}
 </ul>
+
 @endsection
 
 

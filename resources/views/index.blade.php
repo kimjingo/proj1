@@ -1,11 +1,11 @@
 @extends('layouts.master')
 
 @section('content')
-  <h1>Welcome to My application</h1>
+  <h1>If you don't belong here, turn around and go away!</h1>
 @endsection
 
 
-@section('layouts.footer')
+@section('footer')
 
 <script type="text/javascript"></script>
 

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
+
 class BSCheckPointsController extends Controller
 {
     /**
@@ -78,15 +79,20 @@ class BSCheckPointsController extends Controller
 
 
         ]);
-        // // Save it to the database
-        // $post->save();
-        // Post::create(request()->all());
 
-        // And then redirect to the home page
-        return redirect('/bscheckpoint');
-
+        // $this->acp($request->accid, $request->checkdate);
+        return redirect('/bscheckpoint/add');
 
     }
+
+   // private function acp($accid, $bsdate)
+   //  {
+
+   //      $bsresult = DB::insert('INSERT INTO bsyymm(yymm,accid,amt,created_at,updated_at) SELECT ?, acc,SUM(amt),now(),now() FROM atr WHERE pdate < ? + interval 1 day and acc = ? GROUP BY acc ON DUPLICATE KEY UPDATE amt = VALUES(amt),updated_at = VALUES(updated_at)',[$bsdate,$bsdate,$accid]);
+
+
+   //  }
+
 
     /**
      * Display the specified resource.

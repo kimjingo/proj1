@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>non-clickable current page menu button</title>
+    <style type="text/css">
+*, *:before, *:after {
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    box-sizing:border-box;
+}
+.outer {
+    width:70%;
+    margin:0 auto;
+}
+.nav {
+    list-style:none;
+    display:table;
+    width:100%;
+    word-spacing:-1em;
+    padding:0;
+    margin:0;
+}
+.nav.head {
+    border-bottom:16px solid #fc6;
+    padding-bottom:3px;
+}
+.nav li {
+    display:inline-block;
+    word-spacing:0;
+}
+.nav a,
+.nav b {
+    display:inline-block;
+    font-weight:bold;
+    text-decoration:none;
+    border:1px solid #854;
+    padding:.1875em .4375em;
+    margin-left:-1px;
+}
+.nav a:link,.nav a:visited {color:#854;}
+.nav a:hover {background-color:#fcc;}
+.nav a:active {background-color:#f77;}
+.nav b {
+    display:none;
+    color:#fff;
+    background-color:#f00;
+}
+#home .home a,
+#products .products a,
+#orders .orders a,
+#aboutus .aboutus a {
+    display:none;
+}
+#home .home b,
+#products .products b,
+#orders .orders b,
+#aboutus .aboutus b {
+    display:inline-block;
+}
+
+    </style>
+</head>
+<body id="products">
+
+<div class="outer">
+    <ul class="nav head">
+        <li class="home"><a href="#">Home</a><b>Home</b></li>
+        <li class="products"><a href="#">Products</a><b>Products</b></li>
+        <li class="orders"><a href="#">Orders</a><b>Orders</b></li>
+        <li class="aboutus"><a href="#">About Us</a><b>About Us</b></li>
+    </ul>
+</div>
+
+</body>
+</html>

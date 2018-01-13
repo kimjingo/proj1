@@ -64,29 +64,9 @@ class BSComparesController extends Controller
     private function acp($accid, $bsdate)
     {
         //
-//yymm, accid, amt, created_at,updated_at
-        //SELECT acc,SUM(amt) amt FROM atr WHERE pdate > '2017-01-01' AND pdate < '2017-12-31' + interval 1 day and acc = 'appal' GROUP BY acc
 
         $bsresult = DB::insert('INSERT INTO bsyymm(yymm,accid,amt,created_at,updated_at) SELECT ?, acc,SUM(amt),now(),now() FROM atr WHERE pdate < ? + interval 1 day and acc = ? GROUP BY acc ON DUPLICATE KEY UPDATE amt = VALUES(amt),updated_at = VALUES(updated_at)',[$bsdate,$bsdate,$accid]);
 
-        // // $bsresult = DB::select("SELECT acc,SUM(amt) amt FROM atr WHERE pdate > '2017-01-01' AND pdate < ? + interval 1 day and acc = ? GROUP BY acc",[$bsdate,$accid]);
-        // dd($bsresult);
-        // dd($users);
-// bs monthly : yy, mm, acc, sum(amt) group by yy, mm into bsyymm
-
-        // $startdate = DB::table('atr')->min('pdate');
-        // $enddate = new Carbon('last day of last month');
-
-// dd($dd);
-// dd($acc);
-
-        // $bsyymm = DB::table('bsyymm')
-        //     ->join('reconcile', 'bscheckpoints.recid','=','reconcile.id')
-        //     ->orderby('checkdate')->get();
-
-        // $bsyymm = DB::table('bsyymm')
-        //     ->join('reconcile', 'bscheckpoints.recid','=','reconcile.id')
-        //     ->orderby('checkdate')->get();
         return redirect('/bscompares');
     }
 

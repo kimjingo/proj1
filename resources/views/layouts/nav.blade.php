@@ -15,6 +15,7 @@
     <li><a href="/bscheckpoint">Check Point</a></li>
     <li><a href="/bscompares">Compare</a></li>
     <li><a href="/manualposts">Manual Input</a></li>
+    <li><a href="/postingrules">Posting Rules</a></li>
 
     </ul>
 

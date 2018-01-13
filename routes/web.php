@@ -60,3 +60,8 @@ Route::post('/manualposts/store', 'ManualPostsController@store');
 Route::get('/manualposts/delete/{id}','ManualPostsController@destroy');
 Route::get('/manualposts/edit/{id}','ManualPostsController@edit');
 Route::post('/manualposts/update', 'ManualPostsController@update');
+
+Route::get('/postingrules', 'PostingRulesController@index');
+Route::get('/postingrules/create', 'PostingRulesController@create');
+Route::get('/postingrules/duplicate/{id}', 'PostingRulesController@duplicate');
+Route::post('/postingrules/store', 'PostingRulesController@store');

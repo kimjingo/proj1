@@ -13,7 +13,14 @@
                     <tr>
                     
                         <td>{{ $bscompare->yymm }}</td>
-                        <td>{{ $bscompare->accid }}</td>
+                        <td>
+                            @if($bscompare->accid == 'abank')
+                                <a href="//dev.irealook.com/atr_bank.php?"
+                                {{ $bscompare->accid }}
+                            @else
+
+                            @endif
+                        </td>
                         <td class="number-align">{{ $bscompare->aamt }}</td>
                         <td class="number-align">{{ $bscompare->camt }}</td>
                         <td class="number-align">{{ $previouscamt - $bscompare->camt }}</td>

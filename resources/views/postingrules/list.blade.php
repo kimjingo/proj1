@@ -71,7 +71,7 @@
 </form>
 
 <div class="col-sm-8 blog-main">
-    <a class="btn btn-primary" href="/manualposts/create" role="button">Add</a>
+    <a class="btn btn-primary" href="/postingrules/create" role="button">Add</a>
     <table class="table table-bordered table-striped">
         <thead>
             <th>DocType</th>

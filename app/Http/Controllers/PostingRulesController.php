@@ -45,6 +45,15 @@ class PostingRulesController extends Controller
     public function create()
     {
         //
+        $fromdocs = DB::table('apay2_acc')->distinct()->get(['fromdoc']);
+        $trtypes = DB::table('apay2_acc')->distinct()->get(['transaction_type']);
+        $ttypes = DB::table('apay2_acc')->distinct()->get(['ttype']);
+        $vendors = DB::table('apay2_acc')->distinct()->get(['amount_type']);
+
+        // $rules = DB::table('apay2_acc')->where('fromdoc','=',$fromdoc)->orderby('fromdoc')->orderby('transaction_type')->orderby('acc')->orderby('aseq')->simplePaginate(10);
+
+        // return view('postingrules.list',compact('rules','fromdoc','fromdocs') );
+        return view('postingrules.create',compact('fromdocs','trtypes','ttypes','vendors') );
     }
 
     /**

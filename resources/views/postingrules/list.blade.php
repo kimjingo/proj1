@@ -63,9 +63,6 @@
                         </option>
                     @endforeach
                 </select>
-                <input type="text" list="styles" class="form-control" id="style" name="style" <? echo ( isset( $material ) && !empty( $material )) ? "value='".$material."'" : "placeholder='Style#'"; autofocus />
-<!--                <input type="text" list="colors" class="form-control" id="color" name="color" <? //echo ( isset( $color ) && !empty( $color )) ? "value='".$color."'" : "placeholder='Color#'"; ?> autofocus />-->
-<!--                <input type="text" list="sizes" class="form-control" id="size" name="size" <? //echo ( isset( $size ) && !empty( $size )) ? "value='".$size."'" : "placeholder='Size#'"; ?> autofocus />-->
                 <input type="submit" id="submit" class="btn btn-default" value="SEARCH" />
         </div>
 </form>

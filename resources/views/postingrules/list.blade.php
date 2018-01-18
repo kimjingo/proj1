@@ -7,62 +7,60 @@
         <div class="form-group ">
                 <input type="hidden" name="mode" value="search" />
                 <select id="fromdoc" name="fromdoc" class="form-control">
-                    <option>FromDoc</option>
-                    @foreach($fromdocs as $fdoc)
-                        <option value="{{$fdoc->fromdoc}}"
-                            @if($fdoc->fromdoc == $fromdoc)
+                    <option value=>FromDoc</option>
+                    @foreach($fromdocs as $val)
+                        <option value="{{$val->fromdoc}}"
+                            @if($val->fromdoc == $fromdoc)
                                  selected
                             @endif
                         >
-                        
-                            {{ $fdoc->fromdoc }}
-
+                            {{ $val->fromdoc }}
                         </option>
                     @endforeach
-
                 </select>
                 <select id="trtype" name="trtype" class="form-control">
-                    <option>Tr.Type</option>
-                    @foreach($trtypes as $tr)
-                        <option value="{{$tr->transaction_type}}"
-                            @if($tr->transaction_type == $trtype)
+                    <option value=>Tr.Type</option>
+                    @foreach($trtypes as $val)
+                        <option value="{{$val->transaction_type}}"
+                            @if($val->transaction_type == $trtype)
                                  selected
                             @endif
                         >
-                        
-                            {{ $tr->transaction_type }}
-
+                            {{ $val->transaction_type }}
                         </option>
                     @endforeach
                 </select>
                 <select id="ttype" name="ttype" class="form-control">
-                    <option>T.Type</option>
-                    @foreach($ttypes as $tt)
-                        <option value="{{$tt->ttype}}"
-                            @if($tt->ttype == $ttype)
+                    <option value=>T.Type</option>
+                    @foreach($ttypes as $val)
+                        <option value="{{$val->ttype}}"
+                            @if($val->ttype == $ttype)
                                  selected
                             @endif
                         >
-                        
-                            {{ $tt->ttype }}
-
+                            {{ $val->ttype }}
                         </option>
                     @endforeach
                 </select>
                 <select id="vendor" name="vendor" class="form-control">
-                    <option>Vendor</option>
-                    @foreach($vendors as $vr)
-                        <option value="{{$vr->amount_type}}"
-                            @if($vr->amount_type == $vendor)
+                    <option value=>Vendor</option>
+                    @foreach($vendors as $val)
+                        <option value="{{$val->amount_type}}"
+                            @if($val->amount_type == $vendor)
                                  selected
                             @endif
                         >
-                        
-                            {{ $vr->amount_type }}
-
+                            {{ $val->amount_type }}
                         </option>
                     @endforeach
                 </select>
+                <input type="text" class="form-control" id="material" name="material" 
+                @if($material ))
+                    value="{{ $material }}"
+                @else
+                    placeholder="material"
+                @endif
+                />
                 <input type="submit" id="submit" class="btn btn-default" value="SEARCH" />
         </div>
 </form>
@@ -95,9 +93,9 @@
                     <td>{{ $rule->acc }}</td>
                     <td>{{ $rule->dir }}</td>
                     <td>
-                        <a href="/manualposts/delete/{{ $rule->no }}">X</a>
+                        <a href="/postingrules/duplicate/{{ $rule->no }}">E3</a>
                         ||
-                        <a href="/manualposts/edit/{{ $rule->no }}">=3</a> 
+                        <a href="/postingrules/edit/{{ $rule->no }}">=3</a> 
                     </td>
 
                 </tr>
@@ -110,7 +108,13 @@
 </div>
 
 <ul class="pagination">
-    {{ $rules->links() }}
+    {{ $rules->appends([
+        'fromdoc'=> $fromdoc,
+        'trtype' => $trtype,
+        'vendor' => $vendor,
+        'material' => $material,
+        'ttype' => $ttype
+        ])->links() }}
 </ul>
 
 @endsection

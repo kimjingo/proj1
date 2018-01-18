@@ -33,7 +33,8 @@ class BankController extends Controller
         $ttype = Input::get('ttype');
         $vendor = Input::get('vendor');
         $material = Input::get('material');
-        $isPosted = Input::get('isPosted');
+        $isPosted = Input::get('isPosted',2);
+        // dd($isPosted);
 
         $bas = DB::table('bank')->distinct()->get(['ba']);
         $mps = DB::table('bank')->distinct()->get(['mp']);

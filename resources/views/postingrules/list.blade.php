@@ -79,9 +79,9 @@
             <th>Type2</th>
             <th>Vendor</th>
             <th>Material</th>
+            <th>Seq</th>
             <th>Acc</th>
             <th>Dic</th>
-            <th>Seq</th>
             <th>Action</th>
         </thead>
         <tbody>
@@ -94,9 +94,9 @@
                     <td>{{ $rule->ttype }}</td>
                     <td>{{ $rule->amount_type }}</td>
                     <td>{{ $rule->amount_description }}</td>
+                    <td>{{ $rule->aseq }}</td>
                     <td>{{ $rule->acc }}</td>
                     <td>{{ $rule->dir }}</td>
-                    <td>{{ $rule->aseq }}</td>
                     <td>
                         <a href="/manualposts/delete/{{ $rule->no }}">X</a>
                         ||

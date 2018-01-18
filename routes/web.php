@@ -65,3 +65,9 @@ Route::get('/postingrules', 'PostingRulesController@index');
 Route::get('/postingrules/create', 'PostingRulesController@create');
 Route::get('/postingrules/duplicate/{id}', 'PostingRulesController@duplicate');
 Route::post('/postingrules/store', 'PostingRulesController@store');
+
+
+Route::get('/bank', 'BankController@index');
+Route::post('bank/deactivate', 'BankController@deactivate');
+
+Route::get('/apay', 'ApayController@index');

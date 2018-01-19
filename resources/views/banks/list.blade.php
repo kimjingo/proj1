@@ -120,9 +120,9 @@
                 <td>{{ $bank->Checkno }}</td>
                 <td>{{ $bank->postingflag }}</td>
                 <td>
-                    <a href="/banks/delete/{{ $bank->no }}">X</a>
+                    <a href="/bank/edit/{{ $bank->no }}">Edit</a>
                     ||
-                    <a href="/postingrules?fromdoc=bank&trtype={{$bank->TType}}&ttype={{$bank->mp}}&vendor={{$bank->mp}}&material={{$bank->material}}">=3</a> 
+                    <a href="/postingrules?fromdoc=bank&trtype={{$bank->TType}}&ttype={{$bank->mp}}&vendor={{$bank->mp}}&material={{$bank->material}}">Rule</a> 
                     ||
                     <input type="checkbox" id="checkBox" name="no[]" value='{{$bank->no}}'>
                 </td>

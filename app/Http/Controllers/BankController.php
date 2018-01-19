@@ -16,6 +16,8 @@ class BankController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+
     public function index()
     {
         //
@@ -120,7 +122,23 @@ class BankController extends Controller
     public function edit($id)
     {
         //
+
+        $fromdoc = 'bank';
+        $dr = 'abank';
+        $dirs = [1,-1];
+        $bas = DB::table('apay2_acc')->distinct()->get(['ba']);
+        $crs = DB::table('gacc')->distinct()->get(['accid AS acc']);
+        
+        $bank = DB::table('bank')
+            ->where('no',$id)
+            ->first();
+
+// dd($fromdocs);
+        // dd($bank);
+        return view('banks.update',compact('bank','fromdoc','dr','dirs','bas','crs') );
     }
+
+
 
     /**
      * Update the specified resource in storage.

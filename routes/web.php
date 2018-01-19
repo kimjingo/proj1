@@ -68,6 +68,6 @@ Route::post('/postingrules/store', 'PostingRulesController@store');
 
 
 Route::get('/bank', 'BankController@index');
-Route::post('bank/deactivate', 'BankController@deactivate');
+Route::post('bank/post', 'BankController@post');
 
 Route::get('/apay', 'ApayController@index');

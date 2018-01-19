@@ -42,7 +42,15 @@ class BankController extends Controller
 
 
         // $banks = DB::table('bank')->where('fdate','=',$fdate)->orderby('fromdoc')->orderby('transaction_type')->orderby('amount_type')->orderby('tdate','desc')->simplePaginate(10);
-        $banks = DB::table('bank')
+        $banks = DB::table('bank as b')
+            ->select('b.*','a.cnt')
+            ->leftjoin(DB::raw('(SELECT fromdoc,transaction_type,amount_type,amount_description,ttype,count(*) cnt FROM apay2_acc WHERE fromdoc="bank" group by fromdoc,transaction_type,amount_type,amount_description,ttype) a'), function($join)
+            {
+                $join->on('b.TType','=','a.transaction_type')
+                ->on('b.mp','=','a.amount_type')
+                ->on('b.material','=','a.amount_description')
+                ;
+            })
             ->where('tDate', '>=', $fdate)->where('tDate', '<', $tdate)
             ->when($ba, function($query) use ($ba) { return $query->where('ba', $ba); })
             ->when($vendor, function($query) use ($vendor) { return $query->where('mp', $vendor); })
@@ -61,6 +69,7 @@ class BankController extends Controller
             ->orderby('ba')
             ->orderby('no')
             ->simplePaginate(10);
+                // ->on('b.fromdoc', '=', 'a.fromdoc')
 
             // ->when($request->customer_id, function($query) use ($request){return $query->where('customer_id', $request->customer_id); })
             // ->when($request->customer_id, function($query) use ($request){return $query->where('customer_id', $request->customer_id); })
@@ -136,29 +145,61 @@ class BankController extends Controller
         //
     }
 
-    public function deactivate(Request $request)
+    public function post(Request $request)
     {
 
+        // dd($request->submit);
         $len = count($request->no);
-        // $aa = "";
-        // $aa .= $len.";";
+        
+        switch ($request->submit) {
+            case 'Deactivate' :
+                // dd('deactivate');
+
+                // for($i=0; $i<$len; $i++){
+
+                //     DB::table('bank')->where('no',$request->no[$i])->update([
+
+                //         'postingflag' => '9999-12-31 23:59:59'
+
+                //     ]);
+
+                // }
+                break;
+
+            case 'Post' :
+                // dd('post');
+
+                for($i=0; $i<$len; $i++){
+
+                    $posts = DB::table('bank AS b')
+                        ->select(DB::raw('b.no,tdate AS pdate,acc,amt*dir AS amt,b.material,b.mp,b.ttype,if(a.acc="lstax_state", concat(year(tdate-interval 2 month), quarter(tdate-interval 2 month)), clearingkey ) AS clearing,fromdoc,b.ba,tdesc AS remark'))
+                        ->join(DB::raw('(SELECT * FROM apay2_acc WHERE fromdoc="bank") a'), function($join) {
+                            $join->on('b.ttype','=','a.transaction_type')
+                            ->on('b.mp','=','a.amount_type')
+                            ->on('b.material','=','a.amount_description')
+                            ->on('b.ttype','=','a.ttype')
+                            ;
+                        })
+                        ->where('b.no',$request->no[$i])
+                        ->whereNull('postingflag')
+                        ->orderBy('a.aseq')
+                        ->get();
+// dd($posts);
+                        foreach($posts as $post) {
+                            DB::insert('insert into atr(tid,no,pdate,acc,amt,material,mp,ttype,clearing,fromdoc,ba,remark) values (?,?,?,?,?,?,?,?,?,?,?,?)', [
+                                $i,$post->no,$post->pdate,$post->acc,$post->amt,$post->material,$post->mp,$post->ttype,$post->clearing,$post->fromdoc,$post->ba,$post->remark]);
+                        }
 
 
-        for($i=0; $i<$len; $i++){
-            // $aa .= $request->no[$i];
-            // $aa .= ',';
+                        // ->select('b.no','tdate AS pdate','acc','amt*dir AS amt','b.material','b.mp','b.ttype','if(ac.acc="lstax_state", concat(year(tdate-interval 2 month), quarter(tdate-interval 2 month)), clearingkey ) AS clearing', 'fromdoc','b.ba','tdesc AS remark')
+                        DB::table('bank')->where('no',$request->no[$i])->update([
+                            'postingflag' => Carbon::now()
+                        ]);
+                }
+                break;
 
-        //     if($request->amt[$i] != 0){
-
-                DB::table('bank')->where('no',$request->no[$i])->update([
-
-                    'postingflag' => '9999-12-31 23:59:59'
-
-                ]);
-
-        //     }
         }
-        // dd($aa);
+
         return redirect('/bank');
 
 

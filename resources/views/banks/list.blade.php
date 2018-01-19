@@ -80,7 +80,7 @@
     </div>
 </form>
 
-<form class="form-inline" id="deactivateForm" method="post" action="/bank/deactivate">
+<form class="form-inline" id="deactivateForm" method="post" action="/bank/post">
     {{csrf_field()}}
 <div class="col-sm-8 blog-main">
     <a class="btn btn-primary" href="/postingrules/create" role="button">Add</a>
@@ -103,7 +103,11 @@
         <tbody>
         
         @foreach($banks as $bank)
-            <tr>
+            <tr
+            @if($bank->cnt)
+                 class='success'
+            @endif
+            >
             
                 <td>{{ $bank->tDate }}</td>
                 <td class="number-align">{{ $bank->amt }}</td>
@@ -131,7 +135,8 @@
     </table>
 
 </div>
-<input type="submit" id="submit" class="btn btn-default" value="Deactivate" />
+<input type="submit" id="submit" class="btn btn-default" name='submit' value="Deactivate" />
+<input type="submit" id="submit" class="btn btn-danger" name='submit' value="Post" />
 </form>
 
 <ul class="pagination">

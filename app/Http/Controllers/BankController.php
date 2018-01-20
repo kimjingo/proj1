@@ -97,9 +97,39 @@ class BankController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function singlepost(Request $request)
     {
         //
+
+        for($i=0; $i<2; $i++){
+
+            DB::table('manualposts')->insert([
+
+                'tid' => $request->no,
+                'no' => $i,
+                'pdate' => $request->pdate,
+                'acc' => $request->acc[$i],
+                'amt' => $request->amt*$request->dir[$i],
+                'ttype' => $request->ttype,
+                'mp' => $request->vendor,
+                'material' => $request->material,
+                'remark' => $request->remark,
+                'clearing' => $request->clearing,
+                'fromdoc' => 'bank',
+                'inputtype' => 'manual',
+                'ba' => $request->ba,
+
+            ]);
+
+        }
+
+        DB::table('bank')
+            ->where('no',$request->no)
+            ->update([
+                'postingflag' => \Carbon\Carbon::now(),  // \Datetime()
+            ]);
+
+        return redirect('/bank');
     }
 
     /**

@@ -69,7 +69,7 @@ Route::post('/postingrules/store', 'PostingRulesController@store');
 
 Route::get('/bank', 'BankController@index');
 Route::get('/bank/edit/{id}', 'BankController@edit');
-Route::post('/bank/update', 'BankController@update');
+Route::post('/bank/singlepost', 'BankController@singlepost');
 Route::post('bank/post', 'BankController@post');
 
 Route::get('/apay', 'ApayController@index');

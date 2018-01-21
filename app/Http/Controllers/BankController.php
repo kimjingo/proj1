@@ -103,7 +103,7 @@ class BankController extends Controller
 
         for($i=0; $i<2; $i++){
 
-            DB::table('manualposts')->insert([
+            DB::table('atr')->insert([
 
                 'tid' => $request->no,
                 'no' => $i,
@@ -157,7 +157,7 @@ class BankController extends Controller
         $dr = 'abank';
         $dirs = [1,-1];
         $bas = DB::table('apay2_acc')->distinct()->get(['ba']);
-        $crs = DB::table('gacc')->distinct()->get(['accid AS acc']);
+        $accs = DB::table('gacc')->distinct()->get(['accid AS acc']);
         
         $bank = DB::table('bank')
             ->where('no',$id)
@@ -165,7 +165,7 @@ class BankController extends Controller
 
 // dd($fromdocs);
         // dd($bank);
-        return view('banks.update',compact('bank','fromdoc','dr','dirs','bas','crs') );
+        return view('banks.update',compact('bank','fromdoc','dr','dirs','bas','accs') );
     }
 
 

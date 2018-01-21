@@ -2,7 +2,7 @@
 
 @section('content')
 <h1>Post bank manully</h1>
-<form class="form-inline" id="deactivateForm" method="post" action="/bank/singepost">
+<form class="form-inline" id="deactivateForm" method="post" action="/bank/singlepost">
     {{csrf_field()}}
 
     <div class="col-sm-8 blog-main">
@@ -46,8 +46,25 @@
                     <td><input type='text' name='ckey' value='{{ $bank->clearingkey }}' readonly style="width: 100px;" /></td>
 
                 </tr>
-                    <td><input type='text' name='acc[]' style="width: 100px;" readonly /></td>
-                    <td><input type='text' name='dir[]' style="width: 30px;" readonly /></td>
+                    <td>
+                        <input type='text' list='accs' name='acc[]' />
+                        <datalist id="accs">
+                        @foreach($accs as $acc)
+
+                            <option value="{{ $acc->acc }}">
+
+                        @endforeach 
+                    </td>
+                    <td>
+                        <input type='text' list='dirs' name='dir[]' style="width: 30px;" />
+                        <datalist id="dirs">
+                        @foreach($dirs as $dir)
+
+                            <option value="{{ $dir }}">
+
+                        @endforeach 
+
+                    </td>
                     <td><input type='text' name='ttype' value='{{ $bank->TType }}' readonly style="width: 100px;"/></td>
                     <td class="number-align"><input type='number' name='amt' value={{ $bank->amt }} readonly style="width:70px;" /></td>
                     <td><input type='text' name='material' value='{{ $bank->material }}' readonly style="width: 100px;" /></td>

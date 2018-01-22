@@ -73,3 +73,6 @@ Route::post('/bank/singlepost', 'BankController@singlepost');
 Route::post('bank/post', 'BankController@post');
 
 Route::get('/apay', 'ApayController@index');
+Route::get('/apay/edit/{id}', 'ApayController@edit');
+Route::post('/apay/singlepost', 'ApayController@singlepost');
+Route::post('apay/post', 'ApayController@post');

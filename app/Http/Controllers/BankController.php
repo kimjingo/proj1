@@ -101,34 +101,56 @@ class BankController extends Controller
     {
         //
 
+        $accs = DB::table('gacc')->select('accid','dir','gdir')->get();
+        foreach($accs as $acc) {
+            $accCal[$acc->accid] = array(
+                "dir" => $acc->dir,
+                "gdir" => $acc->gdir
+            );
+        }
+        $checksum = 0;
+        // $strrr = "";
         for($i=0; $i<2; $i++){
+            // $strrr .= $request->acc[$i].":".$request->amt ."*". $request->dir[$i] ."*". $accCal[$request->acc[$i]]['dir'] ."*". $accCal[$request->acc[$i]]['gdir'] ."<br>";
 
-            DB::table('atr')->insert([
+            $checksum += $request->amt * $request->dir[$i] * $accCal[$request->acc[$i]]['dir'] * $accCal[$request->acc[$i]]['gdir'] ;
+        }        
 
-                'tid' => $request->no,
-                'no' => $i,
-                'pdate' => $request->pdate,
-                'acc' => $request->acc[$i],
-                'amt' => $request->amt*$request->dir[$i],
-                'ttype' => $request->ttype,
-                'mp' => $request->vendor,
-                'material' => $request->material,
-                'remark' => $request->remark,
-                'clearing' => $request->clearing,
-                'fromdoc' => 'bank',
-                'inputtype' => 'manual',
-                'ba' => $request->ba,
+        // dd($strrr);
+        // dd($checksum);
 
-            ]);
+        if(!$checksum){
+
+            for($i=0; $i<2; $i++){
+
+                DB::table('atr')->insert([
+
+                    'tid' => $request->no,
+                    'no' => $i,
+                    'pdate' => $request->pdate,
+                    'acc' => $request->acc[$i],
+                    'amt' => $request->amt*$request->dir[$i],
+                    'ttype' => $request->ttype,
+                    'mp' => $request->vendor,
+                    'material' => $request->material,
+                    'remark' => $request->remark,
+                    'clearing' => $request->clearing,
+                    'fromdoc' => 'bank',
+                    'inputtype' => 'manual',
+                    'ba' => $request->ba,
+
+                ]);
+
+            }
+
+            DB::table('bank')
+                ->where('no',$request->no)
+                ->update([
+                    'postingflag' => \Carbon\Carbon::now(),  // \Datetime()
+                ]);
 
         }
-
-        DB::table('bank')
-            ->where('no',$request->no)
-            ->update([
-                'postingflag' => \Carbon\Carbon::now(),  // \Datetime()
-            ]);
-
+        
         return redirect('/bank');
     }
 
@@ -152,12 +174,22 @@ class BankController extends Controller
     public function edit($id)
     {
         //
+        $accs = DB::table('gacc')->select('accid','dir','gdir')->get();
+        foreach($accs as $acc) {
+            $accCal[$acc->accid] = array(
+                "dir" => $acc->dir,
+                "gdir" => $acc->gdir
+            );
+        }
+
+        $accCalJSON = json_encode($accCal);
+        // dd($accCalJSON);
 
         $fromdoc = 'bank';
         $dr = 'abank';
         $dirs = [1,-1];
         $bas = DB::table('apay2_acc')->distinct()->get(['ba']);
-        $accs = DB::table('gacc')->distinct()->get(['accid AS acc']);
+        $accs = DB::table('gacc')->get(['accid AS acc']);
         
         $bank = DB::table('bank')
             ->where('no',$id)
@@ -165,7 +197,7 @@ class BankController extends Controller
 
 // dd($fromdocs);
         // dd($bank);
-        return view('banks.update',compact('bank','fromdoc','dr','dirs','bas','accs') );
+        return view('banks.update',compact('bank','fromdoc','dr','dirs','bas','accs','accCalJSON') );
     }
 
 
@@ -196,26 +228,28 @@ class BankController extends Controller
     public function post(Request $request)
     {
 
-        // dd($request->submit);
-        $len = count($request->no);
+        // dd($request->mode);
         
-        switch ($request->submit) {
-            case 'Deactivate' :
+        switch ($request->mode) {
+            case 1 :
                 // dd('deactivate');
+                $len = count($request->no);
 
-                // for($i=0; $i<$len; $i++){
+                for($i=0; $i<$len; $i++){
 
-                //     DB::table('bank')->where('no',$request->no[$i])->update([
+                    DB::table('bank')->where('no',$request->no[$i])->update([
 
-                //         'postingflag' => '9999-12-31 23:59:59'
+                        'postingflag' => '9999-12-31 23:59:59'
 
-                //     ]);
+                    ]);
 
-                // }
+                }
                 break;
 
-            case 'Post' :
-                // dd('post');
+            case 2 :
+                // dd('post selected');
+
+                $len = count($request->no);
 
                 for($i=0; $i<$len; $i++){
 
@@ -232,24 +266,54 @@ class BankController extends Controller
                         ->whereNull('postingflag')
                         ->orderBy('a.aseq')
                         ->get();
-// dd($posts);
+
                         foreach($posts as $post) {
                             DB::insert('insert into atr(tid,no,pdate,acc,amt,material,mp,ttype,clearing,fromdoc,ba,remark) values (?,?,?,?,?,?,?,?,?,?,?,?)', [
                                 $i,$post->no,$post->pdate,$post->acc,$post->amt,$post->material,$post->mp,$post->ttype,$post->clearing,$post->fromdoc,$post->ba,$post->remark]);
                         }
 
-
-                        // ->select('b.no','tdate AS pdate','acc','amt*dir AS amt','b.material','b.mp','b.ttype','if(ac.acc="lstax_state", concat(year(tdate-interval 2 month), quarter(tdate-interval 2 month)), clearingkey ) AS clearing', 'fromdoc','b.ba','tdesc AS remark')
                         DB::table('bank')->where('no',$request->no[$i])->update([
                             'postingflag' => Carbon::now()
                         ]);
                 }
                 break;
 
+            case 3 :
+                // dd('post by rule');
+
+                $posts = DB::table('bank AS b')
+                    ->select(DB::raw('b.no,tdate AS pdate,acc,amt*dir AS amt,b.material,b.mp,b.ttype,if(a.acc="lstax_state", concat(year(tdate-interval 2 month), quarter(tdate-interval 2 month)), clearingkey ) AS clearing,fromdoc,b.ba,tdesc AS remark'))
+                    ->join(DB::raw('(SELECT * FROM apay2_acc WHERE fromdoc="bank") a'), function($join) {
+                        $join->on('b.ttype','=','a.transaction_type')
+                        ->on('b.mp','=','a.amount_type')
+                        ->on('b.material','=','a.amount_description')
+                        ->on('b.ttype','=','a.ttype')
+                        ;
+                    })
+                    ->whereNull('postingflag')
+                    ->orderBy('a.aseq')
+                    ->get();
+
+                // insert to atr
+                foreach($posts as $post) {
+                    DB::insert('insert into atr(tid,no,pdate,acc,amt,material,mp,ttype,clearing,fromdoc,ba,remark) values (?,?,?,?,?,?,?,?,?,?,?,?)', [
+                        $i,$post->no,$post->pdate,$post->acc,$post->amt,$post->material,$post->mp,$post->ttype,$post->clearing,$post->fromdoc,$post->ba,$post->remark]);
+                }
+
+                // update bank's postingflag
+                foreach($posts as $post) {
+                    DB::table('bank')
+                    ->where('no',$post->no)
+                    ->update([
+                        'postingflag' => Carbon::now()
+                    ]);
+                }
+                break;
+
+
         }
 
         return redirect('/bank');
-
 
     }
 }

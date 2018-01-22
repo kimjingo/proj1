@@ -120,9 +120,9 @@
                 <td>{{ $bank->Checkno }}</td>
                 <td>{{ $bank->postingflag }}</td>
                 <td>
-                    <a href="/bank/edit/{{ $bank->no }}">Edit</a>
+                    <a href="/bank/edit/{{ $bank->no }}">Single post</a>
                     ||
-                    <a href="/postingrules?fromdoc=bank&trtype={{$bank->TType}}&ttype={{$bank->mp}}&vendor={{$bank->mp}}&material={{$bank->material}}">Rule</a> 
+                    <a href="/postingrules?fromdoc=bank&trtype={{$bank->TType}}&ttype={{$bank->mp}}&vendor={{$bank->mp}}&material={{$bank->material}}">Make a rule</a> 
                     ||
                     <input type="checkbox" id="checkBox" name="no[]" value='{{$bank->no}}'>
                 </td>
@@ -135,8 +135,9 @@
     </table>
 
 </div>
-<input type="submit" id="submit" class="btn btn-default" name='submit' value="Deactivate" />
-<input type="submit" id="submit" class="btn btn-danger" name='submit' value="Post" />
+<button type="submit" class="btn btn-default" name="mode" value="1">Deactivate</button>
+<button type="submit" class="btn btn-danger" name="mode" value="2">Post selected</button>
+<button type="submit" class="btn btn-warning" name="mode" value="3">Post by rule</button>
 </form>
 
 <ul class="pagination">

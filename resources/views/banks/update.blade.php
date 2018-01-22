@@ -76,7 +76,7 @@
                         ||
                         <a href="/postingrules?fromdoc=bank&trtype={{$bank->TType}}&ttype={{$bank->mp}}&vendor={{$bank->mp}}&material={{$bank->material}}">Rule</a> 
                         ||
-                        <input type="checkbox" id="checkBox" name="no" value='{{$bank->no}}'>
+                        <input type="checkbox" id="toggleReadonly" name="no" value='{{$bank->no}}'>
                     </td>
                 <tr>
                     
@@ -110,6 +110,19 @@
         //       TotalValue += Number($(this).val());
         // });
         // $("td#" + className).html(TotalValue);
+    });
+
+    $('input#toggleReadonly').on('click', function() {
+        // var prev = $(this).prev('input'),
+        //     ro   = prev.prop('readonly');
+        // prev.prop('readonly', !ro).focus();
+        // $(this).val(ro ? 'Save' : 'Edit');
+
+        $("input[type='text']").each(function(){
+            ro   = $(this).prop('readonly');
+            $(this).prop('readonly', !ro);
+        });
+
     });
 </script>
 

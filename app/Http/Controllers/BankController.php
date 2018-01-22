@@ -297,7 +297,7 @@ class BankController extends Controller
                 // insert to atr
                 foreach($posts as $post) {
                     DB::insert('insert into atr(tid,no,pdate,acc,amt,material,mp,ttype,clearing,fromdoc,ba,remark) values (?,?,?,?,?,?,?,?,?,?,?,?)', [
-                        $i,$post->no,$post->pdate,$post->acc,$post->amt,$post->material,$post->mp,$post->ttype,$post->clearing,$post->fromdoc,$post->ba,$post->remark]);
+                        $post->no,$post->no,$post->pdate,$post->acc,$post->amt,$post->material,$post->mp,$post->ttype,$post->clearing,$post->fromdoc,$post->ba,$post->remark]);
                 }
 
                 // update bank's postingflag

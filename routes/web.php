@@ -65,6 +65,10 @@ Route::get('/postingrules', 'PostingRulesController@index');
 Route::get('/postingrules/create', 'PostingRulesController@create');
 Route::get('/postingrules/duplicate/{id}', 'PostingRulesController@duplicate');
 Route::post('/postingrules/store', 'PostingRulesController@store');
+Route::get('/postingrules/addwithdata', 'PostingRulesController@addwithdata');
+
+
+
 
 
 Route::get('/bank', 'BankController@index');
@@ -72,7 +76,8 @@ Route::get('/bank/edit/{id}', 'BankController@edit');
 Route::post('/bank/singlepost', 'BankController@singlepost');
 Route::post('bank/post', 'BankController@post');
 
-Route::get('/apay', 'ApayController@index');
+Route::get('/apay', 'ApayController@singlelist');
 Route::get('/apay/edit/{id}', 'ApayController@edit');
 Route::post('/apay/singlepost', 'ApayController@singlepost');
 Route::post('apay/post', 'ApayController@post');
+Route::get('/apay/showall', 'ApayController@index');

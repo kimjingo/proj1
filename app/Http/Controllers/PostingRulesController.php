@@ -77,33 +77,53 @@ class PostingRulesController extends Controller
     public function store(Request $request)
     {
         //
-                //
-        $len = count($request->fromdoc);
 
-        for($i=0; $i<$len; $i++){
+        $accs = DB::table('gacc')->select('accid','dir','gdir')->get();
+        foreach($accs as $acc) {
+            $accCal[$acc->accid] = array(
+                "dir" => $acc->dir,
+                "gdir" => $acc->gdir
+            );
+        }
+        $checksum = 0;
+        // $strrr = "";
+        for($i=0; $i<2; $i++){
+            // $strrr .= $request->acc[$i].":".$request->amt ."*". $request->dir[$i] ."*". $accCal[$request->acc[$i]]['dir'] ."*". $accCal[$request->acc[$i]]['gdir'] ."<br>";
 
-            // if($request->amt[$i] != 0){
+            $checksum += $request->amt * $request->dir[$i] * $accCal[$request->acc[$i]]['dir'] * $accCal[$request->acc[$i]]['gdir'] ;
+        }        
 
-                $no = DB::table('apay2_acc')->insert([
+        // dd($strrr);
+        // dd($checksum);
 
-                    'fromdoc' => $request->fromdoc[$i],
-                    'transaction_type' => $request->trtype[$i],
-                    'amount_type' => $request->vendor[$i],
-                    'amount_description' => $request->material[$i],
+        if(!$checksum){
+
+            for($i=0; $i<2; $i++){
+
+                DB::table('apay2_acc')->insert([
+
+                    'fromdoc' => $request->fromdoc,
+                    'transaction_type' => $request->ttype,
+                    'amount_type' => $request->atype,
+                    'amount_description' => $request->adesc,
                     'acc' => $request->acc[$i],
                     'dir' => $request->dir[$i],
                     'aseq' => $request->seq[$i],
-                    'ttype' => $request->ttype[$i],
-                    'ba' => $request->ba[$i],
+                    'ttype' => $request->ttype,
+                    'ba' => $request->ba,
+                    'created_at' => \Carbon\Carbon::now(),
+                    'updated_at' => \Carbon\Carbon::now(),
 
                 ]);
-                $nos[] = $no;
-            // }
+
+            }
+
         }
+        
+        // return redirect('/bank');
+        return redirect()->back();
 
-        // dd($nos);
 
-        return redirect('/postingrules?fromdoc='.$request->fromdoc[0].'&trtype='.$request->trtype[0].'&vendor='.$request->vendor[0].'&material='.$request->material[0].'&acc='.$request->acc[0].'&dir='.$request->dir[0].'&aseq='.$request->seq[0].'&ttype='.$request->ttype[0].'&ba='.$request->ba[0]);
     }
 
     /**
@@ -161,6 +181,69 @@ class PostingRulesController extends Controller
 // dd($fromdocs);
 
         return view('postingrules.duplicate',compact('rules','fromdocs','trtypes','ttypes','vendors','materials','bas','accs') );
+    }
+
+    public function addwithdata()
+    {
+        //
+        $fromdoc = Input::get('fromdoc');
+        switch($fromdoc){
+            case "apay2":
+                $dr = 'aar_amz';
+                break;
+        }
+        
+        $accs = DB::table('gacc')->select('accid','dir','gdir')->get();
+        foreach($accs as $acc) {
+            $accCal[$acc->accid] = array(
+                "dir" => $acc->dir,
+                "gdir" => $acc->gdir
+            );
+        }
+        $accCalJSON = json_encode($accCal);
+        // dd($accCalJSON);
+
+        $fromdoc = 'bank';
+        $dirs = [1,-1];
+        $bas = DB::table('apay2_acc')->distinct()->get(['ba']);
+        // $accs = DB::table('gacc')->get(['accid AS acc']);
+
+
+        $ttype = Input::get('ttype');
+        $atype = Input::get('atype');
+        $adesc = Input::get('adesc');
+
+        $accs = DB::table('gacc')->select('accid','dir','gdir')->get();
+        foreach($accs as $acc) {
+            $accCal[$acc->accid] = array(
+                "dir" => $acc->dir,
+                "gdir" => $acc->gdir
+            );
+        }
+
+        return view('postingrules.create',compact('dr','fromdoc','ttype','atype','adesc','accs','accCalJSON','dirs') );
+        
+        // $rules = DB::table('apay2_acc as a1')
+        //     ->select('a1.fromdoc AS fromdoc', 'a1.transaction_type AS trtype', 'a1.amount_type AS vendor', 'a1.amount_description AS material', 'a1.acc', 'a1.dir', 'a1.aseq AS seq', 'a1.ttype', 'a1.no', 'a1.ba')
+        //     ->join(DB::raw('(SELECT * FROM apay2_acc WHERE no='.$id.') a2'), function($join)
+        //     {
+        //         $join->on('a1.fromdoc', '=', 'a2.fromdoc')
+        //         ->on('a1.transaction_type','=','a2.transaction_type')
+        //         ->on('a1.amount_type','=','a2.amount_type')
+        //         ->on('a1.amount_description','=','a2.amount_description')
+        //         ->on('a1.ttype','=','a2.ttype')
+        //         ;
+        //     })
+        //     ->orderBy('a1.fromdoc')
+        //     ->orderBy('a1.transaction_type')
+        //     ->orderBy('a1.amount_type')
+        //     ->orderBy('a1.amount_description')
+        //     ->orderBy('a1.ttype')
+        //     ->orderBy('a1.aseq')
+        //     ->get();
+
+// dd($fromdocs);
+
     }
     /**
      * Update the specified resource in storage.

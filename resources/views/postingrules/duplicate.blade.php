@@ -28,7 +28,7 @@
         @foreach($rules as $rule)
             <tr class="sample">
                 <td>
-                    <input type="text" list="fromdocs" name="fromdoc[]"  value="{{ $rule->fromdoc }}" />
+                    <input type="text" list="fromdocs" name="fromdoc"  value="{{ $rule->fromdoc }}" />
                     <datalist id="fromdocs">
 
                     @foreach($fromdocs as $val)
@@ -39,7 +39,7 @@
                 </td>
                 
                 <td>
-                    <input type="text" list="trtypes" name="trtype[]" value="{{ $rule->trtype }}" />
+                    <input type="text" list="trtypes" name="ttype" value="{{ $rule->trtype }}" />
                     <datalist id="trtypes">
                     @foreach($trtypes as $val)
 
@@ -50,7 +50,7 @@
                 </td>
 
                                 <td>
-                    <input style="width:100px;" type="text" list="vendors" name="vendor[]"  value="{{ $rule->vendor }}" />
+                    <input style="width:100px;" type="text" list="vendors" name="atype"  value="{{ $rule->vendor }}" />
                     <datalist id="vendors">
 
                     @foreach($vendors as $val)
@@ -61,7 +61,7 @@
                 </td>
                 
                 <td>
-                    <input style="width:100px;" type="text" list="materials" name="material[]"  value="{{ $rule->material }}" />
+                    <input style="width:100px;" type="text" list="materials" name="adesc"  value="{{ $rule->material }}" />
                     <datalist id="materials">
 
                     @foreach($materials as $val)
@@ -72,7 +72,7 @@
                 </td>
                 
                 <td>
-                    <input style="width:100px;" type="text" list="ttypes" name="ttype[]"  value="{{ $rule->ttype }}" />
+                    <input style="width:100px;" type="text" list="tttypes" name="tttype"  value="{{ $rule->ttype }}" />
                     <datalist id="ttypes">
 
                     @foreach($ttypes as $val)
@@ -102,7 +102,7 @@
                 </td>
                 
                 <td>
-                    <input style="width:30px;" type="text" list="bas" name="ba[]"  value="{{ $rule->ba }}" />
+                    <input style="width:30px;" type="text" list="bas" name="ba"  value="{{ $rule->ba }}" />
                     <datalist id="bas">
 
                     @foreach($bas as $val)
@@ -128,5 +128,8 @@
 
 @section('footer')
 
+<script type="text/javascript">
+
+</script>
 
 @endsection

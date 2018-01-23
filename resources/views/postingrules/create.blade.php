@@ -1,64 +1,115 @@
 @extends('layouts.master')
 
 @section('content')
+<h1>Post bank manully</h1>
 
-<form class="form-inline" id="searchForm" method="get" action=/postingrules/store>
-<!--<form class="form-inline" id="searchForm" method="get" onsubmit="return false;">-->
-        <div class="form-group ">
-                <input type="hidden" name="mode" value="search" />
-                <select id="fromdoc" name="fromdoc" class="form-control">
-                    <option>FromDoc</option>
-                    @foreach($fromdocs as $fdoc)
-                        <option value="{{$fdoc->fromdoc}}">
-                        
-                            {{ $fdoc->fromdoc }}
+<form class="form-inline" id="deactivateForm" method="post" action="/postingrules/store">
+    {{csrf_field()}}
 
-                        </option>
-                    @endforeach
+    <div class="col-sm-8 blog-main">
+        
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>DR Account</th>
+                    <th>DR Dir</th>
+                    <th rowspan="2">SEQ</th>
 
-                </select>
-                <select id="trtype" name="trtype" class="form-control">
-                    <option>Tr.Type</option>
-                    @foreach($trtypes as $tr)
-                        <option value="{{$tr->transaction_type}}">
-                        
-                            {{ $tr->transaction_type }}
+                    <th>TType</th>
+                    <th>AType</th>
+                    <th rowspan="2">Action</th>
+                </tr>
+                <tr>
+                    <th>CR Account</th>
+                    <th>CR Dir</th>
+                    <th colspan="2">ADesc</th>
 
-                        </option>
-                    @endforeach
-                </select>
-                <select id="ttype" name="ttype" class="form-control">
-                    <option>T.Type</option>
-                    @foreach($ttypes as $tt)
-                        <option value="{{$tt->ttype}}">
-                        
-                            {{ $tt->ttype }}
+                </tr>
+            </thead>
+            <tbody>
+            
+                <tr>
+                    <td><input type='text' id="acc1" name='acc[]' value='{{ $dr }}' style="width: 100px;" readonly /></td>
+                    <td><input type='text' id='dir1' name='dir[]' value=1 style="width: 30px;" readonly /></td>
+                    <td><input type='text' id='seq1' name='seq[]' value=1 style="width: 30px;" readonly /></td>
 
-                        </option>
-                    @endforeach
-                </select>
-                <select id="vendor" name="vendor" class="form-control">
-                    <option>Vendor</option>
-                    @foreach($vendors as $vr)
-                        <option value="{{$vr->amount_type}}">
-                        
-                            {{ $vr->amount_type }}
+                    <td><input type='text' name='ttype' value='{{ $ttype }}' readonly /></td>
+                    <td><input type='text' name='atype' value='{{ $atype }}' readonly /></td>
 
-                        </option>
-                    @endforeach
-                </select>
-                <input type="text" list="styles" class="form-control" id="style" name="style" <? echo ( isset( $material ) && !empty( $material )) ? "value='".$material."'" : "placeholder='Style#'"; autofocus />
-<!--                <input type="text" list="colors" class="form-control" id="color" name="color" <? //echo ( isset( $color ) && !empty( $color )) ? "value='".$color."'" : "placeholder='Color#'"; ?> autofocus />-->
-<!--                <input type="text" list="sizes" class="form-control" id="size" name="size" <? //echo ( isset( $size ) && !empty( $size )) ? "value='".$size."'" : "placeholder='Size#'"; ?> autofocus />-->
-                <input type="submit" id="submit" class="btn btn-default" value="SAVE" />
-        </div>
+                    <td rowspan="2">
+                        <input type="checkbox" id="toggleReadonly">
+                    </td>
+
+                </tr>
+
+                <tr>
+                    <td>
+                        <input type='text' id='acc2' class="acc" list='accs' name='acc[]' required />
+                        <datalist id="accs">
+                        @foreach($accs as $val)
+
+                            <option value="{{ $val->accid }}">
+
+                        @endforeach 
+                    </td>
+                    <td>
+                        <input type='text' id='dir2' list='dirs' name='dir[]' style="width: 30px;" required />
+                        <datalist id="dirs">
+                        @foreach($dirs as $dir)
+
+                            <option value="{{ $dir }}">
+
+                        @endforeach 
+
+                    </td>
+
+                    <td><input type='text' id='seq2' name='seq[]' value="2" style="width: 30px;" /></td>
+
+                    <td colspan="2"><input type='text' name='adesc' value='{{ $adesc }}' readonly /></td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <input type="submit" id="submit" class="btn btn-danger" name='submit' value="Post" />
 </form>
 
 @endsection
 
 
-@section('layouts.footer')
+@section('footer')
 
-<script type="text/javascript"></script>
+<script type="text/javascript">
+    // $("input.acc").focusout(function(){
+    var acc = {!! $accCalJSON !!};
+    $("input#acc2").focusout(function(){
+
+        // console.log($("input#acc1").val());
+
+        var dir2 = $("input#dir1").val() * acc[$("input#acc1").val()].dir * acc[$("input#acc1").val()].gdir * -1 / (acc[$("input#acc2").val()].dir * acc[$("input#acc2").val()].gdir) ; 
+        // console.log(dir2);
+        $("input#dir2").val(dir2);
+        // $("input.acc").each(function(){
+        //       TotalValue += Number($(this).val());
+        // });
+        // $("td#" + className).html(TotalValue);
+    });
+
+    $('input#toggleReadonly').on('click', function() {
+        // var prev = $(this).prev('input'),
+        //     ro   = prev.prop('readonly');
+        // prev.prop('readonly', !ro).focus();
+        // $(this).val(ro ? 'Save' : 'Edit');
+
+        $("input[type='text']").each(function(){
+            ro   = $(this).prop('readonly');
+            $(this).prop('readonly', !ro);
+        });
+
+    });
+</script>
 
 @endsection

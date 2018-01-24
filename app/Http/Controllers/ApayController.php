@@ -238,20 +238,28 @@ class ApayController extends Controller
 
 
         if($fromdoc){
-        // dd($fromdoc);
 
-            // DB::insert("insert into contacts(contact_id,contact_type,account_id,created_at,updated_at) select f.id,'App\\Friend',f.account_id,f.created_at,f.updated_at from friends as f where f.id=?",[16]);
+            $res = DB::insert("INSERT INTO atr(tid,no,pdate,acc,amt,qty,orderid,itemid,mp,clearing,ttype,fromdoc,ba,remark,material,brand,created_at,updated_at) SELECT ac.aseq,ap.no,posted_date_time,acc,amount*dir,quantity_purchased,order_id,order_item_code,'AMZ', if((acc='abank_memo' AND ap.amount_description='Payable to Amazon') OR (acc='abank_memo' AND ap.amount_description='Successful charge'), concat(right( EXTRACT(YEAR_MONTH FROM posted_date + interval 4 day),4), date_format(posted_date + interval 4 day, '%d')) , settlement_id ) clearing,ttype, fromdoc, ap.ba,concat(ap.transaction_type,'-',ap.amount_type,'-',ap.amount_description) remark, a.brand,a.matid,?,? FROM apay2 ap JOIN apay2_acc ac on ap.transaction_type = ac.transaction_type AND ap.amount_type = ac.amount_type AND ap.amount_description = ac.amount_description LEFT JOIN ainv a ON a.sku=ap.sku WHERE postingflag IS NULL AND fromdoc=? AND ap.transaction_type = ? AND ap.amount_type = ? AND ap.amount_description = ? AND posted_date_time >= ? AND posted_date_time < ?", [$cdate,$udate,$fromdoc,$ttype,$atype,$adesc,$fdate,$tdate]);
 
-            // DB::insert("INSERT INTO atr(no,pdate,acc,amt,qty,orderid,itemid,mp,clearing,ttype,fromdoc,ba,remark,material,brand) SELECT ap.no,posted_date_time,acc,amount*dir,quantity_purchased,order_id,order_item_code,'AMZ', if((acc='abank_memo' AND ap.amount_description='Payable to Amazon') OR (acc='abank_memo' AND ap.amount_description='Successful charge'), concat(right( EXTRACT(YEAR_MONTH FROM posted_date + interval 4 day),4), date_format(posted_date + interval 4 day, '%d')) , settlement_id ) clearing,ttype, fromdoc, ap.ba,concat(ap.transaction_type,'-',ap.amount_type,'-',ap.amount_description) remark, a.brand,a.matid FROM apay2 ap JOIN apay2_acc ac on ap.transaction_type = ac.transaction_type AND ap.amount_type = ac.amount_type AND ap.amount_description = ac.amount_description LEFT JOIN ainv a ON a.sku=ap.sku WHERE fromdoc='apay2' AND postingflag IS NULL AND ap.no = ?", ['apay2',570648]);
+            if($res){
 
-            DB::insert("INSERT INTO atr(tid,no,pdate,acc,amt,qty,orderid,itemid,mp,clearing,ttype,fromdoc,ba,remark,material,brand,created_at,updated_at) SELECT ac.aseq,ap.no,posted_date_time,acc,amount*dir,quantity_purchased,order_id,order_item_code,'AMZ', if((acc='abank_memo' AND ap.amount_description='Payable to Amazon') OR (acc='abank_memo' AND ap.amount_description='Successful charge'), concat(right( EXTRACT(YEAR_MONTH FROM posted_date + interval 4 day),4), date_format(posted_date + interval 4 day, '%d')) , settlement_id ) clearing,ttype, fromdoc, ap.ba,concat(ap.transaction_type,'-',ap.amount_type,'-',ap.amount_description) remark, a.brand,a.matid,?,? FROM apay2 ap JOIN apay2_acc ac on ap.transaction_type = ac.transaction_type AND ap.amount_type = ac.amount_type AND ap.amount_description = ac.amount_description LEFT JOIN ainv a ON a.sku=ap.sku WHERE fromdoc='apay2' AND postingflag IS NULL AND fromdoc=? AND ap.transaction_type = ? AND ap.amount_type = ? AND ap.amount_description = ? AND posted_date_time >= ? AND posted_date_time < ?", [$cdate,$udate,$fromdoc,$ttype,$atype,$adesc,$fdate,$tdate]);
+                DB::table('apay2 as a2')
+                    ->join('apay2_acc as aa', function($join){
+                        $join->on('a2.transaction_type','=','aa.transaction_type');
+                        $join->on('a2.amount_type','=','aa.amount_type');
+                        $join->on('a2.amount_description','=','aa.amount_description');
+                    })
+                    ->where('aa.fromdoc',$fromdoc)
+                    ->where('aa.transaction_type',$ttype)
+                    ->where('aa.amount_type',$atype)
+                    ->where('aa.amount_description',$adesc)
+                    ->where('a2.posted_date','>=',$fdate)
+                    ->where('a2.posted_date','<',$tdate)
+                    ->update([
+                        'postingflag' => $udate //\Carbon\Carbon::now(),  // \Datetime()
+                    ]);
 
-            // DB::table('bank')
-            //     ->where('no',$request->no)
-            //     ->update([
-            //         'postingflag' => $udate;//\Carbon\Carbon::now(),  // \Datetime()
-            //     ]);
-
+            }
         }
         
         return redirect('/apay');

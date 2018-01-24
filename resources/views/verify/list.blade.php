@@ -1,15 +1,14 @@
 @extends('layouts.master')
 
 @section('content')
+
 <div class="col-sm-8 blog-main">
-    <div class="alert alert-
-    @if($total)
-        danger
+    @if($zerosum->result)
+    <div class="alert alert-primary" role="alert">
     @else
-        primary
+    <div class="alert alert-danger" role="alert">
     @endif
-    " role="alert">
-      Zero Sum : {{$total}}
+      Zero Sum : {{$zerosum->result}}
     </div>
 
     <div class="jumbotron">
@@ -17,21 +16,23 @@
             <tr>
                 <th>Doc Type</th><th>Zero Sum</th>
             </tr>
-
-            @foreach($bals as val)
-                <tr>
-                    <td>
-                        {{$val->fromdoc}}
-                    </td>
-                    <td>
-                        {{$val->amt}}
-                    </td>
-                </tr>
+            
+            @foreach($bals as $val)
+            <tr>
+                <td>
+                    {{$val->fromdoc}}
+                </td>
+                <td>
+                    {{$val->amt}}
+                </td>
+            </tr>
             @endforeach
+        
         </table>
     </div>
 
 </div>
+
 
 @endsection
 

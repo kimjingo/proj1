@@ -23,8 +23,8 @@
                 <tr>
                     <th>CR Account</th>
                     <th>CR Dir</th>
-                    <th colspan="2">ADesc</th>
-
+                    <th>ADesc</th>
+                    <th>Type</th>
                 </tr>
             </thead>
             <tbody>

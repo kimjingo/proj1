@@ -19,13 +19,14 @@ class VerifyController extends Controller
 
 
 
-        $total = DB::table('atr AS a')
-        	->select(DB::raw('sum(amt*dir*gdir)'))
+        $zerosum = DB::table('atr AS a')
+        	->select(DB::raw('sum(amt*dir*gdir) as result'))
         	->join('gacc as g', 'g.accid', '=', 'a.acc')
             ->first();
+// dd($zerosum->result);
 
         $bals = DB::table('bal')->get();
 
-        return view('verify.list', compact('total','bals') );
+        return view('verify.list', compact('zerosum','bals') );
     }
 }

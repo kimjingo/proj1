@@ -55,14 +55,15 @@
     </div>
 
     <div class="container-fluid">
-      <!-- <div class="row-fluid">
+        
         <div class="span2">
           <div class="well sidebar-nav">
 
             @include('layouts.sidebar')
 
           </div>
-        </div> -->
+        </div>
+
         <div class="span12">
 
             @yield('content')

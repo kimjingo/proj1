@@ -90,7 +90,7 @@ class PostingRulesController extends Controller
         for($i=0; $i<2; $i++){
             // $strrr .= $request->acc[$i].":".$request->amt ."*". $request->dir[$i] ."*". $accCal[$request->acc[$i]]['dir'] ."*". $accCal[$request->acc[$i]]['gdir'] ."<br>";
 
-            $checksum += $request->amt * $request->dir[$i] * $accCal[$request->acc[$i]]['dir'] * $accCal[$request->acc[$i]]['gdir'] ;
+            $checksum += $request->dir[$i] * $accCal[$request->acc[$i]]['dir'] * $accCal[$request->acc[$i]]['gdir'] ;
         }        
 
         // dd($strrr);
@@ -109,7 +109,7 @@ class PostingRulesController extends Controller
                     'acc' => $request->acc[$i],
                     'dir' => $request->dir[$i],
                     'aseq' => $request->seq[$i],
-                    'ttype' => $request->ttype,
+                    'ttype' => $request->atrtype,
                     'ba' => $request->ba,
                     'created_at' => \Carbon\Carbon::now(),
                     'updated_at' => \Carbon\Carbon::now(),
@@ -120,8 +120,8 @@ class PostingRulesController extends Controller
 
         }
         
-        // return redirect('/bank');
-        return redirect()->back();
+        return redirect('/apay');
+        // return redirect()->back();
 
 
     }
@@ -203,9 +203,10 @@ class PostingRulesController extends Controller
         $accCalJSON = json_encode($accCal);
         // dd($accCalJSON);
 
-        $fromdoc = 'bank';
+        // $fromdoc = 'bank';
         $dirs = [1,-1];
         $bas = DB::table('apay2_acc')->distinct()->get(['ba']);
+        $atrtypes = DB::table('apay2_acc')->where('fromdoc',$fromdoc)->distinct()->get(['ttype']);
         // $accs = DB::table('gacc')->get(['accid AS acc']);
 
 
@@ -221,7 +222,7 @@ class PostingRulesController extends Controller
             );
         }
 
-        return view('postingrules.create',compact('dr','fromdoc','ttype','atype','adesc','accs','accCalJSON','dirs') );
+        return view('postingrules.create',compact('dr','fromdoc','ttype','atype','adesc','accs','accCalJSON','dirs','atrtypes') );
         
         // $rules = DB::table('apay2_acc as a1')
         //     ->select('a1.fromdoc AS fromdoc', 'a1.transaction_type AS trtype', 'a1.amount_type AS vendor', 'a1.amount_description AS material', 'a1.acc', 'a1.dir', 'a1.aseq AS seq', 'a1.ttype', 'a1.no', 'a1.ba')

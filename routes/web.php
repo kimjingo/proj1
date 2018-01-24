@@ -79,5 +79,7 @@ Route::post('bank/post', 'BankController@post');
 Route::get('/apay', 'ApayController@singlelist');
 Route::get('/apay/edit/{id}', 'ApayController@edit');
 Route::post('/apay/singlepost', 'ApayController@singlepost');
-Route::post('apay/post', 'ApayController@post');
+Route::get('apay/post', 'ApayController@post');
 Route::get('/apay/showall', 'ApayController@index');
+
+Route::get('/verify', 'VerifyController@index');

@@ -126,7 +126,7 @@
         
         @foreach($apays as $apay)
             <tr
-            @if($apay->cnt)
+            @if($apay->cnt2)
                  class='success'
             @endif
             >
@@ -144,8 +144,9 @@
                 <td>{{ $apay->cnt}}</td>
 
                 <td>
-                    <a href="/apay/edit/{{ $apay->no }}">Single post</a>
-                    ||
+                    @if($apay->cnt2)
+                        <a href="/apay/post?fromdoc=apay2&ttype={{ $apay->transaction_type }}&atype={{ $apay->amount_type }}&adesc={{ $apay->amount_description }}&fdate={{ $fdate }}&tdate={{ $tdate }}">Post</a> ||
+                    @endif
                     <a href="/postingrules/addwithdata?fromdoc=apay2&ttype={{$apay->transaction_type}}&atype={{$apay->amount_type}}&adesc={{$apay->amount_description}}">Make a rule</a> 
                     ||
                     <input type="checkbox" id="checkBox" name="no[]" value='{{$apay->no}}'>

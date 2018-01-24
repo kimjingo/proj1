@@ -1,10 +1,11 @@
 @extends('layouts.master')
 
 @section('content')
-<h1>Post bank manully</h1>
+<h1>Add auto-posting rule</h1>
 
 <form class="form-inline" id="deactivateForm" method="post" action="/postingrules/store">
     {{csrf_field()}}
+    <input type='hidden' name='fromdoc' value='{{ $fromdoc }}' />
 
     <div class="col-sm-8 blog-main">
         
@@ -65,7 +66,17 @@
 
                     <td><input type='text' id='seq2' name='seq[]' value="2" style="width: 30px;" /></td>
 
-                    <td colspan="2"><input type='text' name='adesc' value='{{ $adesc }}' readonly /></td>
+                    <td><input type='text' name='adesc' value='{{ $adesc }}' readonly /></td>
+                    <td>
+                        <input type='text' id='atrtype' list='atrtypes' name='atrtype' required />
+                        <datalist id="atrtypes">
+                        @foreach($atrtypes as $val)
+
+                            <option value="{{ $val->ttype }}">
+
+                        @endforeach 
+
+                    </td>
                 </tr>
 
             </tbody>

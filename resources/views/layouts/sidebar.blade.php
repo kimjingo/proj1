@@ -1,15 +1,17 @@
 @if(!empty($navs))
+	<button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn">
+        <i class="glyphicon glyphicon-align-left"></i>
+        Toggle Sidebar
+    </button>
     <div class="span2" id="sidemenubar">
-    	<button onclick="w3_close()" class="w3-bar-item w3-large">Close &times;</button>
-	      <div class="well sidebar-nav">
-			<ul class="nav nav-list">
-				@foreach($navs as $nav)
-			 	<li><a href="{{ $nav->link }}">{{ $nav->displayname }}</a></li>
-			 	@endforeach
-			</ul>
-	      </div>
-	    </div>
-    <button class="w3-button w3-teal w3-xlarge" onclick="w3_open()">☰</button>
+      <div class="well sidebar-nav">
+		<ul class="nav nav-list">
+			@foreach($navs as $nav)
+		 	<li><a href="{{ $nav->link }}">{{ $nav->displayname }}</a></li>
+		 	@endforeach
+		</ul>
+      </div>
+    </div>
 @endif
 			  <!-- <li class="active"><a href="#">Link</a></li>
 			  <li class="nav-header">Sidebar</li>

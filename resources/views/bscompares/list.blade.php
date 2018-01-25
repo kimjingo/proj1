@@ -42,16 +42,17 @@
 @endsection
 
 
-@section('layouts.footer')
+@section('footer')
 
 <script type="text/javascript">
-function w3_open() {
-    $("div#sidemenubar").style.display = "block";
-}
+$(document).ready(function () {
 
-function w3_close() {
-    $("div#sidemenubar").style.display = "none";
-}
+    $('#sidebarCollapse').on('click', function () {
+        // console.log("aa");
+        $('#sidemenubar').toggleClass('active');
+    });
+
+});
 </script>
 
 @endsection

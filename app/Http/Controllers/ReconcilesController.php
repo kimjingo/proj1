@@ -17,7 +17,9 @@ class ReconcilesController extends Controller
     {
         //
         $reconciles = DB::table('reconcile')->get();
-        return view('reconciles.list', compact('reconciles'));
+
+        $navs = DB::table('sidemenus')->where('menu','compare')->get();
+        return view('reconciles.list', compact('reconciles','navs'));
     }
 
     /**

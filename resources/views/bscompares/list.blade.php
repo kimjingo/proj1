@@ -44,6 +44,14 @@
 
 @section('layouts.footer')
 
-<script type="text/javascript"></script>
+<script type="text/javascript">
+function w3_open() {
+    $("div#sidemenubar").style.display = "block";
+}
+
+function w3_close() {
+    $("div#sidemenubar").style.display = "none";
+}
+</script>
 
 @endsection

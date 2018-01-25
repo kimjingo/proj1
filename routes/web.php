@@ -16,7 +16,18 @@
 // Route::get('/tasks/{task}','TasksController@show');
 
 Route::get('/', function(){
-	return view('index');
+	// $sidemenus = array(
+	// 	[
+	// 		'displayname' => 'Apay',
+	// 		'link' => '/apay'
+	// 	],
+	// 	[
+	// 		'displayname' => 'bank',
+	// 		'link' => '/bank'
+
+	// 	]);
+
+	return view('index',compact('sidemenus'));
 });
 
 
@@ -83,3 +94,9 @@ Route::get('apay/post', 'ApayController@post');
 Route::get('/apay/showall', 'ApayController@index');
 
 Route::get('/verify', 'VerifyController@index');
+
+Route::get('/sidemenus', 'SidemenusController@index');
+Route::get('/sidemenus/create', 'SidemenusController@create');
+Route::get('/sidemenus/duplicate/{id}', 'SidemenusController@duplicate');
+Route::get('/sidemenus/delete/{id}', 'SidemenusController@destroy');
+Route::post('/sidemenus/store', 'SidemenusController@store');

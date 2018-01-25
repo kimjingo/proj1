@@ -56,13 +56,7 @@
 
     <div class="container-fluid">
         
-        <div class="span2">
-          <div class="well sidebar-nav">
-
-            @include('layouts.sidebar')
-
-          </div>
-        </div>
+        @include('layouts.sidebar')
 
         <div class="span12">
 

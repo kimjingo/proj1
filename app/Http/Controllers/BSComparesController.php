@@ -51,7 +51,8 @@ class BSComparesController extends Controller
         //         'camt' => 1999.00
         // ];
 // dd($bscompares['id']);
-        return view('bscompares.list',compact('bscompares') );
+        $navs = DB::table('sidemenus')->where('menu','compare')->get();
+        return view('bscompares.list',compact('bscompares','navs') );
     }
 
     public function accupdate($ddate,$accid) {

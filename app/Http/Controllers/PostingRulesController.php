@@ -21,21 +21,24 @@ class PostingRulesController extends Controller
     {
         //
         $fromdoc = Input::get('fromdoc', 'bank');
-        $trtype = Input::get('trtype');
-        $vendor = Input::get('vendor');
+        $att = Input::get('trtype');
+        $aat = Input::get('aat');
+        $aad = Input::get('aad');
         $material = Input::get('material');
         $ttype = Input::get('ttype');
 
         $fromdocs = DB::table('apay2_acc')->distinct()->get(['fromdoc']);
-        $trtypes = DB::table('apay2_acc')->distinct()->get(['transaction_type']);
+        $atts = DB::table('apay2_acc')->distinct()->get(['transaction_type']);
+        $aats = DB::table('apay2_acc')->distinct()->get(['amount_type']);
+        $aads = DB::table('apay2_acc')->distinct()->get(['amount_type']);
         $ttypes = DB::table('apay2_acc')->distinct()->get(['ttype']);
-        $vendors = DB::table('apay2_acc')->distinct()->get(['amount_type']);
 
         $rules = DB::table('apay2_acc')
             ->where('fromdoc',$fromdoc)
-            ->when($trtype, function($query) use ($trtype) { return $query->where('transaction_type',$trtype);})
+            ->when($att, function($query) use ($att) { return $query->where('transaction_type',$att);})
+            ->when($aat, function($query) use ($aat) { return $query->where('amount_type',$aat);})
+            ->when($aad, function($query) use ($aad) { return $query->where('amount_type',$aad);})
             ->when($ttype, function($query) use ($ttype) { return $query->where('transaction_type',$ttype);})
-            ->when($vendor, function($query) use ($vendor) { return $query->where('amount_type',$vendor);})
             ->when($material, function($query) use ($material) { return $query->where('amount_description','LIKE', '%'.$material.'%'); })
             ->orderby('fromdoc')
             ->orderby('transaction_type')
@@ -46,7 +49,7 @@ class PostingRulesController extends Controller
             ->simplePaginate(10);
 
         // return view('postingrules.list',compact('rules','fromdoc','fromdocs') );
-        return view('postingrules.list',compact('rules','fromdoc','trtype','ttype','vendor','material','fromdocs','trtypes','ttypes','vendors') );
+        return view('postingrules.list',compact('rules','fromdoc','att','aat','aad','ttype','material','fromdocs','atts','ttypes','aads') );
     }
 
     /**
@@ -58,14 +61,14 @@ class PostingRulesController extends Controller
     {
         //
         $fromdocs = DB::table('apay2_acc')->distinct()->get(['fromdoc']);
-        $trtypes = DB::table('apay2_acc')->distinct()->get(['transaction_type']);
+        $atts = DB::table('apay2_acc')->distinct()->get(['transaction_type']);
         $ttypes = DB::table('apay2_acc')->distinct()->get(['ttype']);
-        $vendors = DB::table('apay2_acc')->distinct()->get(['amount_type']);
+        $aat = DB::table('apay2_acc')->distinct()->get(['amount_type']);
 
         // $rules = DB::table('apay2_acc')->where('fromdoc','=',$fromdoc)->orderby('fromdoc')->orderby('transaction_type')->orderby('acc')->orderby('aseq')->simplePaginate(10);
 
         // return view('postingrules.list',compact('rules','fromdoc','fromdocs') );
-        return view('postingrules.create',compact('fromdocs','trtypes','ttypes','vendors') );
+        return view('postingrules.create',compact('fromdocs','atts','ttypes','aat') );
     }
 
     /**
@@ -152,15 +155,15 @@ class PostingRulesController extends Controller
     {
         //
         $fromdocs = DB::table('apay2_acc')->distinct()->get(['fromdoc']);
-        $trtypes = DB::table('apay2_acc')->distinct()->get(['transaction_type AS trtype']);
+        $atts = DB::table('apay2_acc')->distinct()->get(['transaction_type AS att']);
         $ttypes = DB::table('apay2_acc')->distinct()->get(['ttype']);
-        $vendors = DB::table('apay2_acc')->distinct()->get(['amount_type AS vendor']);
+        $aat = DB::table('apay2_acc')->distinct()->get(['amount_type AS vendor']);
         $materials = DB::table('apay2_acc')->distinct()->get(['amount_description AS material']);
         $bas = DB::table('apay2_acc')->distinct()->get(['ba']);
         $accs = DB::table('gacc')->distinct()->get(['accid AS acc']);
         
         $rules = DB::table('apay2_acc as a1')
-            ->select('a1.fromdoc AS fromdoc', 'a1.transaction_type AS trtype', 'a1.amount_type AS vendor', 'a1.amount_description AS material', 'a1.acc', 'a1.dir', 'a1.aseq AS seq', 'a1.ttype', 'a1.no', 'a1.ba')
+            ->select('a1.fromdoc AS fromdoc', 'a1.transaction_type AS att', 'a1.amount_type AS vendor', 'a1.amount_description AS material', 'a1.acc', 'a1.dir', 'a1.aseq AS seq', 'a1.ttype', 'a1.no', 'a1.ba')
             ->join(DB::raw('(SELECT * FROM apay2_acc WHERE no='.$id.') a2'), function($join)
             {
                 $join->on('a1.fromdoc', '=', 'a2.fromdoc')
@@ -180,7 +183,7 @@ class PostingRulesController extends Controller
 
 // dd($fromdocs);
 
-        return view('postingrules.duplicate',compact('rules','fromdocs','trtypes','ttypes','vendors','materials','bas','accs') );
+        return view('postingrules.duplicate',compact('rules','fromdocs','atts','ttypes','aat','materials','bas','accs') );
     }
 
     public function addwithdata()
@@ -225,7 +228,7 @@ class PostingRulesController extends Controller
         return view('postingrules.create',compact('dr','fromdoc','ttype','atype','adesc','accs','accCalJSON','dirs','atrtypes') );
         
         // $rules = DB::table('apay2_acc as a1')
-        //     ->select('a1.fromdoc AS fromdoc', 'a1.transaction_type AS trtype', 'a1.amount_type AS vendor', 'a1.amount_description AS material', 'a1.acc', 'a1.dir', 'a1.aseq AS seq', 'a1.ttype', 'a1.no', 'a1.ba')
+        //     ->select('a1.fromdoc AS fromdoc', 'a1.transaction_type AS att', 'a1.amount_type AS vendor', 'a1.amount_description AS material', 'a1.acc', 'a1.dir', 'a1.aseq AS seq', 'a1.ttype', 'a1.no', 'a1.ba')
         //     ->join(DB::raw('(SELECT * FROM apay2_acc WHERE no='.$id.') a2'), function($join)
         //     {
         //         $join->on('a1.fromdoc', '=', 'a2.fromdoc')

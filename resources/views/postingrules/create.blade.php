@@ -30,8 +30,24 @@
             <tbody>
             
                 <tr>
-                    <td><input type='text' id="acc1" name='acc[]' value='{{ $dr }}' style="width: 100px;" readonly /></td>
-                    <td><input type='text' id='dir1' name='dir[]' value=1 style="width: 30px;" readonly /></td>
+                    <td>
+                        <input type='text' id="acc1" name='acc[]' value='{{ $dr }}' style="width: 100px;" readonly />
+                        <datalist id="accs">
+                        @foreach($accs as $val)
+
+                            <option value="{{ $val->accid }}">
+
+                        @endforeach 
+                    </td>
+                    <td>
+                        <input type='text' id='dir1' name='dir[]' value=1 style="width: 30px;" readonly />
+                        <datalist id="dirs">
+                        @foreach($dirs as $dir)
+
+                            <option value="{{ $dir }}">
+
+                        @endforeach 
+                    </td>
                     <td><input type='text' id='seq1' name='seq[]' value=1 style="width: 30px;" readonly /></td>
 
                     <td><input type='text' name='ttype' value='{{ $ttype }}' readonly /></td>

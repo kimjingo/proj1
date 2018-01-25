@@ -48,7 +48,7 @@ class ApayController extends Controller
 
 
         $apays = DB::table('apay2 AS a')
-            ->select('a.*','r.cnt')
+            ->select('a.*','r.cnt','r.cnt as cnt2')
             ->leftjoin(DB::raw('(SELECT fromdoc,transaction_type,amount_type,amount_description,ttype,count(*) cnt FROM apay2_acc WHERE fromdoc="apay2" group by fromdoc,transaction_type,amount_type,amount_description,ttype) r'), function($join)
             {
                 $join->on('a.transaction_type','=','r.transaction_type')

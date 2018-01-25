@@ -18,11 +18,11 @@
                         </option>
                     @endforeach
                 </select>
-                <select id="trtype" name="trtype" class="form-control">
-                    <option value=>Tr.Type</option>
-                    @foreach($trtypes as $val)
+                <select id="att" name="att" class="form-control">
+                    <option value=>Amz Tr Type</option>
+                    @foreach($atts as $val)
                         <option value="{{$val->transaction_type}}"
-                            @if($val->transaction_type == $trtype)
+                            @if($val->transaction_type == $att)
                                  selected
                             @endif
                         >
@@ -30,6 +30,34 @@
                         </option>
                     @endforeach
                 </select>
+
+                <select id="aad" name="aad" class="form-control">
+                    <option value=>Amz Amt Type</option>
+                    @foreach($aads as $val)
+                        <option value="{{$val->amount_type}}"
+                            @if($val->amount_type == $aat)
+                                 selected
+                            @endif
+                        >
+                            {{ $val->amount_type }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <select id="aad" name="aad" class="form-control">
+                    <option value=>Amz Amt Desc</option>
+                    @foreach($aads as $val)
+                        <option value="{{$val->amount_description}}"
+                            @if($val->amount_description == $aad)
+                                 selected
+                            @endif
+                        >
+                            {{ $val->amount_description }}
+                        </option>
+                    @endforeach
+                </select>
+
+
                 <select id="ttype" name="ttype" class="form-control">
                     <option value=>T.Type</option>
                     @foreach($ttypes as $val)
@@ -42,18 +70,7 @@
                         </option>
                     @endforeach
                 </select>
-                <select id="vendor" name="vendor" class="form-control">
-                    <option value=>Vendor</option>
-                    @foreach($vendors as $val)
-                        <option value="{{$val->amount_type}}"
-                            @if($val->amount_type == $vendor)
-                                 selected
-                            @endif
-                        >
-                            {{ $val->amount_type }}
-                        </option>
-                    @endforeach
-                </select>
+
                 <input type="text" class="form-control" id="material" name="material" 
                 @if($material ))
                     value="{{ $material }}"
@@ -110,7 +127,7 @@
 <ul class="pagination">
     {{ $rules->appends([
         'fromdoc'=> $fromdoc,
-        'trtype' => $trtype,
+        'att' => $att,
         'vendor' => $vendor,
         'material' => $material,
         'ttype' => $ttype

@@ -147,7 +147,7 @@
                     @if($apay->cnt2)
                         <a href="/apay/post?fromdoc=apay2&ttype={{ $apay->transaction_type }}&atype={{ $apay->amount_type }}&adesc={{ $apay->amount_description }}&fdate={{ $fdate }}&tdate={{ $tdate }}">Post</a> ||
                     @endif
-                    <a href="/postingrules/addwithdata?fromdoc=apay2&ttype={{$apay->transaction_type}}&atype={{$apay->amount_type}}&adesc={{$apay->amount_description}}">Make a rule</a> 
+                    <a href="/postingrules/addwithdata?fromdoc=apay2&att={{$apay->transaction_type}}&aat={{$apay->amount_type}}&aad={{$apay->amount_description}}">Make a rule</a> 
                     ||
                     <input type="checkbox" id="checkBox" name="no[]" value='{{$apay->no}}'>
                 </td>

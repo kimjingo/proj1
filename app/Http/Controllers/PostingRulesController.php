@@ -21,7 +21,7 @@ class PostingRulesController extends Controller
     {
         //
         $fromdoc = Input::get('fromdoc', 'bank');
-        $att = Input::get('trtype');
+        $att = Input::get('att');
         $aat = Input::get('aat');
         $aad = Input::get('aad');
         $material = Input::get('material');
@@ -30,7 +30,7 @@ class PostingRulesController extends Controller
         $fromdocs = DB::table('apay2_acc')->distinct()->get(['fromdoc']);
         $atts = DB::table('apay2_acc')->distinct()->get(['transaction_type']);
         $aats = DB::table('apay2_acc')->distinct()->get(['amount_type']);
-        $aads = DB::table('apay2_acc')->distinct()->get(['amount_type']);
+        $aads = DB::table('apay2_acc')->distinct()->get(['amount_description']);
         $ttypes = DB::table('apay2_acc')->distinct()->get(['ttype']);
 
         $rules = DB::table('apay2_acc')
@@ -49,7 +49,7 @@ class PostingRulesController extends Controller
             ->simplePaginate(10);
 
         // return view('postingrules.list',compact('rules','fromdoc','fromdocs') );
-        return view('postingrules.list',compact('rules','fromdoc','att','aat','aad','ttype','material','fromdocs','atts','ttypes','aads') );
+        return view('postingrules.list',compact('rules','fromdoc','att','aat','aad','ttype','material','fromdocs','atts','aats','aads','ttypes') );
     }
 
     /**
@@ -60,15 +60,24 @@ class PostingRulesController extends Controller
     public function create()
     {
         //
+        $accs = DB::table('gacc')->select('accid','dir','gdir')->get();
+        foreach($accs as $acc) {
+            $accCal[$acc->accid] = array(
+                "dir" => $acc->dir,
+                "gdir" => $acc->gdir
+            );
+        }
+        $accCalJSON = json_encode($accCal);
+
         $fromdocs = DB::table('apay2_acc')->distinct()->get(['fromdoc']);
-        $atts = DB::table('apay2_acc')->distinct()->get(['transaction_type']);
+        $atts = DB::table('apay2_acc')->distinct()->get(['transaction_type AS att']);
+        $aats = DB::table('apay2_acc')->distinct()->get(['amount_type AS aat']);
+        $aads = DB::table('apay2_acc')->distinct()->get(['amount_description AS aad']);
         $ttypes = DB::table('apay2_acc')->distinct()->get(['ttype']);
-        $aat = DB::table('apay2_acc')->distinct()->get(['amount_type']);
-
-        // $rules = DB::table('apay2_acc')->where('fromdoc','=',$fromdoc)->orderby('fromdoc')->orderby('transaction_type')->orderby('acc')->orderby('aseq')->simplePaginate(10);
-
-        // return view('postingrules.list',compact('rules','fromdoc','fromdocs') );
-        return view('postingrules.create',compact('fromdocs','atts','ttypes','aat') );
+        $bas = DB::table('apay2_acc')->distinct()->get(['ba']);
+        // $accs = DB::table('gacc')->distinct()->get(['accid AS acc']);
+        
+        return view('postingrules.create',compact('fromdocs','atts','aats','aads','ttypes','bas','accs','accCalJSON') );
     }
 
     /**
@@ -80,6 +89,7 @@ class PostingRulesController extends Controller
     public function store(Request $request)
     {
         //
+        $len = count($request->seq);
 
         $accs = DB::table('gacc')->select('accid','dir','gdir')->get();
         foreach($accs as $acc) {
@@ -90,10 +100,11 @@ class PostingRulesController extends Controller
         }
         $checksum = 0;
         // $strrr = "";
-        for($i=0; $i<2; $i++){
+        for($i=0; $i < $len; $i++){
             // $strrr .= $request->acc[$i].":".$request->amt ."*". $request->dir[$i] ."*". $accCal[$request->acc[$i]]['dir'] ."*". $accCal[$request->acc[$i]]['gdir'] ."<br>";
 
             $checksum += $request->dir[$i] * $accCal[$request->acc[$i]]['dir'] * $accCal[$request->acc[$i]]['gdir'] ;
+
         }        
 
         // dd($strrr);
@@ -101,23 +112,37 @@ class PostingRulesController extends Controller
 
         if(!$checksum){
 
-            for($i=0; $i<2; $i++){
-
-                DB::table('apay2_acc')->insert([
-
+            for($i=0; $i < $len; $i++){
+                $a = array(
                     'fromdoc' => $request->fromdoc,
-                    'transaction_type' => $request->ttype,
-                    'amount_type' => $request->atype,
-                    'amount_description' => $request->adesc,
+                    'transaction_type' => $request->att,
+                    'amount_type' => $request->aat,
+                    'amount_description' => $request->aad,
                     'acc' => $request->acc[$i],
                     'dir' => $request->dir[$i],
                     'aseq' => $request->seq[$i],
-                    'ttype' => $request->atrtype,
+                    'ttype' => $request->ttype,
                     'ba' => $request->ba,
                     'created_at' => \Carbon\Carbon::now(),
                     'updated_at' => \Carbon\Carbon::now(),
+                );
 
-                ]);
+                DB::insert('INSERT IGNORE INTO apay2_acc ('.implode(',',array_keys($a)).') values (?'. str_repeat(',?',count($a)-1).')', array_values($a) ) ;
+                // DB::table('apay2_acc')->updateOrCreate([
+
+                //     'fromdoc' => $request->fromdoc,
+                //     'transaction_type' => $request->att,
+                //     'amount_type' => $request->aat,
+                //     'amount_description' => $request->aad,
+                //     'acc' => $request->acc[$i],
+                //     'dir' => $request->dir[$i],
+                //     'aseq' => $request->seq[$i],
+                //     'ttype' => $request->ttype,
+                //     'ba' => $request->ba,
+                //     'created_at' => \Carbon\Carbon::now(),
+                //     'updated_at' => \Carbon\Carbon::now(),
+                // ]);
+
 
             }
 
@@ -154,16 +179,30 @@ class PostingRulesController extends Controller
     public function duplicate($id)
     {
         //
+        $accs = DB::table('gacc')->select('accid','dir','gdir')->get();
+        foreach($accs as $acc) {
+            $accCal[$acc->accid] = array(
+                "dir" => $acc->dir,
+                "gdir" => $acc->gdir
+            );
+        }
+        $accCalJSON = json_encode($accCal);
+
         $fromdocs = DB::table('apay2_acc')->distinct()->get(['fromdoc']);
         $atts = DB::table('apay2_acc')->distinct()->get(['transaction_type AS att']);
+        $aats = DB::table('apay2_acc')->distinct()->get(['amount_type AS aat']);
+        $aads = DB::table('apay2_acc')->distinct()->get(['amount_description AS aad']);
         $ttypes = DB::table('apay2_acc')->distinct()->get(['ttype']);
-        $aat = DB::table('apay2_acc')->distinct()->get(['amount_type AS vendor']);
-        $materials = DB::table('apay2_acc')->distinct()->get(['amount_description AS material']);
         $bas = DB::table('apay2_acc')->distinct()->get(['ba']);
-        $accs = DB::table('gacc')->distinct()->get(['accid AS acc']);
+        // $accs = DB::table('gacc')->distinct()->get(['accid AS acc']);
         
+        $ruleheader = DB::table('apay2_acc as a1')
+            ->select('a1.fromdoc AS fromdoc', 'a1.transaction_type AS att', 'a1.amount_type AS aat', 'a1.amount_description AS aad', 'a1.ttype','a1.ba')
+            ->where('no',$id)
+            ->first();
+
         $rules = DB::table('apay2_acc as a1')
-            ->select('a1.fromdoc AS fromdoc', 'a1.transaction_type AS att', 'a1.amount_type AS vendor', 'a1.amount_description AS material', 'a1.acc', 'a1.dir', 'a1.aseq AS seq', 'a1.ttype', 'a1.no', 'a1.ba')
+            ->select('a1.fromdoc AS fromdoc', 'a1.transaction_type AS att', 'a1.amount_type AS aat', 'a1.amount_description AS aad', 'a1.acc', 'a1.dir', 'a1.aseq AS seq', 'a1.ttype', 'a1.no', 'a1.ba')
             ->join(DB::raw('(SELECT * FROM apay2_acc WHERE no='.$id.') a2'), function($join)
             {
                 $join->on('a1.fromdoc', '=', 'a2.fromdoc')
@@ -183,7 +222,7 @@ class PostingRulesController extends Controller
 
 // dd($fromdocs);
 
-        return view('postingrules.duplicate',compact('rules','fromdocs','atts','ttypes','aat','materials','bas','accs') );
+        return view('postingrules.duplicate',compact('ruleheader','rules','fromdocs','atts','aats','aads','ttypes','bas','accs','accCalJSON') );
     }
 
     public function addwithdata()
@@ -209,23 +248,29 @@ class PostingRulesController extends Controller
         // $fromdoc = 'bank';
         $dirs = [1,-1];
         $bas = DB::table('apay2_acc')->distinct()->get(['ba']);
-        $atrtypes = DB::table('apay2_acc')->where('fromdoc',$fromdoc)->distinct()->get(['ttype']);
+        $atts = DB::table('apay2_acc')->where('fromdoc',$fromdoc)->distinct()->get(['transaction_type as att']);
+        $aats = DB::table('apay2_acc')->where('fromdoc',$fromdoc)->distinct()->get(['amount_type as aat']);
+        $aads = DB::table('apay2_acc')->where('fromdoc',$fromdoc)->distinct()->get(['amount_description as aad']);
+        $ttypes = DB::table('apay2_acc')->where('fromdoc',$fromdoc)->distinct()->get(['ttype as ttype']);
+        $fromdocs = DB::table('apay2_acc')->where('fromdoc',$fromdoc)->distinct()->get(['fromdoc']);
+
+
         // $accs = DB::table('gacc')->get(['accid AS acc']);
 
 
-        $ttype = Input::get('ttype');
-        $atype = Input::get('atype');
-        $adesc = Input::get('adesc');
+        $att = Input::get('att');
+        $aat = Input::get('aat');
+        $aad = Input::get('aad');
 
-        $accs = DB::table('gacc')->select('accid','dir','gdir')->get();
-        foreach($accs as $acc) {
-            $accCal[$acc->accid] = array(
-                "dir" => $acc->dir,
-                "gdir" => $acc->gdir
-            );
-        }
+        // $accs = DB::table('gacc')->select('accid','dir','gdir')->get();
+        // foreach($accs as $acc) {
+        //     $accCal[$acc->accid] = array(
+        //         "dir" => $acc->dir,
+        //         "gdir" => $acc->gdir
+        //     );
+        // }
 
-        return view('postingrules.create',compact('dr','fromdoc','ttype','atype','adesc','accs','accCalJSON','dirs','atrtypes') );
+        return view('postingrules.create',compact('dr','fromdoc','att','aat','aad','accs','accCalJSON','dirs','atts','atts','aats','aads','fromdocs','ttypes','bas') );
         
         // $rules = DB::table('apay2_acc as a1')
         //     ->select('a1.fromdoc AS fromdoc', 'a1.transaction_type AS att', 'a1.amount_type AS vendor', 'a1.amount_description AS material', 'a1.acc', 'a1.dir', 'a1.aseq AS seq', 'a1.ttype', 'a1.no', 'a1.ba')

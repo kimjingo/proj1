@@ -1,142 +1,191 @@
 @extends('layouts.master')
 
 @section('content')
-<h1>Add auto-posting rule</h1>
+<div class="blog-main">
 
-<form class="form-inline" id="deactivateForm" method="post" action="/postingrules/store">
+
+  <h1>Add new posting rule</h1>
+
+    <form method='POST' action='/postingrules/store' id="form_add" onsubmit="return confirm('Do you really want to submit the form?');">
     {{csrf_field()}}
-    <input type='hidden' name='fromdoc' value='{{ $fromdoc }}' />
+        <table class="table">
+            <tr>
+                <th>DocType</th>
+                <th>TransType</th>
+                <th>Vendor</th>
+                <th>Material</th>
+                <th>Type</th>
+                <th>B/A</th>
+            </tr>
+            <tr>
+                
+                <td>
+                    <input type="text" list="fromdocs" name="fromdoc" value={{ $fromdoc or ''}} />
+                    <datalist id="fromdocs">
 
-    <div class="col-sm-8 blog-main">
-        
-        <table class="table table-bordered table-striped">
+                    @foreach($fromdocs as $val)
+
+                      <option value="{{ $val->fromdoc }}">
+
+                    @endforeach  
+                </td>
+                
+                <td>
+                    <input type="text" list="atts" name="att" value={{ $att or ''}} />
+                    <datalist id="atts">
+                    @foreach($atts as $val)
+
+                      <option value="{{ $val->att }}">
+
+                    @endforeach
+
+                </td>
+
+                <td>
+                    <input type="text" list="aats" name="aat" value={{ $aat or ''}} />
+                    <datalist id="aats">
+
+                    @foreach($aats as $val)
+
+                      <option value="{{ $val->aat }}">
+
+                    @endforeach  
+                </td>
+                
+                <td>
+                    <input type="text" list="aads" name="aad" value={{ $aad or ''}} />
+                    <datalist id="aads">
+
+                    @foreach($aads as $val)
+
+                      <option value="{{ $val->aad }}">
+
+                    @endforeach  
+                </td>
+                
+                <td>
+                    <input type="text" list="ttypes" name="ttype" value={{ $ttype or ''}} />
+                    <datalist id="ttypes">
+
+                    @foreach($ttypes as $val)
+
+                      <option value="{{ $val->ttype }}">
+
+                    @endforeach  
+                </td>
+                <td>
+                    <input style="width:50px;" type="text" list="bas" name="ba" value={{ $ba or ''}} />
+                    <datalist id="bas">
+
+                    @foreach($bas as $val)
+
+                      <option value="{{ $val->ba }}">
+
+                    @endforeach  
+                </td>
+            </tr>
+        </table>
+    
+
+        <table class="table" id="myTable">
             <thead>
                 <tr>
-                    <th>DR Account</th>
-                    <th>DR Dir</th>
-                    <th rowspan="2">SEQ</th>
-
-                    <th>TType</th>
-                    <th>AType</th>
-                    <th rowspan="2">Action</th>
-                </tr>
-                <tr>
-                    <th>CR Account</th>
-                    <th>CR Dir</th>
-                    <th>ADesc</th>
-                    <th>Type</th>
+                    <th>Seq</th>
+                    <th>Credit</th>
+                    <th>Dir</th>
+                    <th>Check</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
             
-                <tr>
+                <tr class="sample">
                     <td>
-                        <input type='text' id="acc1" name='acc[]' value='{{ $dr }}' style="width: 100px;" readonly />
+                        <input style="width:30px;" type="number" name="seq[]" min="0" step="1"  />
+                    </td>
+
+                    <td>
+                        <input style="width:200px;" type="text" class="acc" list='accs' name="acc[]" />
                         <datalist id="accs">
+
                         @foreach($accs as $val)
 
-                            <option value="{{ $val->accid }}">
+                          <option value="{{ $val->accid }}">
 
                         @endforeach 
                     </td>
+
                     <td>
-                        <input type='text' id='dir1' name='dir[]' value=1 style="width: 30px;" readonly />
+                        <input style="width:50px;" list="dirs" type="text" class="dir" name="dir[]" />
                         <datalist id="dirs">
-                        @foreach($dirs as $dir)
-
-                            <option value="{{ $dir }}">
-
-                        @endforeach 
+                            <option value="1">
+                            <option value="-1">
                     </td>
-                    <td><input type='text' id='seq1' name='seq[]' value=1 style="width: 30px;" readonly /></td>
+                    <td class="check">
 
-                    <td><input type='text' name='ttype' value='{{ $ttype }}' readonly /></td>
-                    <td><input type='text' name='atype' value='{{ $atype }}' readonly /></td>
-
-                    <td rowspan="2">
-                        <input type="checkbox" id="toggleReadonly">
                     </td>
-
+                    <td><input type="button" name="add" value="+" class="tr_clone_add"><input type="button" name="del" value="-" class="tr_clone_del"></td>
                 </tr>
-
-                <tr>
-                    <td>
-                        <input type='text' id='acc2' class="acc" list='accs' name='acc[]' required />
-                        <datalist id="accs">
-                        @foreach($accs as $val)
-
-                            <option value="{{ $val->accid }}">
-
-                        @endforeach 
-                    </td>
-                    <td>
-                        <input type='text' id='dir2' list='dirs' name='dir[]' style="width: 30px;" required />
-                        <datalist id="dirs">
-                        @foreach($dirs as $dir)
-
-                            <option value="{{ $dir }}">
-
-                        @endforeach 
-
-                    </td>
-
-                    <td><input type='text' id='seq2' name='seq[]' value="2" style="width: 30px;" /></td>
-
-                    <td><input type='text' name='adesc' value='{{ $adesc }}' readonly /></td>
-                    <td>
-                        <input type='text' id='atrtype' list='atrtypes' name='atrtype' required />
-                        <datalist id="atrtypes">
-                        @foreach($atrtypes as $val)
-
-                            <option value="{{ $val->ttype }}">
-
-                        @endforeach 
-
-                    </td>
-                </tr>
-
             </tbody>
 
         </table>
-
-    </div>
-
-    <input type="submit" id="submit" class="btn btn-danger" name='submit' value="Post" />
-</form>
-
+        
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
 @endsection
-
 
 @section('footer')
 
 <script type="text/javascript">
-    // $("input.acc").focusout(function(){
+$(document).ready(function() {
     var acc = {!! $accCalJSON !!};
-    $("input#acc2").focusout(function(){
 
-        // console.log($("input#acc1").val());
-
-        var dir2 = $("input#dir1").val() * acc[$("input#acc1").val()].dir * acc[$("input#acc1").val()].gdir * -1 / (acc[$("input#acc2").val()].dir * acc[$("input#acc2").val()].gdir) ; 
-        // console.log(dir2);
-        $("input#dir2").val(dir2);
-        // $("input.acc").each(function(){
-        //       TotalValue += Number($(this).val());
-        // });
-        // $("td#" + className).html(TotalValue);
+    $('.tr_clone_add').click( function() {
+        $(this).closest ('tr').clone(true).insertAfter($('#myTable tbody>tr:last'));
+        $(this).closest ('tr').clone(true).insertAfter($('#myTable tbody>tr:last'));
     });
 
-    $('input#toggleReadonly').on('click', function() {
-        // var prev = $(this).prev('input'),
-        //     ro   = prev.prop('readonly');
-        // prev.prop('readonly', !ro).focus();
-        // $(this).val(ro ? 'Save' : 'Edit');
+    $('input.tr_clone_del').click( function() {
+        var rowCount = $('#myTable tbody>tr').length;
+        // console.log(rowCount);
+        if(rowCount > 1) {
+            $(this).closest ('tr').remove ();
+            $(this).closest ('tr').remove ();
+        } 
+    });
 
-        $("input[type='text']").each(function(){
-            ro   = $(this).prop('readonly');
-            $(this).prop('readonly', !ro);
-        });
+    $("input.acc").focusout(function(){
+        var zerosum = 0;
+        for(i = 0; i < $("input.acc").length; i++) { 
+          zerosum += acc[ $("input.acc:eq(" + i  + ")").val() ].dir * acc[ $("input.acc:eq(" + i  + ")").val() ].gdir * $("input.dir:eq("+i+")").val() ;
+        }
+
+        console.log(zerosum);
+        if(zerosum) {
+            $(this).closest('td').next('td').css('background-color', '#f00');
+        } else {
+            $(this).closest('td').next('td').css('background-color', '#fff');
+        }
 
     });
+
+    $("input.dir").focusout(function(){
+        var zerosum = 0;
+        for(i = 0; i < $("input.acc").length; i++) { 
+          zerosum += acc[ $("input.acc:eq(" + i  + ")").val() ].dir * acc[ $("input.acc:eq(" + i  + ")").val() ].gdir * $("input.dir:eq("+i+")").val() ;
+        }
+
+        // console.log(zerosum);
+        if(zerosum) {
+            $(this).closest('td').css('background-color', '#f00');
+        } else {
+            $(this).closest('td').css('background-color', '#fff');
+        }
+
+    });
+
+});
 </script>
 
 @endsection

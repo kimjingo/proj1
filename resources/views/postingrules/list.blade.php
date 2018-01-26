@@ -31,9 +31,9 @@
                     @endforeach
                 </select>
 
-                <select id="aad" name="aad" class="form-control">
+                <select id="aat" name="aat" class="form-control">
                     <option value=>Amz Amt Type</option>
-                    @foreach($aads as $val)
+                    @foreach($aats as $val)
                         <option value="{{$val->amount_type}}"
                             @if($val->amount_type == $aat)
                                  selected
@@ -59,7 +59,7 @@
 
 
                 <select id="ttype" name="ttype" class="form-control">
-                    <option value=>T.Type</option>
+                    <option value=>Type</option>
                     @foreach($ttypes as $val)
                         <option value="{{$val->ttype}}"
                             @if($val->ttype == $ttype)
@@ -75,7 +75,7 @@
                 @if($material ))
                     value="{{ $material }}"
                 @else
-                    placeholder="material"
+                    placeholder="keyword"
                 @endif
                 />
                 <input type="submit" id="submit" class="btn btn-default" value="SEARCH" />
@@ -128,7 +128,8 @@
     {{ $rules->appends([
         'fromdoc'=> $fromdoc,
         'att' => $att,
-        'vendor' => $vendor,
+        'aat' => $aat,
+        'aad' => $aad,
         'material' => $material,
         'ttype' => $ttype
         ])->links() }}

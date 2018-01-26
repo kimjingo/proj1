@@ -8,27 +8,19 @@
 
     <form method='POST' action='/postingrules/store' id="form_add" onsubmit="return confirm('Do you really want to submit the form?');">
     {{csrf_field()}}
-
-    <table class="table" id="myTable">
-        <thead>
+        <table class="table">
             <tr>
                 <th>DocType</th>
-                <th>TrType</th>
+                <th>TransType</th>
                 <th>Vendor</th>
                 <th>Material</th>
                 <th>Type</th>
-                <th>Seq</th>
-                <th>Account</th>
-                <th>Dir</th>
                 <th>B/A</th>
             </tr>
-        </thead>
-        <tbody>
-
-        @foreach($rules as $rule)
-            <tr class="sample">
+            <tr>
+                
                 <td>
-                    <input type="text" list="fromdocs" name="fromdoc"  value="{{ $rule->fromdoc }}" />
+                    <input type="text" list="fromdocs" name="fromdoc"  value="{{ $ruleheader->fromdoc }}" />
                     <datalist id="fromdocs">
 
                     @foreach($fromdocs as $val)
@@ -39,40 +31,40 @@
                 </td>
                 
                 <td>
-                    <input type="text" list="trtypes" name="ttype" value="{{ $rule->trtype }}" />
-                    <datalist id="trtypes">
-                    @foreach($trtypes as $val)
+                    <input type="text" list="atts" name="att" value="{{ $ruleheader->att }}" />
+                    <datalist id="atts">
+                    @foreach($atts as $val)
 
-                      <option value="{{ $val->trtype }}">
+                      <option value="{{ $val->att }}">
 
                     @endforeach
 
                 </td>
 
-                                <td>
-                    <input style="width:100px;" type="text" list="vendors" name="atype"  value="{{ $rule->vendor }}" />
-                    <datalist id="vendors">
+                <td>
+                    <input style="width:100px;" type="text" list="aats" name="aat"  value="{{ $ruleheader->aat }}" />
+                    <datalist id="aats">
 
-                    @foreach($vendors as $val)
+                    @foreach($aats as $val)
 
-                      <option value="{{ $val->vendor }}">
+                      <option value="{{ $val->aat }}">
 
                     @endforeach  
                 </td>
                 
                 <td>
-                    <input style="width:100px;" type="text" list="materials" name="adesc"  value="{{ $rule->material }}" />
-                    <datalist id="materials">
+                    <input style="width:100px;" type="text" list="aads" name="aad"  value="{{ $ruleheader->aad }}" />
+                    <datalist id="aads">
 
-                    @foreach($materials as $val)
+                    @foreach($aads as $val)
 
-                      <option value="{{ $val->material }}">
+                      <option value="{{ $val->aad }}">
 
                     @endforeach  
                 </td>
                 
                 <td>
-                    <input style="width:100px;" type="text" list="tttypes" name="tttype"  value="{{ $rule->ttype }}" />
+                    <input style="width:100px;" type="text" list="ttypes" name="ttype"  value="{{ $ruleheader->ttype }}" />
                     <datalist id="ttypes">
 
                     @foreach($ttypes as $val)
@@ -81,28 +73,8 @@
 
                     @endforeach  
                 </td>
-
                 <td>
-                    <input style="width:30px;" type="number" name="seq[]" step="1" value="{{ $rule->seq }}" />
-                </td>
-
-                <td>
-                    <input style="width:100px;" type="text" list='accs' name="acc[]" value="{{ $rule->acc }}" />
-                    <datalist id="accs">
-
-                    @foreach($accs as $val)
-
-                      <option value="{{ $val->acc }}">
-
-                    @endforeach 
-                </td>
-
-                <td>
-                    <input style="width:30px;" type="number" name="dir[]" step="1" value="{{ $rule->dir }}" />
-                </td>
-                
-                <td>
-                    <input style="width:30px;" type="text" list="bas" name="ba"  value="{{ $rule->ba }}" />
+                    <input style="width:50px;" type="text" list="bas" name="ba"  value="{{ $ruleheader->ba }}" />
                     <datalist id="bas">
 
                     @foreach($bas as $val)
@@ -111,16 +83,57 @@
 
                     @endforeach  
                 </td>
-
             </tr>
-        @endforeach
-
-        
-        <tbody>
-
-      </table>
-
+        </table>
     
+
+        <table class="table" id="myTable">
+            <thead>
+                <tr>
+                    <th>Seq</th>
+                    <th>Credit</th>
+                    <th>Dir</th>
+                    <th>Check</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            
+            @foreach($rules as $rule)
+                <tr class="sample">
+                    <td>
+                        <input style="width:30px;" type="number" name="seq[]" min="0" step="1" value="{{ $rule->seq }}" />
+                    </td>
+
+                    <td>
+                        <input style="width:200px;" type="text" class="acc" list='accs' name="acc[]" value="{{ $rule->acc }}" />
+                        <datalist id="accs">
+
+                        @foreach($accs as $val)
+
+                          <option value="{{ $val->accid }}">
+
+                        @endforeach 
+                    </td>
+
+                    <td>
+                        <input style="width:50px;" list="dirs" type="text" class="dir" name="dir[]" value="{{ $rule->dir }}" />
+                        <datalist id="dirs">
+                            <option value="1">
+                            <option value="-1">
+                    </td>
+                    <td class="check">
+
+                    </td>
+                    <td><input type="button" name="add" value="+" class="tr_clone_add"><input type="button" name="del" value="-" class="tr_clone_del"></td>
+                </tr>
+            @endforeach
+
+            
+            </tbody>
+
+        </table>
+        
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 </div>
@@ -129,7 +142,67 @@
 @section('footer')
 
 <script type="text/javascript">
+$(document).ready(function() {
+    var acc = {!! $accCalJSON !!};
 
+    for(i = 0; i < $("input.acc").length; i++) { 
+        $( "td.check:eq(" + i +")"  ).html(acc[ $("input.acc:eq(" + i  + ")").val() ].dir * acc[ $("input.acc:eq(" + i  + ")").val() ].gdir * $("input.dir:eq("+i+")").val() );
+    }
+
+
+    $('.tr_clone_add').click( function() {
+        $(this).closest ('tr').clone(true).insertAfter($('#myTable tbody>tr:last'));
+    });
+
+    $('input.tr_clone_del').click( function() {
+        var rowCount = $('#myTable tbody>tr').length;
+        // console.log(rowCount);
+        if(rowCount > 1) {
+            $(this).closest ('tr').remove ();
+        } 
+    });
+
+    $("input.acc").focusout(function(){
+        var zerosum = 0;
+        for(i = 0; i < $("input.acc").length; i++) { 
+          zerosum += acc[ $("input.acc:eq(" + i  + ")").val() ].dir * acc[ $("input.acc:eq(" + i  + ")").val() ].gdir * $("input.dir:eq("+i+")").val() ;
+        }
+
+        console.log(zerosum);
+        if(zerosum) {
+            $(this).closest('td').next('td').css('background-color', '#f00');
+        } else {
+            $(this).closest('td').next('td').css('background-color', '#fff');
+        }
+
+        // console.log($("input#acc1").val());
+
+        // var dir2 = $("input#dir1").val() * acc[$("input#acc1").val()].dir * acc[$("input#acc1").val()].gdir * -1 / (acc[$("input#acc2").val()].dir * acc[$("input#acc2").val()].gdir) ; 
+        // console.log(dir2);
+        // $("input#dir2").val(dir2);
+        
+        // $("input.acc").each(function(){
+        //       TotalValue += Number($(this).val());
+        // });
+        // $("tr." + className).html(TotalValue);
+    });
+
+    $("input.dir").focusout(function(){
+        var zerosum = 0;
+        for(i = 0; i < $("input.acc").length; i++) { 
+          zerosum += acc[ $("input.acc:eq(" + i  + ")").val() ].dir * acc[ $("input.acc:eq(" + i  + ")").val() ].gdir * $("input.dir:eq("+i+")").val() ;
+        }
+
+        // console.log(zerosum);
+        if(zerosum) {
+            $(this).closest('td').css('background-color', '#f00');
+        } else {
+            $(this).closest('td').css('background-color', '#fff');
+        }
+
+    });
+
+});
 </script>
 
 @endsection

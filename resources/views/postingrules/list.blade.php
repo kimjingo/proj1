@@ -21,12 +21,12 @@
                 <select id="att" name="att" class="form-control">
                     <option value=>Amz Tr Type</option>
                     @foreach($atts as $val)
-                        <option value="{{$val->transaction_type}}"
-                            @if($val->transaction_type == $att)
+                        <option value="{{$val->att}}"
+                            @if($val->att == $att)
                                  selected
                             @endif
                         >
-                            {{ $val->transaction_type }}
+                            {{ $val->att }}
                         </option>
                     @endforeach
                 </select>
@@ -34,12 +34,12 @@
                 <select id="aat" name="aat" class="form-control">
                     <option value=>Amz Amt Type</option>
                     @foreach($aats as $val)
-                        <option value="{{$val->amount_type}}"
-                            @if($val->amount_type == $aat)
+                        <option value="{{$val->aat}}"
+                            @if($val->aat == $aat)
                                  selected
                             @endif
                         >
-                            {{ $val->amount_type }}
+                            {{ $val->aat }}
                         </option>
                     @endforeach
                 </select>
@@ -47,12 +47,12 @@
                 <select id="aad" name="aad" class="form-control">
                     <option value=>Amz Amt Desc</option>
                     @foreach($aads as $val)
-                        <option value="{{$val->amount_description}}"
-                            @if($val->amount_description == $aad)
+                        <option value="{{$val->aad}}"
+                            @if($val->aad == $aad)
                                  selected
                             @endif
                         >
-                            {{ $val->amount_description }}
+                            {{ $val->aad }}
                         </option>
                     @endforeach
                 </select>
@@ -140,6 +140,8 @@
 
 @section('layouts.footer')
 
-<script type="text/javascript"></script>
+<script type="text/javascript">
+    
+</script>
 
 @endsection

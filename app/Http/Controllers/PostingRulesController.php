@@ -20,7 +20,53 @@ class PostingRulesController extends Controller
     public function index()
     {
         //
-        $fromdoc = Input::get('fromdoc', 'bank');
+        // $selections = DB::table('apay2_acc')->distinct()->get([
+        //     'fromdoc',
+        //     'transaction_type AS att',
+        //     'amount_type AS aat',
+        //     'amount_description AS aad',
+        //     'ttype',
+        // ]);
+
+        // foreach($selections as $selection) {
+        //     if( !isset( $PRSelections[$selection->fromdoc]) ) {
+        //         //echo $i."1:".$row["sku"]."-".$row["brand"]."=".$row["style"]."=".$row["wsku"]."=".$row["size"].$row["qtytarget"]."<br>";
+        //         $PRSelection[$selection->fromdoc] = array(
+        //             $selection->att => array(
+        //                 $selection->aat => array(
+        //                     $selection->aad = array(
+        //                         $selection->ttype
+        //                     )
+        //                 )
+        //             )
+        //         );
+        //     } elseif( !isset( $PRSelections[$selection->fromdoc][$selection->att]) ) {
+        //         $PRSelection[$selection->fromdoc][$selection->att] = array(
+        //             $selection->aat => array(
+        //                 $selection->aad => array(
+        //                     $selection->ttype
+        //                 )
+        //             )
+        //         );
+        //     }elseif( !isset( $PRSelections[$selection->fromdoc][$selection->att][$selection->aat]) ) {
+        //         $PRSelection[$selection->fromdoc][$selection->att][$selection->aat] = array(
+        //             $selection->aad => array(
+        //                 $selection->ttype
+        //             )
+        //         );
+        //     }elseif( !isset( $PRSelections[$selection->fromdoc][$selection->att][$selection->att][$selection->aad]) ) {
+        //         $PRSelection[$selection->fromdoc][$selection->att][$selection->aat][$selection->aad] = array(
+        //             $selection->ttype 
+        //         );
+        //     }else {
+        //         $PRSelection[$selection->fromdoc][$selection->att][$selection->aat][$selection->aad][] = $selection->ttype;
+        //     }
+        // }
+
+        // dd($PRSelection);
+        // $PRSJSON = json_encode($PRSelection);
+
+        $fromdoc = Input::get('fromdoc', 'apay2');
         $att = Input::get('att');
         $aat = Input::get('aat');
         $aad = Input::get('aad');
@@ -28,17 +74,35 @@ class PostingRulesController extends Controller
         $ttype = Input::get('ttype');
 
         $fromdocs = DB::table('apay2_acc')->distinct()->get(['fromdoc']);
-        $atts = DB::table('apay2_acc')->distinct()->get(['transaction_type']);
-        $aats = DB::table('apay2_acc')->distinct()->get(['amount_type']);
-        $aads = DB::table('apay2_acc')->distinct()->get(['amount_description']);
-        $ttypes = DB::table('apay2_acc')->distinct()->get(['ttype']);
+        $atts = DB::table('apay2_acc')
+            ->where('fromdoc',$fromdoc)
+            ->distinct()
+            ->get(['transaction_type as att']);
+        $aats = DB::table('apay2_acc')
+            ->where('fromdoc',$fromdoc)
+            ->when($att, function($query) use ($att) { return $query->where('transaction_type',$att);})
+            ->distinct()
+            ->get(['amount_type as aat']);
+        $aads = DB::table('apay2_acc')
+            ->where('fromdoc',$fromdoc)
+            ->when($att, function($query) use ($att) { return $query->where('transaction_type',$att);})
+            ->when($aat, function($query) use ($aat) { return $query->where('amount_type',$aat);})
+            ->distinct()
+            ->get(['amount_description as aad']);
+        $ttypes = DB::table('apay2_acc')
+            ->where('fromdoc',$fromdoc)
+            ->when($att, function($query) use ($att) { return $query->where('transaction_type',$att);})
+            ->when($aat, function($query) use ($aat) { return $query->where('amount_type',$aat);})
+            ->when($aad, function($query) use ($aad) { return $query->where('amount_description',$aad);})
+            ->distinct()->get(['ttype']);
 
+// dd($aat);
         $rules = DB::table('apay2_acc')
             ->where('fromdoc',$fromdoc)
             ->when($att, function($query) use ($att) { return $query->where('transaction_type',$att);})
             ->when($aat, function($query) use ($aat) { return $query->where('amount_type',$aat);})
-            ->when($aad, function($query) use ($aad) { return $query->where('amount_type',$aad);})
-            ->when($ttype, function($query) use ($ttype) { return $query->where('transaction_type',$ttype);})
+            ->when($aad, function($query) use ($aad) { return $query->where('amount_description',$aad);})
+            ->when($ttype, function($query) use ($ttype) { return $query->where('ttype',$ttype);})
             ->when($material, function($query) use ($material) { return $query->where('amount_description','LIKE', '%'.$material.'%'); })
             ->orderby('fromdoc')
             ->orderby('transaction_type')
@@ -47,7 +111,9 @@ class PostingRulesController extends Controller
             ->orderby('ttype')
             ->orderby('aseq')
             ->simplePaginate(10);
+            // ->toSql();
 
+            // dd($rules);
         // return view('postingrules.list',compact('rules','fromdoc','fromdocs') );
         return view('postingrules.list',compact('rules','fromdoc','att','aat','aad','ttype','material','fromdocs','atts','aats','aads','ttypes') );
     }
@@ -60,6 +126,8 @@ class PostingRulesController extends Controller
     public function create()
     {
         //
+
+
         $accs = DB::table('gacc')->select('accid','dir','gdir')->get();
         foreach($accs as $acc) {
             $accCal[$acc->accid] = array(
@@ -68,6 +136,8 @@ class PostingRulesController extends Controller
             );
         }
         $accCalJSON = json_encode($accCal);
+
+
 
         $fromdocs = DB::table('apay2_acc')->distinct()->get(['fromdoc']);
         $atts = DB::table('apay2_acc')->distinct()->get(['transaction_type AS att']);

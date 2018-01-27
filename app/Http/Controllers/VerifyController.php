@@ -12,21 +12,22 @@ class VerifyController extends Controller
     {
         //
 
-        $bas = DB::table('apay2')->distinct()->whereNotNull('ba')->orderby('ba')->get(['ba']);
-        $ttypes = DB::table('apay2')->distinct()->get(['transaction_type as ttype']);
-        $atypes = DB::table('apay2')->distinct()->get(['amount_type as atype']);
-        $adescs = DB::table('apay2')->distinct()->get(['amount_description as adesc']);
-
-
-
         $zerosum = DB::table('atr AS a')
         	->select(DB::raw('sum(amt*dir*gdir) as result'))
-        	->join('gacc as g', 'g.accid', '=', 'a.acc')
+            ->join('gacc as g', 'g.accid', '=', 'a.acc')
+            ->where('pdate','>=','2017-01-01')
             ->first();
 // dd($zerosum->result);
 
+        return view('verify.list', compact('zerosum') );
+    }
+
+    public function bal()
+    {
+        //
+
         $bals = DB::table('bal')->get();
 
-        return view('verify.list', compact('zerosum','bals') );
+        return view('verify.list', compact('bals') );
     }
 }

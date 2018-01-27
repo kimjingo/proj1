@@ -3,14 +3,23 @@
 @section('content')
 
 <div class="col-sm-8 blog-main">
+@if(isset($zerosum))
     @if($zerosum->result)
     <div class="alert alert-primary" role="alert">
     @else
     <div class="alert alert-danger" role="alert">
     @endif
-      Zero Sum : {{$zerosum->result}}
-    </div>
+      Zero Sum : 
+        @if($zerosum->result != 0)
+            <a href='/verify/bal'> {{$zerosum->result}} </a>
+        @else
+            {{$zerosum->result}}
+        @endif
 
+    </div>
+@endif
+
+@if(isset($bals))
     <div class="jumbotron">
         <table class="table">
             <tr>
@@ -30,7 +39,7 @@
         
         </table>
     </div>
-
+@endif
 </div>
 
 

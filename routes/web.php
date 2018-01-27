@@ -86,6 +86,7 @@ Route::get('apay/post', 'ApayController@post');
 Route::get('/apay/showall', 'ApayController@index');
 
 Route::get('/verify', 'VerifyController@index');
+Route::get('/verify/bal', 'VerifyController@bal');
 
 Route::get('/sidemenus', 'SidemenusController@index');
 Route::get('/sidemenus/create', 'SidemenusController@create');

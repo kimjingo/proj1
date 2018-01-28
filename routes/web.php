@@ -70,10 +70,6 @@ Route::get('/postingrules/duplicate/{id}', 'PostingRulesController@duplicate');
 Route::post('/postingrules/store', 'PostingRulesController@store');
 Route::get('/postingrules/addwithdata', 'PostingRulesController@addwithdata');
 
-
-
-
-
 Route::get('/bank', 'BankController@index');
 Route::get('/bank/edit/{id}', 'BankController@edit');
 Route::post('/bank/singlepost', 'BankController@singlepost');
@@ -93,3 +89,6 @@ Route::get('/sidemenus/create', 'SidemenusController@create');
 Route::get('/sidemenus/duplicate/{id}', 'SidemenusController@duplicate');
 Route::get('/sidemenus/delete/{id}', 'SidemenusController@destroy');
 Route::post('/sidemenus/store', 'SidemenusController@store');
+
+Route::get('/fitransactions', 'FITransactionsController@index');
+Route::get('/fitransactions/show/{id}', 'FITransactionsController@show');

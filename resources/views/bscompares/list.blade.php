@@ -15,10 +15,10 @@
                         <td>{{ $bscompare->yymm }}</td>
                         <td>
                             @if($bscompare->accid == 'abank')
-                                <a href="//dev.irealook.com/atr_bank.php?"
-                                {{ $bscompare->accid }}
+                                <a href="//dev.irealook.com/atr_bank.php?"{{ $bscompare->accid }}>
+                                {{ $bscompare->accid }}</a>
                             @else
-
+                                {{ $bscompare->accid }}
                             @endif
                         </td>
                         <td class="number-align">{{ $bscompare->aamt }}</td>

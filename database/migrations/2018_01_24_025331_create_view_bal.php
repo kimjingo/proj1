@@ -14,12 +14,8 @@ class CreateViewBal extends Migration
     public function up()
     {
         //
-        if (Schema::hasTable('bal')) {
-            //
-            Schema::dropIfExists('bal');
-
-        }
-
+        DB::statement("DROP VIEW IF EXISTS bal");
+        
         DB::statement("
             CREATE VIEW `bal` AS 
                 select `atr`.`fromdoc` AS `fromdoc`,sum(((`atr`.`amt` * `gacc`.`dir`) * `gacc`.`gdir`)) AS `amt` 

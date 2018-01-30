@@ -106,7 +106,6 @@
                     <th>Check</th>
                     <th>Amount to post</th>
                     <th>Clearing Key</th>
-                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -172,7 +171,6 @@
                     <td>
                         <input type="text" name="dr_clearing"  value="{{ $manualpost->dr_clearing }}" />
                     </td>
-                    <td><input type="button" name="add" value="+" class="tr_clone_add"><input type="button" name="del" value="-" class="tr_clone_del"></td>
                 </tr>
             
             </tbody>

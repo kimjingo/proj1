@@ -139,7 +139,7 @@
                     <td>
                         <input type="text" name="cr_clearing"  value="{{ $manualpost->cr_clearing }}" />
                     </td>
-                    <td><input type="button" name="add" value="+" class="tr_clone_add"><input type="button" name="del" value="-" class="tr_clone_del"></td>
+
                 </tr>
 
                  <tr class="sample">

@@ -43,18 +43,19 @@ class ManualPostsController extends Controller
         $bas = [1,2];
         $vendors = DB::table('atr')
             ->where('pdate', '>=', $fdate)->where('pdate', '<', $tdate)
-            ->when($fromdoc, function($query) use ($fromdoc) { return $query->where('fromdoc',$fromdoc);})
+            ->where('fromdoc', 'manualpost')
             ->when($ttype, function($query) use ($ttype) { return $query->where('ttype',$ttype);})
-            ->distinct()->get(['mp']);
+            ->distinct()->get(['mp as vendor']);
         
         $fromdocs = DB::table('atr')
             ->where('pdate', '>=', $fdate)->where('pdate', '<', $tdate)
+            ->where('fromdoc', 'manualpost')
             ->when($ttype, function($query) use ($ttype) { return $query->where('ttype',$ttype);})
             ->distinct()->get(['fromdoc']);
 
         $ttypes = DB::table('atr')
             ->where('pdate', '>=', $fdate)->where('pdate', '<', $tdate)
-            ->when($fromdoc, function($query) use ($fromdoc) { return $query->where('fromdoc',$fromdoc);})
+            ->where('fromdoc', 'manualpost')
             ->when($ttype, function($query) use ($ttype) { return $query->where('ttype',$ttype);})
             ->distinct()->get(['ttype']);
         

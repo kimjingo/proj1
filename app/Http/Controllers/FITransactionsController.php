@@ -42,10 +42,24 @@ class FITransactionsController extends Controller
         $bas = [1,2];
         $mps = DB::table('atr')->distinct()->get(['mp']);
         
-        $fromdocs = DB::table('atr')->distinct()->get(['fromdoc']);
-        $ttypes = DB::table('atr')->distinct()->get(['ttype']);
+        $fromdocs = DB::table('atr')
+                        ->where('pdate', '>=', $fdate)->where('pdate', '<', $tdate)
+                        ->distinct()->get(['fromdoc']);
+
+        $vendors = DB::table('atr')
+            ->where('pdate', '>=', $fdate)->where('pdate', '<', $tdate)
+            ->when($fromdoc, function($query) use ($fromdoc) { return $query->where('fromdoc',$fromdoc);})
+            ->when($ttype, function($query) use ($ttype) { return $query->where('ttype',$ttype);})
+            ->distinct()->get(['mp as vendor']);
+
+        $ttypes = DB::table('atr')
+            ->where('pdate', '>=', $fdate)->where('pdate', '<', $tdate)
+            ->when($fromdoc, function($query) use ($fromdoc) { return $query->where('fromdoc',$fromdoc);})
+            ->when($ttype, function($query) use ($ttype) { return $query->where('ttype',$ttype);})
+            ->distinct()->get(['ttype']);
+
         $brands = DB::table('atr')->distinct()->get(['brand']);
-        $vendors = DB::table('atr')->distinct()->get(['mp as vendor']);
+
         
         $accs = DB::table('gacc')->distinct()->get(['accid']);
 

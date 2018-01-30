@@ -41,12 +41,24 @@ class ManualPostsController extends Controller
         // dd($isPosted);
 
         $bas = [1,2];
-        $mps = DB::table('atr')->distinct()->get(['mp']);
+        $vendors = DB::table('atr')
+            ->where('pdate', '>=', $fdate)->where('pdate', '<', $tdate)
+            ->when($fromdoc, function($query) use ($fromdoc) { return $query->where('fromdoc',$fromdoc);})
+            ->when($ttype, function($query) use ($ttype) { return $query->where('ttype',$ttype);})
+            ->distinct()->get(['mp']);
         
-        $fromdocs = DB::table('atr')->distinct()->get(['fromdoc']);
-        $ttypes = DB::table('atr')->distinct()->get(['ttype']);
+        $fromdocs = DB::table('atr')
+            ->where('pdate', '>=', $fdate)->where('pdate', '<', $tdate)
+            ->when($ttype, function($query) use ($ttype) { return $query->where('ttype',$ttype);})
+            ->distinct()->get(['fromdoc']);
+
+        $ttypes = DB::table('atr')
+            ->where('pdate', '>=', $fdate)->where('pdate', '<', $tdate)
+            ->when($fromdoc, function($query) use ($fromdoc) { return $query->where('fromdoc',$fromdoc);})
+            ->when($ttype, function($query) use ($ttype) { return $query->where('ttype',$ttype);})
+            ->distinct()->get(['ttype']);
+        
         $brands = DB::table('atr')->distinct()->get(['brand']);
-        $vendors = DB::table('atr')->distinct()->get(['mp as vendor']);
         
         // $manualinputs = DB::table('manualposts')->where('created_at','>','2018-01-08')->orderby('updated_at','desc')->limit(100)->get();
         $manualinputs = DB::table('manualposts')
@@ -68,7 +80,7 @@ class ManualPostsController extends Controller
             ->orderby('pdate')
         ->orderby('created_at','desc')->simplePaginate(10);
 
-        return view('manualposts.list',compact('manualinputs','tdate','fdate','amt','material','vendor','ttype','remark','ba','isPosted','cfdate','ctdate','bas','mps','ttypes','brand','vendors') );
+        return view('manualposts.list',compact('manualinputs','tdate','fdate','amt','material','vendor','ttype','remark','ba','isPosted','cfdate','ctdate','bas','ttypes','brand','vendors') );
 
     }
 

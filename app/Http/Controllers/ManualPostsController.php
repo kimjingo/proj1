@@ -193,9 +193,10 @@ class ManualPostsController extends Controller
         $pdate = new Carbon('last day of last month');
         $bas = [1,2];
 
-        $manualinputs = DB::table('manualposts')->where('id','=', $id)->get();
+        $manualinput = DB::table('manualposts')->find($id);
+        //where('id','=', $id)->get();
 
-        $manualinput = $manualinputs[0];
+        // $manualinput = $manualinputs[0];
 // dd($manualinput[0]->pdate);
 
         return view('manualposts.edit',compact('ttypes', 'mps', 'paidbys','pdate','bas','manualinput','id') );

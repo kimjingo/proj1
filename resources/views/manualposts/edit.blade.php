@@ -52,10 +52,10 @@
           </td>
 
           <td>
-            <input style="width:100px;" type="text" name="material"  value="{{ $manualinput->material }}" />
+            <input style="width:100px;" type="text" name="material" value="{{ $manualinput->material }}" />
           </td>
           <td>
-            <input type="text" name="remark" />
+            <input type="text" name="remark" value="{{ $manualinput->remark }}" />
           </td>
           <td>
             <input style="width:50px;" type="text" class="form-control" id="checkno" name="checkno"  value="{{ $manualinput->checkno }}" />

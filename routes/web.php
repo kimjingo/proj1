@@ -63,6 +63,9 @@ Route::post('/manualposts/store', 'ManualPostsController@store');
 Route::get('/manualposts/delete/{id}','ManualPostsController@destroy');
 Route::get('/manualposts/edit/{id}','ManualPostsController@edit');
 Route::post('/manualposts/update', 'ManualPostsController@update');
+Route::get('/manualposts/post/{id}', 'ManualPostsController@manualpost');
+Route::put('/manualposts/post/{id}', 'ManualPostsController@post');
+
 
 Route::get('/postingrules', 'PostingRulesController@index');
 Route::get('/postingrules/create', 'PostingRulesController@create');

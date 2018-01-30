@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Input;
 
 class ManualPostsController extends Controller
 {
@@ -17,10 +18,57 @@ class ManualPostsController extends Controller
     public function index()
     {
         //
-        // dd('aa');
+        $ttdate = new Carbon('last day of last month');
+        $tdate = $ttdate->addDay()->toDateString();
+
+        $ffdate = new Carbon('first day of last year');
+        $fdate = $ffdate->toDateString();
+
+        $fdate = Input::get('fdate', $fdate);
+        $tdate = Input::get('tdate', $tdate);
+
+        $amt = Input::get('amt');
+        $material = Input::get('material');
+        $vendor = Input::get('vendor');
+        $ttype = Input::get('ttype');
+        $remark = Input::get('remark');
+        $ba = Input::get('ba');
+        $isPosted = Input::get('isPosted',2);
+
+        $cfdate = Input::get('cfdate', $fdate);
+        $ctdate = Input::get('ctdate', $tdate);
+
+        // dd($isPosted);
+
+        $bas = [1,2];
+        $mps = DB::table('atr')->distinct()->get(['mp']);
+        
+        $fromdocs = DB::table('atr')->distinct()->get(['fromdoc']);
+        $ttypes = DB::table('atr')->distinct()->get(['ttype']);
+        $brands = DB::table('atr')->distinct()->get(['brand']);
+        $vendors = DB::table('atr')->distinct()->get(['mp as vendor']);
+        
         // $manualinputs = DB::table('manualposts')->where('created_at','>','2018-01-08')->orderby('updated_at','desc')->limit(100)->get();
-        $manualinputs = DB::table('manualposts')->orderby('updated_at','desc')->simplePaginate(10);
-        return view('manualposts.list',compact('manualinputs') );
+        $manualinputs = DB::table('manualposts')
+          ->where('pdate', '>=', $fdate)->where('pdate', '<', $tdate)
+            ->when($ba, function($query) use ($ba) { return $query->where('ba', $ba); })
+            ->when($vendor, function($query) use ($vendor) { return $query->where('mp', $vendor); })
+            ->when($material, function($query) use ($material) { return $query->where('material', $material); })
+            ->when($ttype, function($query) use ($ttype) { return $query->where('ttype', $ttype); })
+            ->when($amt, function($query) use ($amt) { return $query->where('amt', $amt)->orWhere('amt',$amt*-1); })
+            ->when($remark, function($query) use ($remark) { return $query->where('remark','LIKE', '%'.$remark.'%'); })
+            ->when($isPosted, function($query) use($isPosted) {
+                    if($isPosted == 1){
+                        return $query->whereNotNull('posting');
+                    }elseif($isPosted == 2){
+                        return $query->whereNull('posting');
+                    }
+                }
+            )
+            ->orderby('pdate')
+        ->orderby('created_at','desc')->simplePaginate(10);
+
+        return view('manualposts.list',compact('manualinputs','tdate','fdate','amt','material','vendor','ttype','remark','ba','isPosted','cfdate','ctdate','bas','mps','ttypes','brand','vendors') );
 
     }
 
@@ -196,6 +244,110 @@ class ManualPostsController extends Controller
         //
         $manualpost = DB::table('manualposts')->delete($id);
     // dd($manualpost);
+        return redirect('/manualposts');
+    }
+
+    public function manualpost($id)
+    {
+        # code...
+        // dd("aa");
+        $accs = DB::table('gacc')->select('accid','dir','gdir')->get();
+        foreach($accs as $acc) {
+            $accCal[$acc->accid] = array(
+                "dir" => $acc->dir,
+                "gdir" => $acc->gdir
+            );
+        }
+
+        $accCalJSON = json_encode($accCal);
+        // dd($accCalJSON);
+
+        $fromdoc = 'manualpost';
+        // $dr = 'abank';
+        $dirs = [1,-1];
+        $bas = DB::table('apay2_acc')->distinct()->get(['ba']);
+        $vendors = DB::table('manualposts')->distinct()->get(['mp as vendor']);
+        $materials = DB::table('manualposts')->distinct()->get(['material']);
+        $ttypes = DB::table('manualposts')->distinct()->get(['ttype']);
+        $paidbys = DB::table('manualposts')->distinct()->get(['paidby']);
+        
+        $manualpostheader = DB::table('manualposts')
+            ->select('id','pdate','amt','mp as vendor','material','remark','ttype','paidby','ba','checkno')
+            ->find($id);
+
+        $manualpost = DB::table('manualposts')
+            ->select('cr','cr_dir','cr_clearing','dr','dr_dir','dr_clearing')
+            ->find($id);
+
+// dd($fromdocs);
+        // dd($bank);
+        return view('manualposts.manualpost',compact('manualpostheader','manualpost','fromdoc','bas','accs','accCalJSON','dirs','vendors','materials','ttypes','paidbys') );
+
+    }
+
+    public function post(Request $request, $id)
+    {
+        //
+        // dd($request->amt*$request->cr_dir);
+        $udate = \Carbon\Carbon::now();
+        
+        $acc = ['cr','dr'];
+        $dir = ['cr_dir','dr_dir'];
+        $clearing = ['cr_clearing','dr_clearing'];
+
+        for($i=0;$i<2;$i++){
+            $accname = $acc[$i];
+            $dirname = $dir[$i];
+            $clearingname = $clearing[$i];
+            $amt = $request->amt*$request->$dirname;
+            // dd($amt);
+            $res = DB::insert("INSERT INTO atr(tid,no,pdate, acc,amt,mp, material,inputtype,ttype, clearing,ba,remark, fromdoc,created_at,updated_at) values(?,?,?, ?,?,?, ?,'manual',?, ?,?,?, ?,?,?);", [$id,$request->seq[$i],$request->pdate, $request->$accname,$amt,$request->vendor, $request->material,$request->ttype, $request->$clearingname,$request->ba,$request->remark, $request->fromdoc,$udate,$udate ]);
+
+            // $res = DB::insert('atr')->insert([
+            //     'tid'   =>  $id,
+            //     'no'    =>  $request->seq[$i],
+            //     'pdate' =>  $request->pdate,
+            //     'orderid'   =>  1,
+            //     'itemid'    =>  1,
+            //     'material'  =>  $request->material,
+            //     'mp'    =>  $request->vendor,
+            //     'ttype' =>  $request->ttype,
+            //     'inputtype' =>  'manual',
+            //     'remark'    =>  $request->remark,
+            //     'fromdoc'   =>  $request->fromdoc,
+            //     'ba'    =>  $request->ba,
+
+            //     'acc'   =>  $request->cr,
+            //     'amt'   =>  $request->amt*$request->cr_dir,
+            //     'clearing'  =>  $request->cr_clearing,
+
+            //     'created_at' => $udate,
+            //     'updated_at' => $udate
+            // ]);
+        }
+                // 'acc'   =>  $request->{$aac[$i]},
+                // 'amt'   =>  $request->cr*$request->{$dir[$i]},
+                // 'clearing'  =>  $request->{$clearing[$i]},
+
+        if($res){
+
+            DB::table('manualposts')
+                ->where('id',$id)
+                ->update([
+                    'cr' => $request->cr,
+                    'cr_dir' => $request->cr_dir,
+                    'cr_clearing' => $request->cr_clearing,
+                    'dr' => $request->dr,
+                    'dr_dir' => $request->dr_dir,
+                    'dr_clearing' => $request->dr_clearing,
+                    'mp' => $request->vendor,
+                    'material' => $request->material,
+                    'ba' => $request->ba,
+                    'posting' => $udate //\Carbon\Carbon::now(),  // \Datetime()
+                ]);
+
+        }
+        
         return redirect('/manualposts');
     }
 }

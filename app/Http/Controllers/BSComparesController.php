@@ -28,7 +28,7 @@ class BSComparesController extends Controller
         //     ->join('reconcile', 'bscheckpoints.recid','=','reconcile.id')
         //     ->orderby('checkdate')->get();
 
-        $bscompares = DB::select ("select b.checkdate yymm,r.accid,sum(b.amt) aamt, min(bym.amt) camt from bscheckpoints b left join reconcile r on b.recid=r.id left join bsyymm bym on bym.yymm=b.checkdate and bym.accid=r.accid group by b.checkdate,accid");
+        $bscompares = DB::select ("select b.checkdate yymm,r.accid,sum(b.amt) aamt, min(bym.amt) camt from bscheckpoints b left join reconcile r on b.recid=r.id left join bsyymm bym on bym.yymm=b.checkdate and bym.accid=r.accid group by  order by accid, b.checkdate");
         // $users = DB::table('bscheckpoints')
         //     ->leftjoin('reconcile', 'reconcile.id', '=', 'bscheckpoints.user_id')
         //     ->leftjoin('bsyymm', 'bsyymm.id', '=', 'orders.user_id')

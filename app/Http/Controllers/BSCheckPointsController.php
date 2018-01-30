@@ -19,7 +19,9 @@ class BSCheckPointsController extends Controller
         //
         $bscheckpoints = DB::table('bscheckpoints')
             ->join('reconcile', 'bscheckpoints.recid','=','reconcile.id')
-            ->orderby('checkdate')->orderby('accid')->get();
+            ->orderby('accid')
+            ->orderby('checkdate')
+            ->get();
             // dd($bscheckpoints);
         return view('bscheckpoints.list', compact('bscheckpoints'));
     }

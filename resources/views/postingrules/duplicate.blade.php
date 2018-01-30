@@ -14,7 +14,6 @@
                 <th>TransType</th>
                 <th>Vendor</th>
                 <th>Material</th>
-                <th>Type</th>
                 <th>B/A</th>
             </tr>
             <tr>
@@ -64,16 +63,6 @@
                 </td>
                 
                 <td>
-                    <input style="width:100px;" type="text" list="ttypes" name="ttype"  value="{{ $ruleheader->ttype }}" />
-                    <datalist id="ttypes">
-
-                    @foreach($ttypes as $val)
-
-                      <option value="{{ $val->ttype }}">
-
-                    @endforeach  
-                </td>
-                <td>
                     <input style="width:50px;" type="text" list="bas" name="ba"  value="{{ $ruleheader->ba }}" />
                     <datalist id="bas">
 
@@ -94,6 +83,7 @@
                     <th>Credit</th>
                     <th>Dir</th>
                     <th>Check</th>
+                    <th>Type</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -124,6 +114,16 @@
                     </td>
                     <td class="check">
 
+                    </td>
+                    <td>
+                        <input style="width:100px;" type="text" list="ttypes" name="ttype[]"  value="{{ $rule->ttype }}" />
+                        <datalist id="ttypes">
+
+                        @foreach($ttypes as $val)
+
+                          <option value="{{ $val->ttype }}">
+
+                        @endforeach  
                     </td>
                     <td><input type="button" name="add" value="+" class="tr_clone_add"><input type="button" name="del" value="-" class="tr_clone_del"></td>
                 </tr>

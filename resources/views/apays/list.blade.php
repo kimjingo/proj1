@@ -145,9 +145,9 @@
 
                 <td>
                     @if($apay->cnt2)
-                        <a href="/apay/post?fromdoc=apay2&ttype={{ $apay->transaction_type }}&atype={{ $apay->amount_type }}&adesc={{ $apay->amount_description }}&fdate={{ $fdate }}&tdate={{ $tdate }}">Post</a> ||
+                        <a class="link" href="/apay/post?fromdoc=apay2&ttype={{ urlencode($apay->transaction_type) }}&atype={{ urlencode($apay->amount_type) }}&adesc={{ urlencode($apay->amount_description) }}&fdate={{ $fdate }}&tdate={{ $tdate }}">Post</a> ||
                     @endif
-                    <a href="/postingrules/addwithdata?fromdoc=apay2&att={{$apay->transaction_type}}&aat={{$apay->amount_type}}&aad={{$apay->amount_description}}">Make a rule</a> 
+                    <a class="link" data-href="/postingrules/addwithdata?fromdoc=apay2&att={{urlencode($apay->transaction_type)}}&aat={{urlencode($apay->amount_type)}}&aad={{urlencode($apay->amount_description)}}">Make a rule</a> 
                     ||
                     <input type="checkbox" id="checkBox" name="no[]" value='{{$apay->no}}'>
                 </td>
@@ -181,8 +181,28 @@
 @endsection
 
 
-@section('layouts.footer')
+@section('footer')
 
-<script type="text/javascript"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".link").mouseup(function(){
+        var confirmmessage = "Are you sure you want to continue?";
+        var go = $(this).data('href');
+        var message = "Action Was Cancelled By User";
+ 
+        if (confirm(confirmmessage)) {
+
+          window.location = go;
+
+        } else {
+
+           alert(message);
+
+        }
+
+    });
+
+});
+</script>
 
 @endsection

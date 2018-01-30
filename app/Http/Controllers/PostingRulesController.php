@@ -160,6 +160,8 @@ class PostingRulesController extends Controller
     {
         //
         $len = count($request->seq);
+        $now = \Carbon\Carbon::now();
+
 
         $accs = DB::table('gacc')->select('accid','dir','gdir')->get();
         foreach($accs as $acc) {
@@ -183,21 +185,23 @@ class PostingRulesController extends Controller
         if(!$checksum){
 
             for($i=0; $i < $len; $i++){
-                $a = array(
-                    'fromdoc' => $request->fromdoc,
-                    'transaction_type' => $request->att,
-                    'amount_type' => $request->aat,
-                    'amount_description' => $request->aad,
-                    'acc' => $request->acc[$i],
-                    'dir' => $request->dir[$i],
-                    'aseq' => $request->seq[$i],
-                    'ttype' => $request->ttype,
-                    'ba' => $request->ba,
-                    'created_at' => \Carbon\Carbon::now(),
-                    'updated_at' => \Carbon\Carbon::now(),
-                );
+                // dd($request->aat);
+                // $a = array(
+                //     'fromdoc' => $request->fromdoc,
+                //     'transaction_type' => $request->att,
+                //     'amount_type' => $request->aat,
+                //     'amount_description' => $request->aad,
+                //     'acc' => $request->acc[$i],
+                //     'dir' => $request->dir[$i],
+                //     'aseq' => $request->seq[$i],
+                //     'ttype' => $request->ttype,
+                //     'ba' => $request->ba,
+                //     'created_at' => \Carbon\Carbon::now(),
+                //     'updated_at' => \Carbon\Carbon::now(),
+                // );
 
-                DB::insert('INSERT IGNORE INTO apay2_acc ('.implode(',',array_keys($a)).') values (?'. str_repeat(',?',count($a)-1).')', array_values($a) ) ;
+                DB::insert("INSERT IGNORE INTO apay2_acc(fromdoc, transaction_type, amount_type, amount_description, acc, dir, aseq, ttype, ba, created_at, updated_at) values (?,?,?,?,?,?,?,?,?,?,?)", [$request->fromdoc,$request->att,$request->aat,$request->aad,$request->acc[$i],$request->dir[$i],$request->seq[$i],$request->ttype[$i],$request->ba,$now,$now] ) ;
+                // DB::insert("insert into contacts(contact_id,contact_type,account_id,created_at,updated_at) select f.id,'App\\Friend',f.account_id,f.created_at,f.updated_at from friends as f where f.id=?",[16]);
                 // DB::table('apay2_acc')->updateOrCreate([
 
                 //     'fromdoc' => $request->fromdoc,
@@ -267,7 +271,7 @@ class PostingRulesController extends Controller
         // $accs = DB::table('gacc')->distinct()->get(['accid AS acc']);
         
         $ruleheader = DB::table('apay2_acc as a1')
-            ->select('a1.fromdoc AS fromdoc', 'a1.transaction_type AS att', 'a1.amount_type AS aat', 'a1.amount_description AS aad', 'a1.ttype','a1.ba')
+            ->select('a1.fromdoc AS fromdoc', 'a1.transaction_type AS att', 'a1.amount_type AS aat', 'a1.amount_description AS aad', 'a1.ba')
             ->where('no',$id)
             ->first();
 
@@ -327,9 +331,9 @@ class PostingRulesController extends Controller
 
         // $accs = DB::table('gacc')->get(['accid AS acc']);
 
-
         $att = Input::get('att');
         $aat = Input::get('aat');
+// dd($aat);
         $aad = Input::get('aad');
 
         // $accs = DB::table('gacc')->select('accid','dir','gdir')->get();

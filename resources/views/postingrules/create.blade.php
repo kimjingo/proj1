@@ -14,7 +14,6 @@
                 <th>TransType</th>
                 <th>Vendor</th>
                 <th>Material</th>
-                <th>Type</th>
                 <th>B/A</th>
             </tr>
             <tr>
@@ -42,7 +41,7 @@
                 </td>
 
                 <td>
-                    <input type="text" list="aats" name="aat" value={{ $aat or ''}} />
+                    <input type="text" list="aats" name="aat" value="{{ $aat or ''}}" />
                     <datalist id="aats">
 
                     @foreach($aats as $val)
@@ -53,7 +52,7 @@
                 </td>
                 
                 <td>
-                    <input type="text" list="aads" name="aad" value={{ $aad or ''}} />
+                    <input type="text" list="aads" name="aad" value="{{ $aad or ''}}" />
                     <datalist id="aads">
 
                     @foreach($aads as $val)
@@ -63,16 +62,6 @@
                     @endforeach  
                 </td>
                 
-                <td>
-                    <input type="text" list="ttypes" name="ttype" value={{ $ttype or ''}} />
-                    <datalist id="ttypes">
-
-                    @foreach($ttypes as $val)
-
-                      <option value="{{ $val->ttype }}">
-
-                    @endforeach  
-                </td>
                 <td>
                     <input style="width:50px;" type="text" list="bas" name="ba" value={{ $ba or ''}} />
                     <datalist id="bas">
@@ -94,6 +83,7 @@
                     <th>Credit</th>
                     <th>Dir</th>
                     <th>Check</th>
+                    <th>Type</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -124,6 +114,16 @@
                     <td class="check">
 
                     </td>
+                    <td>
+                        <input type="text" list="ttypes" name="ttype[]" value="{{ $ttype or ''}}" />
+                        <datalist id="ttypes">
+
+                        @foreach($ttypes as $val)
+
+                          <option value="{{ $val->ttype }}">
+
+                        @endforeach  
+                    </td>
                     <td><input type="button" name="add" value="+" class="tr_clone_add"><input type="button" name="del" value="-" class="tr_clone_del"></td>
                 </tr>
             </tbody>
@@ -140,6 +140,16 @@
 <script type="text/javascript">
 $(document).ready(function() {
     var acc = {!! $accCalJSON !!};
+
+    function updateCheck(){ 
+        for(i = 0; i < $("input.acc").length; i++) { 
+          if($("input.acc:eq(" + i  + ")").val()){
+            $( "td.check:eq(" + i +")"  ).html(acc[ $("input.acc:eq(" + i  + ")").val() ].dir * acc[ $("input.acc:eq(" + i  + ")").val() ].gdir * $("input.dir:eq("+i+")").val() );
+            $("td.amttopost:eq(" + i + ")" ).html($("input#amt").val() * $("input.dir:eq(" + i + ")").val() );
+          }
+        }
+    }
+    updateCheck();
 
     $('.tr_clone_add').click( function() {
         $(this).closest ('tr').clone(true).insertAfter($('#myTable tbody>tr:last'));
@@ -159,7 +169,8 @@ $(document).ready(function() {
           zerosum += acc[ $("input.acc:eq(" + i  + ")").val() ].dir * acc[ $("input.acc:eq(" + i  + ")").val() ].gdir * $("input.dir:eq("+i+")").val() ;
         }
 
-        console.log(zerosum);
+        // console.log(zerosum);
+        updateCheck();
         if(zerosum) {
             $(this).closest('td').next('td').css('background-color', '#f00');
         } else {
@@ -175,6 +186,7 @@ $(document).ready(function() {
         }
 
         // console.log(zerosum);
+        updateCheck();
         if(zerosum) {
             $(this).closest('td').css('background-color', '#f00');
         } else {

@@ -143,14 +143,12 @@ $(document).ready(function() {
 
     $('.tr_clone_add').click( function() {
         $(this).closest ('tr').clone(true).insertAfter($('#myTable tbody>tr:last'));
-        $(this).closest ('tr').clone(true).insertAfter($('#myTable tbody>tr:last'));
     });
 
     $('input.tr_clone_del').click( function() {
         var rowCount = $('#myTable tbody>tr').length;
         // console.log(rowCount);
         if(rowCount > 1) {
-            $(this).closest ('tr').remove ();
             $(this).closest ('tr').remove ();
         } 
     });

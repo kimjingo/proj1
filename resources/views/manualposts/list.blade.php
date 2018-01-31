@@ -97,6 +97,7 @@
     </div>
 </form>
 <div class="col-sm-8 blog-main">
+    <form class="form-inline" id="searchForm" method="post" action="manualposts/postbybatch">
     <a class="btn btn-primary" href="/manualposts/create" role="button">Add</a>
     <table class="table table-bordered table-striped">
         <thead>
@@ -135,7 +136,8 @@
                         <a href="/manualposts/delete/{{ $manualinput->id }}">X</a>
                         ||
                         <a href="/manualposts/edit/{{ $manualinput->id }}">=3</a> ||
-                        <a href="/manualposts/post/{{ $manualinput->id }}">=></a> 
+                        <a href="/manualposts/post/{{ $manualinput->id }}">=></a> ||
+                        <input type="checkbox" id="checkBox" name="id[]" value='{{$manualinput->id}}'>
                     </td>
 
                 </tr>
@@ -144,6 +146,8 @@
         </tbody>
 
     </table>
+    <input type="submit" id="submit" class="btn btn-default" value="Post by Batch" />
+    </form>
 
 </div>
 

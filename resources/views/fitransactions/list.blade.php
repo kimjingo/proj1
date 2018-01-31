@@ -141,6 +141,9 @@
             'tdate' => $tdate,
             'ba' => $ba,
             'ttype' => $ttype,
+            'vendor' => $vendor,
+            'cfdate' => $cfdate,
+            'ctdate' => $ctdate,
             'amt' => $amt]
             )->links() 
     }}

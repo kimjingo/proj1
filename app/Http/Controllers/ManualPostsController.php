@@ -216,7 +216,6 @@ class ManualPostsController extends Controller
             'pdate' => 'required',
             'amt' => 'required',
             'mp' => 'required',
-            'paidby' => 'required',
         ]);
 
 

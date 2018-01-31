@@ -98,7 +98,9 @@
     </div>
 </form>
 <div class="col-sm-8 blog-main">
-    <form class="form-inline" id="searchForm" method="post" action="manualposts/postbybatch">
+    <form class="form-inline" id="searchForm" method="post" action="/manualposts/postbybatch">
+        {{csrf_field()}}
+
     <a class="btn btn-primary" href="/manualposts/create" role="button">Add</a>
     <table class="table table-bordered table-striped">
         <thead>

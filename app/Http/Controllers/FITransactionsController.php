@@ -77,7 +77,7 @@ class FITransactionsController extends Controller
             ->when($remark, function($query) use ($remark) { return $query->where('remark','LIKE', '%'.$remark.'%'); })
             ->when($ba, function($query) use ($ba) { return $query->where('ba', $ba); })
             ->when($brand, function($query) use ($brand) { return $query->where('brand', $brand); })
-            ->orderby('created_at', 'desc')
+            ->orderby('pdate', 'desc')
             ->orderby('keyv')
             ->orderby('ba')
             ->simplePaginate(10);

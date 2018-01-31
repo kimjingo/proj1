@@ -1,6 +1,8 @@
 @extends('layouts.master')
 
 @section('content')
+<h1>BS Check Points</h1>
+
 <div class="col-sm-8 blog-main">
     <table class="table">
         <thead>

@@ -422,4 +422,3 @@ class ManualPostsController extends Controller
         return redirect('/manualposts');
     }
 }
-}

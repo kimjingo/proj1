@@ -143,6 +143,7 @@
         $fitransactions->appends([
             'fdate' => $fdate,
             'tdate' => $tdate,
+            'fromdoc' => $fromdoc,
             'ba' => $ba,
             'ttype' => $ttype,
             'vendor' => $vendor,

@@ -111,23 +111,70 @@ class ManualPostsController extends Controller
     public function store(Request $request)
     {
         //
+        $this->validate(request(),[
+            'pdate' => 'required',
+            'amt' => 'required',
+            'mp' => 'required',
+        ]);
+
         $len = count($request->pdate);
 
         for($i=0; $i<$len; $i++){
 
             if($request->amt[$i] != 0){
+                if (!$request->paidby[$i]){
+                    $paidby = '';
+                } else{
+                    $paidby = $request->paidby[$i];
+                }
+
+                if (!$request->ttype[$i]){
+                    $ttype = '';
+                }else{
+                    $ttype = $request->ttype[$i];
+                }
+
+                if (!$request->material[$i]){
+                    $material = '';
+                }else{
+
+                    $material = $request->material[$i];
+                }
+                if (!$request->remark[$i]) {
+                    $remark = '';
+
+                }else{
+                    $remark = $request->remark[$i];
+                    
+                }
+                if (!$request->checkno[$i]){
+                 $checkno = '';
+
+                }else{
+                    $checkno = $request->checkno[$i];
+                    
+                }
+                
+                if (!$request->ba[$i]){
+                 $ba = 1;
+
+                }else{
+                    $ba = $request->ba[$i];
+                    
+                }
+
 
                 DB::table('manualposts')->insert([
 
                     'pdate' => $request->pdate[$i],
                     'amt' => $request->amt[$i],
-                    'ttype' => $request->ttype[$i],
                     'mp' => $request->mp[$i],
-                    'material' => $request->material[$i],
-                    'remark' => $request->remark[$i],
-                    'checkno' => $request->checkno[$i],
-                    'paidby' => $request->paidby[$i],
-                    'ba' => $request->ba[$i],
+                    'ttype' => $ttype,
+                    'material' => $material,
+                    'remark' => $remark,
+                    'checkno' => $checkno,
+                    'paidby' => $paidby,
+                    'ba' => $ba,
 
                     //composer require nesbot/carbon
 

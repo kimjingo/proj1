@@ -111,24 +111,9 @@ class ManualPostsController extends Controller
     public function store(Request $request)
     {
         //
-        // dd($request->pdate);
-        // $this->validate(request(),[
-        //     'pdate' => 'required',
-        //     'amt' => 'required',
-        //     'mp' => 'required',
-        //     'paidbys' => 'required',
-        //     'amt' => 'required'
-        // ]);
-        
-        // $aa ="";
         $len = count($request->pdate);
-        // $aa .= $len.";";
 
         for($i=0; $i<$len; $i++){
-
-        // $aa .= $request->pdate[$i].",";
-        // $aa .= $request->amt[$i].",";
-        // $aa .= $request->checkno[$i].";";
 
             if($request->amt[$i] != 0){
 
@@ -141,7 +126,6 @@ class ManualPostsController extends Controller
                     'material' => $request->material[$i],
                     'remark' => $request->remark[$i],
                     'checkno' => $request->checkno[$i],
-                    'posting' => $request->posted_at[$i],
                     'paidby' => $request->paidby[$i],
                     'ba' => $request->ba[$i],
 

@@ -4,7 +4,7 @@
 <div class="blog-main">
 
 
-  <h1>Add new posting rule</h1>
+  <h1>Duplicate new posting rule</h1>
 
     <form method='POST' action='/postingrules/store' id="form_add" onsubmit="return confirm('Do you really want to submit the form?');">
     {{csrf_field()}}

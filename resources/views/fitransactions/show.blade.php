@@ -3,6 +3,8 @@
 @section('content')
 
 <div class="col-sm-8 blog-main">
+    <h1>A Financial Transaction</h1>
+
     <?php $len = count($columns) ; ?>
 
     

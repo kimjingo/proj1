@@ -49,7 +49,7 @@
         </select>
 
         <select id="vendor" name="vendor" class="form-control">
-            <option value=>Type</option>
+            <option value=>Vendor</option>
             @foreach($vendors as $val)
                 <option value="{{$val->vendor}}"
                     @if($val->vendor == $vendor)
@@ -103,6 +103,8 @@
                 <th>Material</th>
                 <th>order_id</th>
                 <th>item_id</th>
+                <th>clearing</th>
+                <th>Remark</th>
                 <th>Type</th>
                 <th>Brand</th>
                 <th>B/A</th>
@@ -122,6 +124,8 @@
                 <td>{{ $fitransaction->material }}</td>
                 <td>{{ $fitransaction->orderid }}</td>
                 <td>{{ $fitransaction->itemid }}</td>
+                <td>{{ $fitransaction->clearing }}</td>
+                <td>{{ $fitransaction->remark }}</td>
                 <td>{{ $fitransaction->ttype }}</td>
                 <td>{{ $fitransaction->brand }}</td>
                 <td>{{ $fitransaction->ba }}</td>
@@ -145,7 +149,7 @@
             'cfdate' => $cfdate,
             'ctdate' => $ctdate,
             'amt' => $amt]
-            )->links() 
+        )->links() 
     }}
 </ul>
 

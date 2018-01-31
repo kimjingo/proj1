@@ -1,9 +1,10 @@
 @extends('layouts.master')
 
 @section('content')
-<h1>Post bank manully</h1>
+<h1>Amazon Payments - update</h1>
 
-<form class="form-inline" id="deactivateForm" method="post" action="/bank/singlepost">
+
+<form class="form-inline" id="deactivateForm" method="post" action="/apay/singlepost">
     {{csrf_field()}}
 
     <div class="col-sm-8 blog-main">

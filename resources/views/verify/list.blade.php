@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('content')
-
+<h1>Financial Verification</h1>
 <div class="col-sm-8 blog-main">
 @if(isset($zerosum))
     @if($zerosum->result)

@@ -1,6 +1,7 @@
 @extends('layouts.master')
 
 @section('content')
+<h1>Reconciles</h1>
 <div class="col-sm-8 blog-main">
     <table class="table">
         <thead>

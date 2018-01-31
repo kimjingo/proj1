@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('content')
-
+<h1>Posting Rules</h1>
 <form class="form-inline" id="searchForm" method="get">
 <!--<form class="form-inline" id="searchForm" method="get" onsubmit="return false;">-->
         <div class="form-group ">

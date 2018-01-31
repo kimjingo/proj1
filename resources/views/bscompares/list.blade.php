@@ -1,6 +1,7 @@
 @extends('layouts.master')
 
 @section('content')
+<h1>Compare B/S Account On/Off</h1>
 <div class="col-sm-8 blog-main">
     <a class="btn btn-primary" href="/bscheckpoint/add" role="button">Add</a>
     <table class="table">

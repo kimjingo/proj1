@@ -361,4 +361,65 @@ class ManualPostsController extends Controller
         
         return redirect('/manualposts');
     }
+
+    public function postbybatch(Request $request)
+    {
+        //
+        for($i=0;$i<count($request->id);$i++){
+
+            $ttdate = new Carbon('last day of last month');
+            $tdate = $ttdate->addDay()->toDateString();
+
+            $ffdate = new Carbon('first day of last year');
+            $fdate = $ffdate->toDateString();
+
+            $fromdoc = Input::get('fromdoc');
+            $fdate = Input::get('fdate', $fdate);
+            $tdate = Input::get('tdate', $tdate);
+
+            $ttype = Input::get('ttype');
+            $atype = Input::get('atype');
+            $adesc = Input::get('adesc');
+            $cdate = \Carbon\Carbon::now();
+            $udate = \Carbon\Carbon::now();
+
+
+            if($fromdoc){
+
+                $res = DB::insert("INSERT INTO atr(tid,no,pdate,acc,amt,qty,orderid,itemid,mp,clearing,ttype,fromdoc,ba, remark, brand, material, created_at,updated_at) 
+
+                    SELECT aa.aseq,ap.no,posted_date_time,acc, if((acc='ainv' or acc='pcgs'), ifnull(m.map,5)*greatest(quantity_purchased,1)*dir, amount ), quantity_purchased,order_id,order_item_code, 'AMZ', if((acc='abank_memo' AND ap.amount_description='Payable to Amazon') OR (acc='abank_memo' AND ap.amount_description='Successful charge'), concat(right( EXTRACT(YEAR_MONTH FROM posted_date + interval 4 day),4), date_format(posted_date + interval 4 day, '%d')) , settlement_id ) clearing, ttype, fromdoc, ap.ba, concat(ap.transaction_type,'-',ap.amount_type,'-',ap.amount_description) remark, a.brand,a.matid,?,? 
+
+                    FROM manualposts ap 
+                    JOIN apay2_acc aa ON ap.transaction_type = aa.transaction_type AND ap.amount_type = aa.amount_type AND ap.amount_description = aa.amount_description 
+                    LEFT OUTER JOIN ainv a on a.sku=ap.sku 
+                    LEFT OUTER JOIN mat m on m.vendor=a.brand AND m.matid=a.matid 
+                    WHERE  fromdoc=? AND ap.postingflag IS NULL AND aa.transaction_type = ? AND aa.amount_type = ? AND aa.amount_description = ? AND posted_date_time >= ? AND posted_date_time < ?"
+                    , [$cdate,$udate,$fromdoc,$ttype,$atype,$adesc,$fdate,$tdate]);
+
+
+                if($res){
+
+                    DB::table('apay2 as a2')
+                        ->join('apay2_acc as aa', function($join){
+                            $join->on('a2.transaction_type','=','aa.transaction_type');
+                            $join->on('a2.amount_type','=','aa.amount_type');
+                            $join->on('a2.amount_description','=','aa.amount_description');
+                        })
+                        ->where('aa.fromdoc',$fromdoc)
+                        ->where('aa.transaction_type',$ttype)
+                        ->where('aa.amount_type',$atype)
+                        ->where('aa.amount_description',$adesc)
+                        ->where('a2.posted_date','>=',$fdate)
+                        ->where('a2.posted_date','<',$tdate)
+                        ->update([
+                            'postingflag' => $udate //\Carbon\Carbon::now(),  // \Datetime()
+                        ]);
+                }
+            }
+        }
+        
+        return redirect('/manualposts');
+    }
+}
 }

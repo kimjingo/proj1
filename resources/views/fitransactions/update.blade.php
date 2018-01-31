@@ -1,8 +1,7 @@
 @extends('layouts.master')
 
 @section('content')
-<h1>Post bank manully</h1>
-
+<h1>Financial Transactions - update</h1>
 <form class="form-inline" id="deactivateForm" method="post" action="/bank/singlepost">
     {{csrf_field()}}
 

@@ -4,7 +4,7 @@
 <div class="blog-main">
 
 
-  <h1>Add receipt, check, invoice and etc</h1>
+  <h1>Manual Post : Edit receipt, check, invoice and etc</h1>
 
 	<form method='POST' action='/manualposts/update' id="form_add" onsubmit="return confirm('Do you really want to submit the form?');">
     {{csrf_field()}}

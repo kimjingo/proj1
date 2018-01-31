@@ -4,7 +4,7 @@
 <div class="col-sm-8 blog-main">
 
 
-  <h1>Add check point</h1>
+  <h1>Add B/S Check point</h1>
 
   <form method='POST' action='/bscheckpoint/store' id="form_add" onsubmit="return confirm('Do you really want to submit the form?');">
     {{csrf_field()}}

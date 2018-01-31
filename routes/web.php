@@ -65,7 +65,7 @@ Route::get('/manualposts/edit/{id}','ManualPostsController@edit');
 Route::post('/manualposts/update', 'ManualPostsController@update');
 Route::get('/manualposts/post/{id}', 'ManualPostsController@manualpost');
 Route::put('/manualposts/post/{id}', 'ManualPostsController@post');
-
+Route::post('/manualposts/postbybatch', 'ManualPostsController@postbybatch');
 
 Route::get('/postingrules', 'PostingRulesController@index');
 Route::get('/postingrules/create', 'PostingRulesController@create');

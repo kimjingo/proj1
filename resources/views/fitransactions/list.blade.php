@@ -122,6 +122,7 @@
                 <th>Type</th>
                 <th>Brand</th>
                 <th>B/A</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -143,6 +144,8 @@
                 <td>{{ $fitransaction->ttype }}</td>
                 <td>{{ $fitransaction->brand }}</td>
                 <td>{{ $fitransaction->ba }}</td>
+                <td><a href='//dev.irealook.com/dist_photocost.php/{{ $fitransaction->keyv }}'>Distribute?</a></td>
+
             </tr>
         @endforeach
 

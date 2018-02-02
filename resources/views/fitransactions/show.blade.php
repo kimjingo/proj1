@@ -25,7 +25,7 @@
         @endfor
     
     </table>
-
+<a class="button" href="//dev.irealook.com/dist_photocost.php?{{fitransactions[0]->{$columns[20]}}">Distribute</a>
 </div>
 
 

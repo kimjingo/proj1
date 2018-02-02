@@ -146,11 +146,11 @@
                 <td>{{ $fitransaction->ba }}</td>
                 <td>
                     @if(!isset($fitransaction->aid))
-                        <a href='//dev.irealook.com/dist_photocost.php?aid={{ $fitransaction->keyv }}'>Distribute?</a>
+                        <a href='//dev.irealook.com/dist_photocost.php?aid={{ $fitransaction->keyv }}' target='_blank'>Distribute?</a>
                     @elseif($fitransaction->posted_at)
                         Distributed
                     @elseif(isset($fitransaction->aid) && !isset($fitransaction->posted_at))
-                        <a href='//dev.irealook.com/dist_photocost.php?aid={{ $fitransaction->keyv }}'>Distributing</a>
+                        <a href='//dev.irealook.com/dist_photocost.php?aid={{ $fitransaction->keyv }}' target='_blank'>Distributing</a>
                     @endif
 
                 </td>

@@ -145,10 +145,13 @@
                 <td>{{ $fitransaction->brand }}</td>
                 <td>{{ $fitransaction->ba }}</td>
                 <td>
-                    @if(isset($fitransaction->aid) && $fit )
-                    <a href='//dev.irealook.com/dist_photocost.php?aid={{ $fitransaction->keyv }}'>Distribute?</a>
-                    <a href='//dev.irealook.com/dist_photocost.php?aid={{ $fitransaction->keyv }}'>Distribute?</a>
-                    Distributed
+                    @if(!isset($fitransaction->aid))
+                        <a href='//dev.irealook.com/dist_photocost.php?aid={{ $fitransaction->keyv }}'>Distribute?</a>
+                    @elseif($fitransaction->posted_at)
+                        Distributed
+                    @elseif(isset($fitransaction->aid) && !isset($fitransaction->posted_at))
+                        <a href='//dev.irealook.com/dist_photocost.php?aid={{ $fitransaction->keyv }}'>Distributing</a>
+                    @endif
 
                 </td>
 

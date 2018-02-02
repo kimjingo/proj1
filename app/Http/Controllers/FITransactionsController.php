@@ -82,7 +82,7 @@ class FITransactionsController extends Controller
             ->orderby('keyv')
             ->orderby('ba')
             ->simplePaginate(10);
-        dd($fitransactions);
+        // dd($fitransactions);
 
         // return view('postingrules.list',compact('rules','fromdoc','fromdocs') );
         return view('fitransactions.list', compact('fdate','tdate','acc','amt','orderid','material','vendor','clearing','ttype','remark','fromdoc','ba','brand','cfdate','ctdate','bas','mps','fromdocs','ttypes','brands','vendors','accs','fitransactions') );//

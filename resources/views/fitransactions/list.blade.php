@@ -144,7 +144,13 @@
                 <td>{{ $fitransaction->ttype }}</td>
                 <td>{{ $fitransaction->brand }}</td>
                 <td>{{ $fitransaction->ba }}</td>
-                <td><a href='//dev.irealook.com/dist_photocost.php?aid={{ $fitransaction->keyv }}'>Distribute?</a></td>
+                <td>
+                    @if(isset($fitransaction->aid) && $fit )
+                    <a href='//dev.irealook.com/dist_photocost.php?aid={{ $fitransaction->keyv }}'>Distribute?</a>
+                    <a href='//dev.irealook.com/dist_photocost.php?aid={{ $fitransaction->keyv }}'>Distribute?</a>
+                    Distributed
+
+                </td>
 
             </tr>
         @endforeach

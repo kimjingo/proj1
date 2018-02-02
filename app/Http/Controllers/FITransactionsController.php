@@ -65,7 +65,8 @@ class FITransactionsController extends Controller
 
 
         // $fitransactions = DB::table('atr')->where('fdate','=',$fdate)->orderby('fromdoc')->orderby('transaction_type')->orderby('amount_type')->orderby('tdate','desc')->simplePaginate(10);
-        $fitransactions = DB::table('atr')
+        $fitransactions = DB::table('atr as a')
+            ->leftJoin('dist as d', 'd.aid','=','a.keyv')
             ->where('pdate', '>=', $fdate)->where('pdate', '<', $tdate)
             ->when($fromdoc, function($query) use ($fromdoc) { return $query->where('fromdoc', $fromdoc); })
             ->when($acc, function($query) use ($acc) { return $query->where('acc', $acc); })
@@ -81,19 +82,7 @@ class FITransactionsController extends Controller
             ->orderby('keyv')
             ->orderby('ba')
             ->simplePaginate(10);
-            // ->where('created_at', '>=', $cfdate)->where('created_at', '<', $ctdate)
-            // ->when($isPosted, function($query) use($isPosted) {
-            //         if($isPosted == 1){
-            //             return $query->whereNotNull('postingflag');
-            //         }elseif($isPosted == 2){
-            //             return $query->whereNull('postingflag');
-            //         }
-            //     }
-                // ->on('b.fromdoc', '=', 'a.fromdoc')
-
-            // ->when($request->customer_id, function($query) use ($request){return $query->where('customer_id', $request->customer_id); })
-            // ->when($request->customer_id, function($query) use ($request){return $query->where('customer_id', $request->customer_id); })
-            // ->when($request->customer_id, function($query) use ($request){return $query->where('customer_id', $request->customer_id); })
+        dd($fitransactions);
 
         // return view('postingrules.list',compact('rules','fromdoc','fromdocs') );
         return view('fitransactions.list', compact('fdate','tdate','acc','amt','orderid','material','vendor','clearing','ttype','remark','fromdoc','ba','brand','cfdate','ctdate','bas','mps','fromdocs','ttypes','brands','vendors','accs','fitransactions') );//

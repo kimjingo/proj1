@@ -48,6 +48,20 @@
             @endforeach
         </select>
 
+        <select id="acc" name="acc" class="form-control">
+            <option value=>Acount</option>
+            @foreach($accs as $val)
+                <option value="{{$val->accid}}"
+                    @if($val->accid == $acc)
+                         selected
+                    @endif
+                >
+                    {{ $val->accid }}
+                </option>
+            @endforeach
+        </select>
+
+
         <select id="vendor" name="vendor" class="form-control">
             <option value=>Vendor</option>
             @foreach($vendors as $val)
@@ -149,6 +163,7 @@
             'vendor' => $vendor,
             'cfdate' => $cfdate,
             'ctdate' => $ctdate,
+            'acc' => $acc,
             'amt' => $amt]
         )->links() 
     }}

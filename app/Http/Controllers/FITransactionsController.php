@@ -14,6 +14,7 @@ class FITransactionsController extends Controller
     //
     public function index() {
         $ttdate = new Carbon('last day of last month');
+        // $tdate = $ttdate->addDay()->toDateString();
         $tdate = $ttdate->addDay()->toDateString();
 
         $ffdate = new Carbon('first day of last year');
@@ -63,11 +64,18 @@ class FITransactionsController extends Controller
         
         $accs = DB::table('gacc')->distinct()->get(['accid']);
 
+        $tdate1 = new Carbon($tdate);
+        $tdate1->endOfDay();
+        $qtdate = $tdate1->toDateTimeString();
 
+        $ctdate1 = new Carbon($ctdate);
+        $ctdate1->endOfDay();
+        $qctdate = $ctdate1->toDateTimeString();
         // $fitransactions = DB::table('atr')->where('fdate','=',$fdate)->orderby('fromdoc')->orderby('transaction_type')->orderby('amount_type')->orderby('tdate','desc')->simplePaginate(10);
         $fitransactions = DB::table('atr as a')
             ->leftJoin('dist as d', 'd.aid','=','a.keyv')
-            ->where('pdate', '>=', $fdate)->where('pdate', '<', $tdate)
+            ->where('pdate', '>=', $fdate)->where('pdate', '<=', $qtdate)
+            ->where('a.created_at', '>=', $cfdate)->where('a.created_at', '<=', $qctdate)
             ->when($fromdoc, function($query) use ($fromdoc) { return $query->where('fromdoc', $fromdoc); })
             ->when($acc, function($query) use ($acc) { return $query->where('acc', $acc); })
             ->when($amt, function($query) use ($amt) { return $query->where('amt', $amt)->orWhere('amt',$amt*-1); })

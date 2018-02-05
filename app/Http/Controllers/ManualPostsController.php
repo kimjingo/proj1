@@ -19,7 +19,8 @@ class ManualPostsController extends Controller
     {
         //
         $ttdate = new Carbon('last day of last month');
-        $tdate = $ttdate->addDay()->toDateString();
+        // $tdate = $ttdate->addDay()->toDateString();
+        $tdate = $ttdate->toDateString();
 
         $ffdate = new Carbon('first day of last year');
         $fdate = $ffdate->toDateString();
@@ -59,8 +60,19 @@ class ManualPostsController extends Controller
         $brands = DB::table('atr')->distinct()->get(['brand']);
         
         // $manualinputs = DB::table('manualposts')->where('created_at','>','2018-01-08')->orderby('updated_at','desc')->limit(100)->get();
+        $tdate1 = new Carbon($tdate);
+        $tdate1->endOfDay();
+        $qtdate = $tdate1->toDateTimeString();
+
+        $ctdate1 = new Carbon($ctdate);
+        $ctdate1->endOfDay();
+        $qctdate = $ctdate1->toDateTimeString();
+
+        // dd($qtdate);
+
         $manualinputs = DB::table('manualposts')
-          ->where('pdate', '>=', $fdate)->where('pdate', '<', $tdate)
+            ->where('pdate', '>=', $fdate)->where('pdate', '<=', $qtdate)
+            ->where('created_at', '>=', $fdate)->where('created_at', '<=', $qctdate)
             ->when($ba, function($query) use ($ba) { return $query->where('ba', $ba); })
             ->when($vendor, function($query) use ($vendor) { return $query->where('mp', $vendor); })
             ->when($material, function($query) use ($material) { return $query->where('material', $material); })

@@ -51,19 +51,19 @@ class FITransactionsController extends Controller
         $ctdate1->endOfDay();
         $qctdate = $ctdate1->toDateTimeString();
 
-        $fromdocs = DB::table('atr')
+        $fromdocs = DB::table('atr as a')
                         ->where('pdate', '>=', $fdate)->where('pdate', '<', $qtdate)
                         ->where('a.created_at', '>=', $cfdate)->where('a.created_at', '<=', $qctdate)
                         ->distinct()->get(['fromdoc']);
 
-        $vendors = DB::table('atr')
+        $vendors = DB::table('atr as a')
             ->where('pdate', '>=', $fdate)->where('pdate', '<', $qtdate)
             ->where('a.created_at', '>=', $cfdate)->where('a.created_at', '<=', $qctdate)
             ->when($fromdoc, function($query) use ($fromdoc) { return $query->where('fromdoc',$fromdoc);})
             ->when($ttype, function($query) use ($ttype) { return $query->where('ttype',$ttype);})
             ->distinct()->get(['mp as vendor']);
 
-        $ttypes = DB::table('atr')
+        $ttypes = DB::table('atr as a')
             ->where('pdate', '>=', $fdate)->where('pdate', '<', $qtdate)
             ->where('a.created_at', '>=', $cfdate)->where('a.created_at', '<=', $qctdate)
             ->when($fromdoc, function($query) use ($fromdoc) { return $query->where('fromdoc',$fromdoc);})

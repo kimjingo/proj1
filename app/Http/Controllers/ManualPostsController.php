@@ -39,6 +39,13 @@ class ManualPostsController extends Controller
         $cfdate = Input::get('cfdate', $fdate);
         $ctdate = Input::get('ctdate', $tdate);
 
+        $tdate1 = new Carbon($tdate);
+        $tdate1->endOfDay();
+        $qtdate = $tdate1->toDateTimeString();
+
+        $ctdate1 = new Carbon($ctdate);
+        $ctdate1->endOfDay();
+        $qctdate = $ctdate1->toDateTimeString();
         // dd($isPosted);
 
         $bas = [1,2];
@@ -60,13 +67,6 @@ class ManualPostsController extends Controller
         $brands = DB::table('atr')->distinct()->get(['brand']);
         
         // $manualinputs = DB::table('manualposts')->where('created_at','>','2018-01-08')->orderby('updated_at','desc')->limit(100)->get();
-        $tdate1 = new Carbon($tdate);
-        $tdate1->endOfDay();
-        $qtdate = $tdate1->toDateTimeString();
-
-        $ctdate1 = new Carbon($ctdate);
-        $ctdate1->endOfDay();
-        $qctdate = $ctdate1->toDateTimeString();
 
         // dd($qtdate);
 

@@ -43,18 +43,29 @@ class FITransactionsController extends Controller
         $bas = [1,2];
         $mps = DB::table('atr')->distinct()->get(['mp']);
         
+        $tdate1 = new Carbon($tdate);
+        $tdate1->endOfDay();
+        $qtdate = $tdate1->toDateTimeString();
+
+        $ctdate1 = new Carbon($ctdate);
+        $ctdate1->endOfDay();
+        $qctdate = $ctdate1->toDateTimeString();
+
         $fromdocs = DB::table('atr')
-                        ->where('pdate', '>=', $fdate)->where('pdate', '<', $tdate)
+                        ->where('pdate', '>=', $fdate)->where('pdate', '<', $qtdate)
+                        ->where('a.created_at', '>=', $cfdate)->where('a.created_at', '<=', $qctdate)
                         ->distinct()->get(['fromdoc']);
 
         $vendors = DB::table('atr')
-            ->where('pdate', '>=', $fdate)->where('pdate', '<', $tdate)
+            ->where('pdate', '>=', $fdate)->where('pdate', '<', $qtdate)
+            ->where('a.created_at', '>=', $cfdate)->where('a.created_at', '<=', $qctdate)
             ->when($fromdoc, function($query) use ($fromdoc) { return $query->where('fromdoc',$fromdoc);})
             ->when($ttype, function($query) use ($ttype) { return $query->where('ttype',$ttype);})
             ->distinct()->get(['mp as vendor']);
 
         $ttypes = DB::table('atr')
-            ->where('pdate', '>=', $fdate)->where('pdate', '<', $tdate)
+            ->where('pdate', '>=', $fdate)->where('pdate', '<', $qtdate)
+            ->where('a.created_at', '>=', $cfdate)->where('a.created_at', '<=', $qctdate)
             ->when($fromdoc, function($query) use ($fromdoc) { return $query->where('fromdoc',$fromdoc);})
             ->when($ttype, function($query) use ($ttype) { return $query->where('ttype',$ttype);})
             ->distinct()->get(['ttype']);
@@ -64,13 +75,6 @@ class FITransactionsController extends Controller
         
         $accs = DB::table('gacc')->distinct()->get(['accid']);
 
-        $tdate1 = new Carbon($tdate);
-        $tdate1->endOfDay();
-        $qtdate = $tdate1->toDateTimeString();
-
-        $ctdate1 = new Carbon($ctdate);
-        $ctdate1->endOfDay();
-        $qctdate = $ctdate1->toDateTimeString();
         // $fitransactions = DB::table('atr')->where('fdate','=',$fdate)->orderby('fromdoc')->orderby('transaction_type')->orderby('amount_type')->orderby('tdate','desc')->simplePaginate(10);
         $fitransactions = DB::table('atr as a')
             ->leftJoin('dist as d', 'd.aid','=','a.keyv')

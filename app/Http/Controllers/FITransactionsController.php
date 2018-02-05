@@ -75,6 +75,7 @@ class FITransactionsController extends Controller
         
         $accs = DB::table('gacc')->distinct()->get(['accid']);
 
+// dd($qtdate,$qctdate);
         // $fitransactions = DB::table('atr')->where('fdate','=',$fdate)->orderby('fromdoc')->orderby('transaction_type')->orderby('amount_type')->orderby('tdate','desc')->simplePaginate(10);
         $fitransactions = DB::table('atr as a')
             ->leftJoin('dist as d', 'd.aid','=','a.keyv')
@@ -82,7 +83,7 @@ class FITransactionsController extends Controller
             ->where('a.created_at', '>=', $cfdate)->where('a.created_at', '<=', $qctdate)
             ->when($fromdoc, function($query) use ($fromdoc) { return $query->where('fromdoc', $fromdoc); })
             ->when($acc, function($query) use ($acc) { return $query->where('acc', $acc); })
-            ->when($amt, function($query) use ($amt) { return $query->where('amt', $amt)->orWhere('amt',$amt*-1); })
+            ->when($amt, function($query) use ($amt) { return $query->whereRaw('abs(amt)=?', [$amt]); })
             ->when($vendor, function($query) use ($vendor) { return $query->where('mp', $vendor); })
             ->when($material, function($query) use ($material) { return $query->where('material', $material); })
             ->when($clearing, function($query) use ($clearing) { return $query->where('clearing', $clearing); })
@@ -95,6 +96,7 @@ class FITransactionsController extends Controller
             ->orderby('ba')
             ->simplePaginate(10);
         // dd($fitransactions);
+            // ->when($amt, function($query) use ($amt) { return $query->where('amt', $amt)->orWhere('amt',$amt*-1); })
 
         // return view('postingrules.list',compact('rules','fromdoc','fromdocs') );
         return view('fitransactions.list', compact('fdate','tdate','acc','amt','orderid','material','vendor','clearing','ttype','remark','fromdoc','ba','brand','cfdate','ctdate','bas','mps','fromdocs','ttypes','brands','vendors','accs','fitransactions') );//

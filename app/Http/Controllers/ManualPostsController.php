@@ -77,7 +77,7 @@ class ManualPostsController extends Controller
             ->when($vendor, function($query) use ($vendor) { return $query->where('mp', $vendor); })
             ->when($material, function($query) use ($material) { return $query->where('material', $material); })
             ->when($ttype, function($query) use ($ttype) { return $query->where('ttype', $ttype); })
-            ->when($amt, function($query) use ($amt) { return $query->where('amt', $amt)->orWhere('amt',$amt*-1); })
+            ->when($amt, function($query) use ($amt) { return $query->whereRaw('abs(amt)=?', [$amt]); })
             ->when($remark, function($query) use ($remark) { return $query->where('remark','LIKE', '%'.$remark.'%'); })
             ->when($isPosted, function($query) use($isPosted) {
                     if($isPosted == 1){
@@ -90,6 +90,7 @@ class ManualPostsController extends Controller
             ->orderby('pdate')
         ->orderby('created_at','desc')->simplePaginate(10);
 
+            // ->when($amt, function($query) use ($amt) { return $query->where('amt', $amt)->orWhere('amt',$amt*-1); })
         return view('manualposts.list',compact('manualinputs','tdate','fdate','amt','material','vendor','ttype','remark','ba','isPosted','cfdate','ctdate','bas','ttypes','brand','vendors') );
 
     }

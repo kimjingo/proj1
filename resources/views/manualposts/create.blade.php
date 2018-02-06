@@ -18,6 +18,7 @@
             <th>What</th>
             <th>Why</th>
             <th>Ref#</th>
+            <th>Ref#2</th>
             <th>Who paid*</th>
             <th>BA</th>
             <th>+/-</th>
@@ -25,7 +26,7 @@
         <tbody>
         <tr class="sample">
           <td class="col-md-5">
-            <input style="width:150px;" type="date" class="form-control" id="pdate" name="pdate[]" value="{{ $pdate->toDateString() }}" >
+            <input style="width:130px;" type="date" class="form-control" id="pdate" name="pdate[]" value="{{ $pdate->toDateString() }}" >
           </td>
           <td>
             <input style="width:80px;" type="number" class="form-control" id="amt" name="amt[]" step="0.01" placeholder="Amount">
@@ -59,6 +60,9 @@
           </td>
           <td>
             <input style="width:50px;" type="text" class="form-control" id="checkno" name="checkno[]" placeholder="Ref#:check# or invoice#" />
+          </td>
+          <td>
+            <input style="width:50px;" type="text" class="form-control" id="dr_clearing" name="dr_clearing[]" placeholder="in case of check" />
           </td>
           <td>
             <input style="width:100px;" type="text" list="paidbys" name="paidby[]" />

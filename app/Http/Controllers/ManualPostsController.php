@@ -167,6 +167,14 @@ class ManualPostsController extends Controller
                     $checkno = $request->checkno[$i];
                     
                 }
+
+                if (!$request->dr_clearing[$i]){
+                 $dr_clearing = '';
+
+                }else{
+                    $dr_clearing = $request->dr_clearing[$i];
+                    
+                }
                 
                 if (!$request->ba[$i]){
                  $ba = 1;
@@ -186,6 +194,7 @@ class ManualPostsController extends Controller
                     'material' => $material,
                     'remark' => $remark,
                     'checkno' => $checkno,
+                    'dr_clearing' => $dr_clearing,
                     'paidby' => $paidby,
                     'ba' => $ba,
 

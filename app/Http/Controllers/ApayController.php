@@ -22,7 +22,7 @@ class ApayController extends Controller
     {
         //
         $ttdate = new Carbon('last day of last month');
-        $tdate = $ttdate->addDay()->toDateString();
+        $tdate = $ttdate->toDateString();
 
         $ffdate = new Carbon('first day of last year');
         $fdate = $ffdate->toDateString();
@@ -45,6 +45,9 @@ class ApayController extends Controller
         $atypes = DB::table('apay2')->distinct()->get(['amount_type as atype']);
         $adescs = DB::table('apay2')->distinct()->get(['amount_description as adesc']);
 
+        $tdate1 = new Carbon($tdate);
+        $tdate1->endOfDay();
+        $qtdate = $tdate1->toDateTimeString();
 
 
         $apays = DB::table('apay2 AS a')
@@ -57,8 +60,7 @@ class ApayController extends Controller
                 ;
             })
             ->where('currency', '')
-            ->where('posted_date', '>=', $fdate)
-            ->where('posted_date', '<', $tdate)
+            ->where('posted_date', '>=', $fdate)->where('posted_date', '<=', $qtdate)
             ->when($ba, function($query) use ($ba) { return $query->where('ba', $ba); })
             ->when($ttype, function($query) use ($ttype) { return $query->where('a.transaction_type', $ttype); })
             ->when($amt, function($query) use ($amt) { return $query->where('amount', $amt)->orWhere('amount',$amt*-1); })

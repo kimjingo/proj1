@@ -422,7 +422,7 @@ class ManualPostsController extends Controller
             $now = \Carbon\Carbon::now();
             $fromdoc = 'manualpost';
 
-            $res = DB::insert("INSERT INTO atr(tid,no,pdate,acc,amt, mp,material, clearing,ttype,fromdoc, ba,remark,created_at,updated_at) SELECT ap.id,aa.aseq,ap.pdate,aa.acc,ap.amt*aa.dir, ap.mp,ap.material, ap.checkno,ap.ttype,?, ap.ba,ap.remark,?,? FROM manualposts ap, apay2_acc aa WHERE  aa.fromdoc=? AND ap.posting IS NULL AND ap.mp=aa.transaction_type AND ap.material=aa.amount_type AND ap.ttype=aa.ttype AND ap.id=?", [$fromdoc,$now,$now,$fromdoc,$request->id[$i]]);
+            $res = DB::insert("INSERT INTO atr(tid,no,pdate,acc,amt, mp,material, clearing,ttype,fromdoc, ba,remark,created_at,updated_at) SELECT ap.id,aa.aseq,ap.pdate,aa.acc,ap.amt*aa.dir, ap.mp,ap.material, if((ap.ttype='check' and aa.acc!='lck'), ap.dr_clearing, ap.checkno),ap.ttype,?, ap.ba,ap.remark,?,? FROM manualposts ap, apay2_acc aa WHERE  aa.fromdoc=? AND ap.posting IS NULL AND ap.mp=aa.transaction_type AND ap.material=aa.amount_type AND ap.ttype=aa.ttype AND ap.id=?", [$fromdoc,$now,$now,$fromdoc,$request->id[$i]]);
 
             if($res){
                 DB::table('manualposts')
@@ -436,3 +436,9 @@ class ManualPostsController extends Controller
         
     }
 }
+
+// select acc, if((ap.ttype='check' and aa.acc!='lck'), ap.dr_clearing, ap.checkno) 
+// FROM manualposts ap, apay2_acc aa 
+// WHERE
+// ap.mp=aa.transaction_type AND ap.material=aa.amount_type AND ap.ttype=aa.ttype
+// limit 10;

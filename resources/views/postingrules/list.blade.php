@@ -93,7 +93,7 @@
             <th>Material</th>
             <th>Seq</th>
             <th>Acc</th>
-            <th>Dic</th>
+            <th>Dir</th>
             <th>Action</th>
         </thead>
         <tbody>

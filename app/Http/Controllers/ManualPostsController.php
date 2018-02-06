@@ -271,6 +271,11 @@ class ManualPostsController extends Controller
             'mp' => 'required',
         ]);
 
+        if($request->dr_clearing) {
+            $clearingkey=$request->dr_clearing;
+        }else{
+            $clearingkey=$request->checkno;
+        }
 
         DB::table('manualposts')->where('id',$request->id)
             ->update([
@@ -282,6 +287,7 @@ class ManualPostsController extends Controller
             'material' => $request->material,
             'remark' => $request->remark,
             'checkno' => $request->checkno,
+            'dr_clearing' => $clearingkey,
             'posting' => $request->posted_at,
             'paidby' => $request->paidby,
             'ba' => $request->ba,

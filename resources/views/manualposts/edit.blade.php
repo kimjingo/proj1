@@ -19,6 +19,7 @@
             <th>What</th>
             <th>Why</th>
             <th>Ref#</th>
+            <th>Ref#2</th>
             <th>Who paid*</th>
             <th>BA</th>
         </thead>
@@ -59,6 +60,9 @@
           </td>
           <td>
             <input style="width:50px;" type="text" class="form-control" id="checkno" name="checkno"  value="{{ $manualinput->checkno }}" />
+          </td>
+          <td>
+            <input style="width:50px;" type="text" class="form-control" id="dr_clearing" name="dr_clearing" placeholder="in case of check" />
           </td>
           <td>
             <input style="width:100px;" type="text" list="paidbys" name="paidby"  value="{{ $manualinput->paidby }}" />

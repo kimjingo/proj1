@@ -95,3 +95,7 @@ Route::post('/sidemenus/store', 'SidemenusController@store');
 
 Route::get('/fitransactions', 'FITransactionsController@index');
 Route::get('/fitransactions/show/{id}', 'FITransactionsController@show');
+
+Route::get('/distribute', 'DistributeController@index');
+Route::get('/distribute/show/{id}', 'DistributeController@show');
+Route::post('/distribute/post/{id}', 'DistributeController@post');

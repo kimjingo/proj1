@@ -15,7 +15,7 @@ class FITransactionsController extends Controller
     public function index() {
         $ttdate = new Carbon('last day of last month');
         // $tdate = $ttdate->addDay()->toDateString();
-        $tdate = $ttdate->addDay()->toDateString();
+        $tdate = $ttdate->toDateString();
 
         $ffdate = new Carbon('first day of last year');
         $fdate = $ffdate->toDateString();

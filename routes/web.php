@@ -99,3 +99,6 @@ Route::get('/fitransactions/show/{id}', 'FITransactionsController@show');
 Route::get('/distribute', 'DistributeController@index');
 Route::get('/distribute/show/{id}', 'DistributeController@show');
 Route::post('/distribute/post/{id}', 'DistributeController@post');
+
+
+Route::get('/distribute/test/{id}', 'DistributeController@test');

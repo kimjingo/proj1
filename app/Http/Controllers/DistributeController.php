@@ -120,39 +120,94 @@ class DistributeController extends Controller
         return view('distribute.list', compact('fdate','tdate','acc','amt','orderid','material','vendor','clearing','ttype','remark','fromdoc','ba','brand','cfdate','ctdate','bas','mps','fromdocs','ttypes','brands','vendors','accs','distribute','isPosted') );//
 	}
 
-	private function getMat($id)
+
+    private function getMatFromFbasf($id){
+            // case "fbasf":
+        $todistribute = DB::table('dist as d')
+            ->Join('atr as a', 'd.aid','=','a.keyv')
+            ->where('d.aid',$id)
+            ->first();
+
+        $originaltotal = $todistribute->amt;
+        $dd = json_decode($todistribute->dd);
+
+        $key = $dd->data[0]->feedate;        
+        // fbasf
+        $fbasfs = DB::table('fbasf as f')
+            ->select('brand','matid','monthly_storage_fee as rate')
+            ->Join('ainv as a', 'f.fnsku','=','a.fnsku')
+            ->where('monthofcharge',$key)
+            ->get();
+            
+        select asin,fnsku,monthly_storage_fee from fbasf where monthofcharge="2017-01-00 00:00:00";
+        dd($key);
+
+            
+
+    }
+
+    private function getMatFromLtsf($id){
+            // case "ltsf":
+
+
+            
+
+    }
+
+    private function getMatFromFbash($id){
+            // case "fbash":
+
+
+
+            
+
+    }
+
+    private function getMatFromMonthlyStock($id){
+            // case "monthly_brand_mat_qty":
+
+
+
+    }
+
+    private function getMatAmt($id)
     {
         //
         // case : mat,fbasf,ltsf,fbass,fbash
-		$columns = DB::getSchemaBuilder()->getColumnListing('atr');
-		// $dcolumns = DB::getSchemaBuilder()->getColumnListing('dist');
-		// dd($columns);
-		$todistribute = DB::table('dist as d')
+        // $dcolumns = DB::getSchemaBuilder()->getColumnListing('dist');
+        // dd($columns);
+        $todistribute = DB::table('dist as d')
             ->Join('atr as a', 'd.aid','=','a.keyv')
-	        ->where('d.aid',$id)
-	        ->first();
+            ->where('d.aid',$id)
+            ->first();
 
-	    $originaltotal = $todistribute->amt;
+        $originaltotal = $todistribute->amt;
         $dd = json_decode($todistribute->dd);
 
         switch ($dd->table){
             case "mat":
-
+                $matdata = getMatFromMat($id);
             break;
 
             case "fbasf":
+                $matdata = getMatFromFbasf($id);
+
             break;
 
             case "ltsf":
-            break;
+                $matdata = getMatFromLtsf($id);
 
-            case "fbass":
             break;
 
             case "fbash":
+                $matdata = getMatFromFbash($id);
+
+
             break;
 
             case "monthly_brand_mat_qty":
+                $matdata = getMatFromMonthlyStock($id);
+
             break;
 
         }
@@ -163,76 +218,77 @@ class DistributeController extends Controller
         $remainingtotal = $todistribute->amt;
 
         // foreach($dd->data as $row){
-    	foreach ($dd->data as $key => $row){
-	        if($remainingtotal){
-	        	if($remainingtotal > $amtperd){
-		        	$wskudata[] = [
-		        		"vendor" => $row->vendor,
-		        		"wsku" => $row->wsku,
-		        		"amt" => $amtperd
-		        	];
+        foreach ($dd->data as $key => $row){
+            if($remainingtotal){
+                if($remainingtotal > $amtperd){
+                    $wskudata[] = [
+                        "vendor" => $row->vendor,
+                        "wsku" => $row->wsku,
+                        "amt" => $amtperd
+                    ];
 
-		        	$remainingtotal = $remainingtotal - $amtperd;
+                    $remainingtotal = $remainingtotal - $amtperd;
 
-	        	}else{
-	        		$wskudata[] = [
-		        		"vendor" => $row->vendor,
-		        		"wsku" => $row->wsku,
-		        		"amt" => $remainingtotal
-		        	];
+                }else{
+                    $wskudata[] = [
+                        "vendor" => $row->vendor,
+                        "wsku" => $row->wsku,
+                        "amt" => $remainingtotal
+                    ];
 
-		        	$remainingtotal = 0;
-	        	}
-	        }
+                    $remainingtotal = 0;
+                }
+            }
         }
 
-    	foreach ($wskudata as $key => $rr){
-    		// dd($rr['vendor']);
-    		$m2d = DB::table('mat')
-    			->select('vendor', 'matid')
-    			->where('vendor', $rr['vendor'])
-    			->where('wsku', $rr['wsku'])
-    			->whereNull('invalid')
-    			->get();
+        foreach ($wskudata as $key => $rr){
+            // dd($rr['vendor']);
+            $m2d = DB::table('mat')
+                ->select('vendor', 'matid')
+                ->where('vendor', $rr['vendor'])
+                ->where('wsku', $rr['wsku'])
+                ->whereNull('invalid')
+                ->get();
 
-    		$remainingtotal = $rr['amt'];
-    		$mlen = count($m2d);
-    		$amtperm = ceil($remainingtotal * 100 / $mlen) / 100;
+            $remainingtotal = $rr['amt'];
+            $mlen = count($m2d);
+            $amtperm = ceil($remainingtotal * 100 / $mlen) / 100;
 
-    		foreach($m2d as $key => $fval){
+            foreach($m2d as $key => $fval){
 
-		        if($remainingtotal){
-		        	if($remainingtotal > $amtperm){
-			        	$matdata[] = [
-			        		"vendor" => $fval->vendor,
-			        		"wsku" => $rr['wsku'],
-			        		"wamt" => $rr['amt'],
-			        		"matid" => $fval->matid,
-			        		"amt" => $amtperm
-			        	];
+                if($remainingtotal){
+                    if($remainingtotal > $amtperm){
+                        $matdata[] = [
+                            "vendor" => $fval->vendor,
+                            "wsku" => $rr['wsku'],
+                            "wamt" => $rr['amt'],
+                            "matid" => $fval->matid,
+                            "amt" => $amtperm
+                        ];
 
-			        	$remainingtotal = $remainingtotal - $amtperm;
+                        $remainingtotal = $remainingtotal - $amtperm;
 
-		        	}else{
-		        		$matdata[] = [
-			        		"vendor" => $fval->vendor,
-			        		"wsku" => $rr['wsku'],
-			        		"wamt" => $rr['amt'],
-			        		"matid" => $fval->matid,
-			        		"amt" => $remainingtotal
-			        	];
+                    }else{
+                        $matdata[] = [
+                            "vendor" => $fval->vendor,
+                            "wsku" => $rr['wsku'],
+                            "wamt" => $rr['amt'],
+                            "matid" => $fval->matid,
+                            "amt" => $remainingtotal
+                        ];
 
-			        	$remainingtotal = 0;
-		        	}
-		        }
-    		}
+                        $remainingtotal = 0;
+                    }
+                }
+            }
         }
 
         
 
+		$columns = DB::getSchemaBuilder()->getColumnListing('atr');
 
         // dd($matdata);
-	    // dd($todistribute->amt, $dlen, $amtperd,$wskudata);
+        // dd($todistribute->amt, $dlen, $amtperd,$wskudata);
 
         return compact('matdata', 'todistribute' ,'columns','originaltotal') ;//
         // return ['matdata' => $matdata, 'todistribute' => $todistribute, 'columns' => $columns, 'originaltotal' => $originaltotal ];
@@ -263,7 +319,7 @@ class DistributeController extends Controller
             case "ltsf":
             break;
 
-            case "fbass":
+            case "monthly_brand_mat_qty":
             break;
 
             case "fbash":
@@ -349,11 +405,18 @@ class DistributeController extends Controller
     {
         //
         $now = \Carbon\Carbon::now();
-		$d2d = $this->getMat($id);
+		$d2d = $this->getMatAmt($id);
+        // { 'totalamt': $atr->amt, 
+        // 'matdata': [
+        //     {'brand':$table->brand, 'mat':$table->mat, 'rate':$table->rate},
+        //     {},
+        //     {}
+        // ]}
+
 		$i=0;
 		foreach($d2d['matdata'] as $mat){
 
-			$res = DB::insert("INSERT INTO atr(tid,no,pdate,acc,amt,qty,orderid,itemid,mp,clearing,ttype,fromdoc,ba, remark, brand, material, created_at,updated_at) SELECT tid,?,pdate,acc,?,qty,orderid,itemid,mp,clearing,ttype,?,ba,remark,?, ?, ?,? from atr where keyv=?", [$i,$mat['amt'],'distribute',$mat['matid'],$mat['vendor'],$now,$now,$id]);
+			$res = DB::insert("INSERT INTO atr(tid,no,pdate,acc,amt,qty,orderid,itemid,mp,clearing,ttype,fromdoc,ba, remark, brand, material, created_at,updated_at) SELECT tid,?,pdate,acc,?,qty,orderid,itemid,mp,clearing,ttype,?,ba,remark,?, ?, ?,? from atr where keyv=?", [$i,$mat['amt'],'distribute',$mat['matid'],$mat['brand'],$now,$now,$id]);
 			$i++;
 		}
 
@@ -379,5 +442,11 @@ class DistributeController extends Controller
         //
         $data2distribute = $this->getMat($id);
         return view('distribute.show', compact('data2distribute','id') );//
+    }
+
+    public function test($id)
+    {
+        //
+        $this->getMatFromFbasf($id);
     }
 }

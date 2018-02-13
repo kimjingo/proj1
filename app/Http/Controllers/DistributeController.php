@@ -121,52 +121,117 @@ class DistributeController extends Controller
 	}
 
 
-    private function getMatFromFbasf($id){
+    private function &getMatFromFbasf($id,&$dd){
             // case "fbasf":
-        $todistribute = DB::table('dist as d')
-            ->Join('atr as a', 'd.aid','=','a.keyv')
-            ->where('d.aid',$id)
-            ->first();
-
-        $originaltotal = $todistribute->amt;
-        $dd = json_decode($todistribute->dd);
 
         $key = $dd->data[0]->feedate;        
         // fbasf
+        $totalofthemonth = DB::table('fbasf')
+            ->where('monthofcharge',$key)
+            ->sum('monthly_storage_fee');
+
         $fbasfs = DB::table('fbasf as f')
-            ->select('brand','matid','monthly_storage_fee as rate')
+            ->select(DB::raw('brand, matid, sum( Average_quantity_on_hand+Average_quantity_pending_removal) qty, sum(monthly_storage_fee) as rate'))
             ->Join('ainv as a', 'f.fnsku','=','a.fnsku')
             ->where('monthofcharge',$key)
+            ->groupBy('brand', 'matid')
+            ->orderBy('rate', 'desc')
             ->get();
-            
-        select asin,fnsku,monthly_storage_fee from fbasf where monthofcharge="2017-01-00 00:00:00";
-        dd($key);
+        
+        $matdata = array(
+            'total' => $totalofthemonth,
+            'mats' => $fbasfs
+        );
+
+        return $matdata;
+        // return { 'total'}
+        // select asin,fnsku,monthly_storage_fee from fbasf where monthofcharge="2017-01-00 00:00:00";
+        // dd($key);
 
             
 
     }
 
-    private function getMatFromLtsf($id){
+    private function &getMatFromLtsf($id,&$dd){
             // case "ltsf":
+        $key = $dd->data[0]->feedate;        
+        // fbasf
+        $totalofthemonth = DB::table('ltsf')
+            ->select(DB::raw('SUM(fee6+fee12) as total'))
+            ->where('snapshot_date',$key)
+            ->first();
+            // ->sum('fee6+fee12');
+        // dd($totalofthemonth->total);
 
+        $fbasfs = DB::table('ltsf as f')
+            ->select(DB::raw('brand, matid, sum( qty6+qty12) qty, sum(fee6+fee12) as rate'))
+            ->Join('ainv as a', 'f.fnsku','=','a.fnsku')
+            ->where('snapshot_date',$key)
+            ->groupBy('brand', 'matid')
+            ->orderBy('rate', 'desc')
+            ->get();
+        
+        $matdata = array(
+            'total' => $totalofthemonth->total,
+            'mats' => $fbasfs
+        );
 
-            
+        return $matdata;
 
     }
 
-    private function getMatFromFbash($id){
+    private function &getMatFromFbash($id,&$dd){
             // case "fbash":
+        $key = $dd->data[0]->fshipmentid;        
+        // fbasf
+        $totalofthemonth = DB::table('fbash')
+            ->select(DB::raw('SUM(qtysent) as total'))
+            ->where('fshipmentid',$key)
+            ->first();
+            // ->sum('fee6+fee12');
+        // dd($totalofthemonth->total);
 
+        $fbasfs = DB::table('fbash as f')
+            ->select(DB::raw('brand, matid, sum(qtysent) qty, sum(qtysent) as rate'))
+            ->Join('ainv as a', 'f.fnsku','=','a.fnsku')
+            ->where('fshipmentid',$key)
+            ->groupBy('brand', 'matid')
+            ->orderBy('rate', 'desc')
+            ->get();
+        
+        $matdata = array(
+            'total' => $totalofthemonth->total,
+            'mats' => $fbasfs
+        );
 
-
-            
+        return $matdata;
 
     }
 
-    private function getMatFromMonthlyStock($id){
+    private function &getMatFromMonthlyStock($id,&$dd){
             // case "monthly_brand_mat_qty":
+        $key = $dd->data[0]->feedate;        
+        // fbasf
+        $totalofthemonth = DB::table('monthly_brand_mat_qty')
+            ->select(DB::raw('SUM(qty) as total'))
+            ->where('snapshot_date',$key)
+            ->first();
+            // ->sum('fee6+fee12');
+        // dd($totalofthemonth->total);
 
+        $fbasfs = DB::table('monthly_brand_mat_qty as f')
+            ->select(DB::raw('brand, mat matid, sum(qty) qty, sum(qty) as rate'))
+            ->where('pdate',$key)
+            ->groupBy('brand', 'matid')
+            ->orderBy('rate', 'desc')
+            ->get();
+        
+        $matdata = array(
+            'total' => $totalofthemonth->total,
+            'mats' => $fbasfs
+        );
 
+        return $matdata;
 
     }
 
@@ -181,116 +246,78 @@ class DistributeController extends Controller
             ->where('d.aid',$id)
             ->first();
 
-        $originaltotal = $todistribute->amt;
+            // ->select(DB::raw('amt, dd'))
+        // $originaltotal = $todistribute->amt;
         $dd = json_decode($todistribute->dd);
 
         switch ($dd->table){
             case "mat":
-                $matdata = getMatFromMat($id);
+                $matdata_ref = $this->getMatFromMat($id,$dd);
             break;
 
             case "fbasf":
-                $matdata = getMatFromFbasf($id);
+                $matdata_ref = $this->getMatFromFbasf($id,$dd);
 
             break;
 
             case "ltsf":
-                $matdata = getMatFromLtsf($id);
+                $matdata_ref = $this->getMatFromLtsf($id,$dd);
 
             break;
 
             case "fbash":
-                $matdata = getMatFromFbash($id);
+                $matdata_ref = $this->getMatFromFbash($id,$dd);
 
 
             break;
 
             case "monthly_brand_mat_qty":
-                $matdata = getMatFromMonthlyStock($id);
+                $matdata_ref = $this->getMatFromMonthlyStock($id,$dd);
 
             break;
 
         }
 
-        $dlen = count($dd->data);
-        $amtperd = ceil($todistribute->amt * 100 / $dlen)/100;
-        $totaltodistribute = $todistribute->amt;
+        $matdata['rtotal'] = $matdata_ref['total'];
         $remainingtotal = $todistribute->amt;
 
-        // foreach($dd->data as $row){
-        foreach ($dd->data as $key => $row){
-            if($remainingtotal){
-                if($remainingtotal > $amtperd){
-                    $wskudata[] = [
-                        "vendor" => $row->vendor,
-                        "wsku" => $row->wsku,
-                        "amt" => $amtperd
-                    ];
+        foreach($matdata_ref['mats'] as $key => $rval){
+            // ceil($todistribute->amt * 100 / $dlen)/100
+            $amtperm = ceil($todistribute->amt * 100 * $rval->rate / $matdata_ref['total'])/100;
 
-                    $remainingtotal = $remainingtotal - $amtperd;
+            if($remainingtotal){
+                if($remainingtotal > $amtperm){
+                    $matdata['mats'][] = array(
+                        "brand" => $rval->brand,
+                        "matid" => $rval->matid,
+                        "qty" => $rval->qty,
+                        "rate" => $rval->rate,
+                        "amt" => $amtperm,
+                    );
+
+                    $remainingtotal = $remainingtotal - $amtperm;
 
                 }else{
-                    $wskudata[] = [
-                        "vendor" => $row->vendor,
-                        "wsku" => $row->wsku,
+                    $matdata['mats'][] = array(
+                        "brand" => $rval->brand,
+                        "matid" => $rval->matid,
+                        "qty" => $rval->qty,
+                        "rate" => $rval->rate,
                         "amt" => $remainingtotal
-                    ];
+                    );
 
                     $remainingtotal = 0;
                 }
             }
         }
 
-        foreach ($wskudata as $key => $rr){
-            // dd($rr['vendor']);
-            $m2d = DB::table('mat')
-                ->select('vendor', 'matid')
-                ->where('vendor', $rr['vendor'])
-                ->where('wsku', $rr['wsku'])
-                ->whereNull('invalid')
-                ->get();
-
-            $remainingtotal = $rr['amt'];
-            $mlen = count($m2d);
-            $amtperm = ceil($remainingtotal * 100 / $mlen) / 100;
-
-            foreach($m2d as $key => $fval){
-
-                if($remainingtotal){
-                    if($remainingtotal > $amtperm){
-                        $matdata[] = [
-                            "vendor" => $fval->vendor,
-                            "wsku" => $rr['wsku'],
-                            "wamt" => $rr['amt'],
-                            "matid" => $fval->matid,
-                            "amt" => $amtperm
-                        ];
-
-                        $remainingtotal = $remainingtotal - $amtperm;
-
-                    }else{
-                        $matdata[] = [
-                            "vendor" => $fval->vendor,
-                            "wsku" => $rr['wsku'],
-                            "wamt" => $rr['amt'],
-                            "matid" => $fval->matid,
-                            "amt" => $remainingtotal
-                        ];
-
-                        $remainingtotal = 0;
-                    }
-                }
-            }
-        }
-
-        
-
-		$columns = DB::getSchemaBuilder()->getColumnListing('atr');
-
         // dd($matdata);
+        // return $matdata;
+        return array('matdata'=>$matdata, 'todistribute'=>$todistribute) ;//
+        // $columns = DB::getSchemaBuilder()->getColumnListing('atr');
+
         // dd($todistribute->amt, $dlen, $amtperd,$wskudata);
 
-        return compact('matdata', 'todistribute' ,'columns','originaltotal') ;//
         // return ['matdata' => $matdata, 'todistribute' => $todistribute, 'columns' => $columns, 'originaltotal' => $originaltotal ];
     }
 
@@ -401,27 +428,21 @@ class DistributeController extends Controller
         return compact('matdata', 'todistribute' ,'columns','originaltotal') ;//
     }
 
-	public function post($id)
+    public function post($id)
     {
         //
         $now = \Carbon\Carbon::now();
-		$d2d = $this->getMatAmt($id);
-        // { 'totalamt': $atr->amt, 
-        // 'matdata': [
-        //     {'brand':$table->brand, 'mat':$table->mat, 'rate':$table->rate},
-        //     {},
-        //     {}
-        // ]}
+        $d2d = $this->getMatAmt($id);
 
-		$i=0;
-		foreach($d2d['matdata'] as $mat){
+        $i=0;
+        foreach($d2d['matdata']['mats'] as $mat){
 
-			$res = DB::insert("INSERT INTO atr(tid,no,pdate,acc,amt,qty,orderid,itemid,mp,clearing,ttype,fromdoc,ba, remark, brand, material, created_at,updated_at) SELECT tid,?,pdate,acc,?,qty,orderid,itemid,mp,clearing,ttype,?,ba,remark,?, ?, ?,? from atr where keyv=?", [$i,$mat['amt'],'distribute',$mat['matid'],$mat['brand'],$now,$now,$id]);
-			$i++;
-		}
+            $res = DB::insert("INSERT INTO atr(tid,no,pdate,acc,amt,qty,orderid,itemid,mp,clearing,ttype,fromdoc,ba, remark, brand, material, created_at,updated_at) SELECT tid, ?,pdate,acc, ?, ?,orderid,itemid,mp,clearing,ttype, ?,ba,remark, ?, ?, ?, ? from atr where keyv=?", [$i, $mat['amt'], $mat['qty'], 'distribute', $mat['matid'], $mat['brand'], $now, $now, $id]);
+            $i++;
+        }
 
-		if($res) {
-			$res1 = DB::insert("INSERT INTO atr(tid,no,pdate,acc,amt,qty,orderid,itemid,mp,clearing,ttype,fromdoc,ba, remark, brand, material, created_at,updated_at) SELECT tid,no,pdate,acc,amt*-1,qty,orderid,itemid,mp,clearing,ttype,?,ba,remark,brand,material,?,? from atr where keyv=?", ['distribute',$now,$now,$id]);
+        if($res) {
+            $res1 = DB::insert("INSERT INTO atr(tid,no,pdate,acc,amt,qty,orderid,itemid,mp,clearing,ttype,fromdoc,ba, remark, brand, material, created_at,updated_at) SELECT tid,no,pdate,acc,amt*-1,qty,orderid,itemid,mp,clearing,ttype,?,ba,remark,brand,material,?,? from atr where keyv=?", ['distribute',$now,$now,$id]);
             
             if($res1){
 
@@ -440,13 +461,25 @@ class DistributeController extends Controller
 	public function show($id)
     {
         //
-        $data2distribute = $this->getMat($id);
-        return view('distribute.show', compact('data2distribute','id') );//
+        // $d2d = $this->getMatAmt($id);
+        // $d2d = 
+        $d2d = $this->getMatAmt($id);
+        // dd($d2d['matdata']);
+        // dd($d2d);
+        return view('distribute.show', compact('d2d') );//
     }
 
     public function test($id)
     {
         //
-        $this->getMatFromFbasf($id);
+        $todistribute = DB::table('dist as d')
+            ->Join('atr as a', 'd.aid','=','a.keyv')
+            ->where('d.aid',$id)
+            ->first();
+
+        $originaltotal = $todistribute->amt;
+        $dd = json_decode($todistribute->dd);
+
+        $this->getMatFromFbasf($id,$dd);
     }
 }

@@ -3,37 +3,33 @@
 @section('content')
 
 <div class="col-sm-8 blog-main">
-    <h1>A Financial Transaction</h1>
+    <h1>A Financial Transaction to Distribute</h1>
 
-<form class="form-inline" id="deactivateForm" method="post" action="/distribute/post/{{$id}}">
+<form class="form-inline" id="deactivateForm" method="post" action="/distribute/post/{{ $d2d['todistribute']->aid }}">
     {{csrf_field()}}
 
-
-    <?php $len = count($data2distribute['columns']) ; ?>
-
-    
     <table class="table">
         <tr>
             <th>Doc Type</th><th>Value</th>
         </tr>
         
-        @for($i=0;$i<$len;$i++)
+        @foreach($d2d['todistribute'] as $key => $val)
         <tr>
             <td>
-                {{ $data2distribute['columns'][$i] }}
+                {{ $key }}
             </td>
             <td>
-                {{ $data2distribute['todistribute']->{$data2distribute['columns'][$i]} }}
+                {{ $val }}
             </td>
         </tr>
-        @endfor
+        @endforeach
     
     </table>
 
     <table class="table">
         <thead>
             <tr>
-                <th>Brand</th><th>WSKU</th><th>WAmt</th><th>Matid</th><th>Amt</th>
+                <th>No</th><th>Brand</th><th>MAT</th><th>QTY</th><th>Rate</th><th>Amt</th>
             </tr>
         </thead>
         <tbody>
@@ -41,19 +37,22 @@
                 $total = 0;
             @endphp
 
-                @foreach($data2distribute['matdata'] as $key => $mat)
+                @foreach($d2d['matdata']['mats'] as $key => $mat)
                     <tr>
                         <td>
-                            {{ $mat['vendor'] }}
+                            {{ $key }}
                         </td>
                         <td>
-                            {{ $mat['wsku'] }}
-                        </td>
-                        <td>
-                            {{ $mat['wamt'] }}
+                            {{ $mat['brand'] }}
                         </td>
                         <td>
                             {{ $mat['matid'] }}
+                        </td>
+                        <td>
+                            {{ $mat['qty'] }}
+                        </td>
+                        <td>
+                            {{ $mat['rate'] }}
                         </td>
                         <td>
                             {{ $mat['amt'] }}
@@ -64,12 +63,12 @@
                     @endphp
                 @endforeach
 
-                <tr><td colspan=2>Total</td><td>{{$data2distribute['originaltotal']}}</td><td></td><td>{{$total}}</td></tr>
+                <tr><td colspan=2>Total</td><td>{{$d2d['todistribute']->amt}}</td><td></td><td>{{ $d2d['matdata']['rtotal'] }}</td><td>{{$total}}</td></tr>
         </tbody>    
     
     </table>
 
-    @if( round($total,3) == round($data2distribute['originaltotal'],3) )
+    @if( round($total,3) == round($d2d['todistribute']->amt,3) )
         <button type="submit" class="btn btn-primary">Post to Distribute</button>
     @endif
   

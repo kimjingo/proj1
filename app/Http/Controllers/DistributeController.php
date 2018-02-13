@@ -14,6 +14,9 @@ class DistributeController extends Controller
     //
     public function index() {
         $ttdate = new Carbon('last day of last month');
+        $now = \Carbon\Carbon::now();
+        // dd($now);
+
         $tdate = $ttdate->toDateString();
 
         $ffdate = new Carbon('first day of last year');
@@ -34,10 +37,17 @@ class DistributeController extends Controller
         $ba = Input::get('ba');
         $brand = Input::get('brand');
 
+        $table = Input::get('table');
+
+
         $cfdate = Input::get('cfdate', $fdate);
-        $ctdate = Input::get('ctdate', $tdate);
+        
+        $snow = $now->toDateString();
+        $ctdate = Input::get('ctdate', $snow);
 
         // dd($isPosted);
+        $isPosted = Input::get('isPosted',2);
+
 
         $bas = [1,2];
         $mps = DB::table('atr')->distinct()->get(['mp']);
@@ -72,14 +82,23 @@ class DistributeController extends Controller
         $brands = DB::table('atr')->distinct()->get(['brand']);
 
         
-        $accs = DB::table('gacc')->distinct()->get(['accid']);
+        $accs = DB::table('gacc')->where('accgrp', 'profitloss')->distinct()->get(['accid']);
+        // $tables = DB::table('dist')->select(DB::raw('dd->"$.table" `table`'))->groupBy('table')->get();
+        // dd($tables);
 
 // dd($qtdate,$qctdate);
         // $distribute = DB::table('atr')->where('fdate','=',$fdate)->orderby('fromdoc')->orderby('transaction_type')->orderby('amount_type')->orderby('tdate','desc')->simplePaginate(10);
         $distribute = DB::table('dist as d')
             ->Join('atr as a', 'd.aid','=','a.keyv')
-            // ->where('pdate', '>=', $fdate)->where('pdate', '<=', $qtdate)
-            // ->where('a.created_at', '>=', $cfdate)->where('a.created_at', '<=', $qctdate)
+            ->when($isPosted, function($query) use($isPosted) {
+                if($isPosted == 1){
+                    return $query->whereNotNull('posted_at');
+                }elseif($isPosted == 2){
+                    return $query->whereNull('posted_at');
+                }
+            })
+            ->where('pdate', '>=', $fdate)->where('pdate', '<=', $qtdate)
+            ->where('a.created_at', '>=', $cfdate)->where('a.created_at', '<=', $qctdate)
             // ->when($fromdoc, function($query) use ($fromdoc) { return $query->where('fromdoc', $fromdoc); })
             // ->when($acc, function($query) use ($acc) { return $query->where('acc', $acc); })
             // ->when($amt, function($query) use ($amt) { return $query->whereRaw('abs(amt)=?', [$amt]); })
@@ -98,12 +117,13 @@ class DistributeController extends Controller
             // ->when($amt, function($query) use ($amt) { return $query->where('amt', $amt)->orWhere('amt',$amt*-1); })
 
         // return view('postingrules.list',compact('rules','fromdoc','fromdocs') );
-        return view('distribute.list', compact('fdate','tdate','acc','amt','orderid','material','vendor','clearing','ttype','remark','fromdoc','ba','brand','cfdate','ctdate','bas','mps','fromdocs','ttypes','brands','vendors','accs','distribute') );//
+        return view('distribute.list', compact('fdate','tdate','acc','amt','orderid','material','vendor','clearing','ttype','remark','fromdoc','ba','brand','cfdate','ctdate','bas','mps','fromdocs','ttypes','brands','vendors','accs','distribute','isPosted') );//
 	}
 
 	private function getMat($id)
     {
         //
+        // case : mat,fbasf,ltsf,fbass,fbash
 		$columns = DB::getSchemaBuilder()->getColumnListing('atr');
 		// $dcolumns = DB::getSchemaBuilder()->getColumnListing('dist');
 		// dd($columns);
@@ -114,6 +134,29 @@ class DistributeController extends Controller
 
 	    $originaltotal = $todistribute->amt;
         $dd = json_decode($todistribute->dd);
+
+        switch ($dd->table){
+            case "mat":
+
+            break;
+
+            case "fbasf":
+            break;
+
+            case "ltsf":
+            break;
+
+            case "fbass":
+            break;
+
+            case "fbash":
+            break;
+
+            case "monthly_brand_mat_qty":
+            break;
+
+        }
+
         $dlen = count($dd->data);
         $amtperd = ceil($todistribute->amt * 100 / $dlen)/100;
         $totaltodistribute = $todistribute->amt;
@@ -195,6 +238,112 @@ class DistributeController extends Controller
         // return ['matdata' => $matdata, 'todistribute' => $todistribute, 'columns' => $columns, 'originaltotal' => $originaltotal ];
     }
 
+    private function getMatFromMat($id)
+    {
+        //
+        // case : mat,fbasf,ltsf,fbass,fbash
+        $columns = DB::getSchemaBuilder()->getColumnListing('atr');
+        // $dcolumns = DB::getSchemaBuilder()->getColumnListing('dist');
+        // dd($columns);
+        $todistribute = DB::table('dist as d')
+            ->Join('atr as a', 'd.aid','=','a.keyv')
+            ->where('d.aid',$id)
+            ->first();
+
+        $originaltotal = $todistribute->amt;
+        $dd = json_decode($todistribute->dd);
+
+        switch ($dd->table){
+            case "mat":
+            break;
+
+            case "fbasf":
+            break;
+
+            case "ltsf":
+            break;
+
+            case "fbass":
+            break;
+
+            case "fbash":
+            break;
+
+        }
+
+        $dlen = count($dd->data);
+        $amtperd = ceil($todistribute->amt * 100 / $dlen)/100;
+        $totaltodistribute = $todistribute->amt;
+        $remainingtotal = $todistribute->amt;
+
+        // foreach($dd->data as $row){
+        foreach ($dd->data as $key => $row){
+            if($remainingtotal){
+                if($remainingtotal > $amtperd){
+                    $wskudata[] = [
+                        "vendor" => $row->vendor,
+                        "wsku" => $row->wsku,
+                        "amt" => $amtperd
+                    ];
+
+                    $remainingtotal = $remainingtotal - $amtperd;
+
+                }else{
+                    $wskudata[] = [
+                        "vendor" => $row->vendor,
+                        "wsku" => $row->wsku,
+                        "amt" => $remainingtotal
+                    ];
+
+                    $remainingtotal = 0;
+                }
+            }
+        }
+
+        foreach ($wskudata as $key => $rr){
+            // dd($rr['vendor']);
+            $m2d = DB::table('mat')
+                ->select('vendor', 'matid')
+                ->where('vendor', $rr['vendor'])
+                ->where('wsku', $rr['wsku'])
+                ->whereNull('invalid')
+                ->get();
+
+            $remainingtotal = $rr['amt'];
+            $mlen = count($m2d);
+            $amtperm = ceil($remainingtotal * 100 / $mlen) / 100;
+
+            foreach($m2d as $key => $fval){
+
+                if($remainingtotal){
+                    if($remainingtotal > $amtperm){
+                        $matdata[] = [
+                            "vendor" => $fval->vendor,
+                            "wsku" => $rr['wsku'],
+                            "wamt" => $rr['amt'],
+                            "matid" => $fval->matid,
+                            "amt" => $amtperm
+                        ];
+
+                        $remainingtotal = $remainingtotal - $amtperm;
+
+                    }else{
+                        $matdata[] = [
+                            "vendor" => $fval->vendor,
+                            "wsku" => $rr['wsku'],
+                            "wamt" => $rr['amt'],
+                            "matid" => $fval->matid,
+                            "amt" => $remainingtotal
+                        ];
+
+                        $remainingtotal = 0;
+                    }
+                }
+            }
+        }
+
+        return compact('matdata', 'todistribute' ,'columns','originaltotal') ;//
+    }
 
 	public function post($id)
     {
@@ -229,93 +378,6 @@ class DistributeController extends Controller
     {
         //
         $data2distribute = $this->getMat($id);
-        // dd($data2distribute);
-		// $columns = DB::getSchemaBuilder()->getColumnListing('atr');
-		// // $dcolumns = DB::getSchemaBuilder()->getColumnListing('dist');
-		// // dd($columns);
-		// $todistribute = DB::table('dist as d')
-  //           ->Join('atr as a', 'd.aid','=','a.keyv')
-	 //        ->where('d.aid',$id)
-	 //        ->first();
-
-	 //    $originaltotal = $todistribute->amt;
-  //       $dd = json_decode($todistribute->dd);
-  //       $dlen = count($dd->data);
-  //       $amtperd = ceil($todistribute->amt * 100 / $dlen)/100;
-  //       $totaltodistribute = $todistribute->amt;
-  //       $remainingtotal = $todistribute->amt;
-
-  //       // foreach($dd->data as $row){
-  //   	foreach ($dd->data as $key => $row){
-	 //        if($remainingtotal){
-	 //        	if($remainingtotal > $amtperd){
-		//         	$wskudata[] = [
-		//         		"vendor" => $row->vendor,
-		//         		"wsku" => $row->wsku,
-		//         		"amt" => $amtperd
-		//         	];
-
-		//         	$remainingtotal = $remainingtotal - $amtperd;
-
-	 //        	}else{
-	 //        		$wskudata[] = [
-		//         		"vendor" => $row->vendor,
-		//         		"wsku" => $row->wsku,
-		//         		"amt" => $remainingtotal
-		//         	];
-
-		//         	$remainingtotal = 0;
-	 //        	}
-	 //        }
-  //       }
-
-  //   	foreach ($wskudata as $key => $rr){
-  //   		// dd($rr['vendor']);
-  //   		$m2d = DB::table('mat')
-  //   			->select('vendor', 'matid')
-  //   			->where('vendor', $rr['vendor'])
-  //   			->where('wsku', $rr['wsku'])
-  //   			->whereNull('invalid')
-  //   			->get();
-
-  //   		$remainingtotal = $rr['amt'];
-  //   		$mlen = count($m2d);
-  //   		$amtperm = ceil($remainingtotal * 100 / $mlen) / 100;
-
-  //   		foreach($m2d as $key => $fval){
-
-		//         if($remainingtotal){
-		//         	if($remainingtotal > $amtperm){
-		// 	        	$matdata[] = [
-		// 	        		"vendor" => $fval->vendor,
-		// 	        		"wsku" => $rr['wsku'],
-		// 	        		"wamt" => $rr['amt'],
-		// 	        		"matid" => $fval->matid,
-		// 	        		"amt" => $amtperm
-		// 	        	];
-
-		// 	        	$remainingtotal = $remainingtotal - $amtperm;
-
-		//         	}else{
-		//         		$matdata[] = [
-		// 	        		"vendor" => $fval->vendor,
-		// 	        		"wsku" => $rr['wsku'],
-		// 	        		"wamt" => $rr['amt'],
-		// 	        		"matid" => $fval->matid,
-		// 	        		"amt" => $remainingtotal
-		// 	        	];
-
-		// 	        	$remainingtotal = 0;
-		//         	}
-		//         }
-  //   		}
-  //       }
-
-
-        // dd($matdata);
-	    // dd($todistribute->amt, $dlen, $amtperd,$wskudata);
-
-        // return view('distribute.show', compact('wskudata','matdata','todistribute','columns','originaltotal','id') );//
         return view('distribute.show', compact('data2distribute','id') );//
     }
 }

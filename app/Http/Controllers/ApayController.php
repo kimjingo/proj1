@@ -63,7 +63,7 @@ class ApayController extends Controller
             ->where('posted_date', '>=', $fdate)->where('posted_date', '<=', $qtdate)
             ->when($ba, function($query) use ($ba) { return $query->where('ba', $ba); })
             ->when($ttype, function($query) use ($ttype) { return $query->where('a.transaction_type', $ttype); })
-            ->when($amt, function($query) use ($amt) { return $query->where('amount', $amt)->orWhere('amount',$amt*-1); })
+            ->when($amt, function($query) use ($amt) { return $query->whereRaw('abs(amount)=?', [$amt]); })
             ->when($isPosted, function($query) use($isPosted) {
                     if($isPosted == 1){
                         return $query->whereNotNull('postingflag');

@@ -58,7 +58,7 @@ class BankController extends Controller
             ->when($vendor, function($query) use ($vendor) { return $query->where('mp', $vendor); })
             ->when($material, function($query) use ($material) { return $query->where('material', $material); })
             ->when($ttype, function($query) use ($ttype) { return $query->where('ttype', $ttype); })
-            ->when($amt, function($query) use ($amt) { return $query->where('amt', $amt)->orWhere('amt',$amt*-1); })
+            ->when($amt, function($query) use ($amt) { return $query->whereRaw('abs(amt)=?', [$amt]); })
             ->when($keyword, function($query) use ($keyword) { return $query->where('tDesc','LIKE', '%'.$keyword.'%'); })
             ->when($isPosted, function($query) use($isPosted) {
                     if($isPosted == 1){

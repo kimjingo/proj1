@@ -7,7 +7,7 @@
         <div class="form-group ">
                 <input type="hidden" name="mode" value="search" />
                 <select id="fromdoc" name="fromdoc" class="form-control">
-                    <option value=>FromDoc</option>
+                    <option value=>DocType</option>
                     @foreach($fromdocs as $val)
                         <option value="{{$val->fromdoc}}"
                             @if($val->fromdoc == $fromdoc)
@@ -19,7 +19,7 @@
                     @endforeach
                 </select>
                 <select id="att" name="att" class="form-control">
-                    <option value=>Amz Tr Type</option>
+                    <option value=>Type1</option>
                     @foreach($atts as $val)
                         <option value="{{$val->att}}"
                             @if($val->att == $att)
@@ -31,8 +31,21 @@
                     @endforeach
                 </select>
 
+                <select id="ttype" name="ttype" class="form-control">
+                    <option value=>Type2</option>
+                    @foreach($ttypes as $val)
+                        <option value="{{$val->ttype}}"
+                            @if($val->ttype == $ttype)
+                                 selected
+                            @endif
+                        >
+                            {{ $val->ttype }}
+                        </option>
+                    @endforeach
+                </select>
+
                 <select id="aat" name="aat" class="form-control">
-                    <option value=>Amz Amt Type</option>
+                    <option value=>Vendor</option>
                     @foreach($aats as $val)
                         <option value="{{$val->aat}}"
                             @if($val->aat == $aat)
@@ -45,7 +58,7 @@
                 </select>
 
                 <select id="aad" name="aad" class="form-control">
-                    <option value=>Amz Amt Desc</option>
+                    <option value=>Material</option>
                     @foreach($aads as $val)
                         <option value="{{$val->aad}}"
                             @if($val->aad == $aad)
@@ -58,18 +71,6 @@
                 </select>
 
 
-                <select id="ttype" name="ttype" class="form-control">
-                    <option value=>Type</option>
-                    @foreach($ttypes as $val)
-                        <option value="{{$val->ttype}}"
-                            @if($val->ttype == $ttype)
-                                 selected
-                            @endif
-                        >
-                            {{ $val->ttype }}
-                        </option>
-                    @endforeach
-                </select>
 
                 <input type="text" class="form-control" id="material" name="material" 
                 @if($material ))

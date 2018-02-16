@@ -100,5 +100,9 @@ Route::get('/distribute', 'DistributeController@index');
 Route::get('/distribute/show/{id}', 'DistributeController@show');
 Route::post('/distribute/post/{id}', 'DistributeController@post');
 
+Route::get('/recurring', 'RecurringController@index');
+Route::get('/recurring/add', 'RecurringController@add');
+Route::get('/recurring/show/{id}', 'RecurringController@show');
 
-Route::get('/distribute/test/{id}', 'DistributeController@test');
+Route::post('/recurring/post', 'RecurringController@post');
+Route::post('/recurring/store', 'RecurringController@store');

@@ -18,6 +18,7 @@
     <li><a href="/postingrules">Posting Rules</a></li>
     <li><a href="/fitransactions">Finance</a></li>
     <li><a href="/distribute">Distribute</a></li>
+    <li><a href="/recurring">Recurring</a></li>
     <li><a href="/verify">Verify</a></li>
 
     </ul>

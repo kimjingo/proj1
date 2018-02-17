@@ -43,6 +43,7 @@
                 <td>{{ $recurring->updated_at }}</td>
                 <td>
                     <a href="/recurring/delete/{{ $recurring->id }}">X</a> || 
+                    <a href="/recurring/duplicate/{{ $recurring->id }}">E3</a> || 
                     <input type="checkbox" id="checkBox" name="id[]" value='{{ $recurring->id }}'>
                 </td>
 

@@ -102,7 +102,7 @@ Route::post('/distribute/post/{id}', 'DistributeController@post');
 
 Route::get('/recurring', 'RecurringController@index');
 Route::get('/recurring/add', 'RecurringController@add');
-Route::get('/recurring/show/{id}', 'RecurringController@show');
+Route::get('/recurring/duplicate/{id}', 'RecurringController@duplicate');
 
 Route::post('/recurring/post', 'RecurringController@post');
 Route::post('/recurring/store', 'RecurringController@store');

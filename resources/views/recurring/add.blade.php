@@ -50,17 +50,22 @@
 
 		      	    @foreach($options[$col->Field] as $key => $val)
 
-	               <option value="{{$val}}">{{$val}}</option>
+	               <option value="{{$val}}" 
+                    @if($val == $rec->{$col->Field})
+                        selected
+                    @endif
+                    >{{$val}}
+                    </option>
 
 		            @endforeach
 		      	</select>
 
 			@else
-				<input type="{{$inputtype}}" class="form-control" id="{{$col->Field}}" name="{{$col->Field}}" placeholder="{{$col->Field}}" 
-				@if($col->Field == 'enddate')
-					value = {{ date('Y-m-d', time() + (10 * 365 * 24 * 60 * 60)) }}
-				@elseif($inputtype == 'date')
-					value = {{ date('Y-m-d', time()) }}
+				<input type="{{$inputtype}}" class="form-control" id="{{$col->Field}}" name="{{$col->Field}}" value="{{ $rec->{$col->Field} or ''}}" placeholder="{{$col->Field}}"
+                @if($col->Field == 'enddate')
+                    value = {{ date('Y-m-d', time() + (10 * 365 * 24 * 60 * 60)) }}
+                @elseif($inputtype == 'date')
+					value = {{ $rec->{$col->Field} or date('Y-m-d', time()) }}
 				@endif
 				>
 	      	@endif

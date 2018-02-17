@@ -18,7 +18,7 @@
             <th>Material</th>
             <th>amt</th>
             <th>clearing</th>
-            <th>posted_at</th>
+            <th>Lastposted_at</th>
             <th>created_at</th>
             <th>updated_at</th>
             <th>Action</th>

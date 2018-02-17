@@ -106,7 +106,7 @@
                             <option value="-1">
                     </td>
                     <td>
-                        <input style="width:100px;" type="number" class="rate toverify" name="rate[]" min="0" max="1"  />
+                        <input style="width:100px;" type="number" class="rate toverify" name="rate[]" step="0.0001" min="0" max="1"  />
                     </td>
                     <td class="result">
                     </td>

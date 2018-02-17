@@ -23,6 +23,7 @@ class RecurringController extends Controller
     
 	public function get_clearing_from_date($cycle,$dtPdate)
 	{
+        // dd($cycle);
         switch ($cycle) {
             case 'biennially':
                 $clearing = date('Y',$dtPdate);
@@ -100,15 +101,17 @@ class RecurringController extends Controller
             break;
 
             case 'bimonthly':
-            	$recurringdate = ($dd==0)? 't':$dd;
-                $dtPdate = strtotime(strtotime('Y-m-'.$dd, strtotime('+2 month',$dtLastposted)));
+                $recurringdate = ($dd==0)? 't':$dd;
+                $dtPdate = strtotime(date('Y-m-'.$dd, strtotime('+2 month',$dtLastposted)));
                 $clearing = date('Ym',$dtPdate);
 
             break;
 
             case 'monthly':
-    			$recurringdate = ($dd==0)? 't':$dd;
-                $dtPdate = strtotime(strtotime('Y-m-'.$dd, strtotime('+1 month',$dtLastposted)));
+                $recurringdate = ($dd==0)? 't':$dd;
+                // dd( $cycle,date('Y-m-d',$dtLastposted),$dd,date('Y-m-1', strtotime('+1 month',$dtLastposted)) );
+                
+                $dtPdate = strtotime(date('Y-m-'.$dd, strtotime('+1 month',$dtLastposted)));
                 $clearing = date('Ym',$dtPdate);
 
             break;
@@ -135,7 +138,7 @@ class RecurringController extends Controller
                 $clearing = date('Ymdh',$dtPdate);
             break;
         }		
-
+        // dd($dtPdate);
 		return ['pdate' => $dtPdate, 'clearing' => $clearing];
 	}
 
@@ -165,10 +168,10 @@ class RecurringController extends Controller
         
         $columns = DB::select("show columns from recurring");
         // dd($columns);
-        // $cycles = $this->get_enum_values('recurring','cycle');
-        $cycles = ['yearly','monthly','biweekly','weekly','daily','hourly'];
-        // $types = $this->get_enum_values('recurring','type');
-        $types = ['expense','storage','others'];
+        // $cycles = ['yearly','monthly','biweekly','weekly','daily','hourly'];
+        $cycles = $this->get_enum_values('recurring','cycle');
+        // $types = ['expense','storage','others'];
+        $types = $this->get_enum_values('recurring','type');
         $options = [
         	'cycle' => $cycles,
         	'type' => $types
@@ -244,13 +247,17 @@ class RecurringController extends Controller
     public function post(Request $request)
     {
 //         //
-//         for($i=0; $i < count($request->id); $i++){
-//             $rec = DB::table('recurring')->find($request->id[$i]);
+        $now = \Carbon\Carbon::now();
+        $dtNow = strtotime($now);
+
+        for($i=0; $i < count($request->id); $i++){
+            $rec = DB::table('recurring')->find($request->id[$i]);
 //         //  $thispdate = strtotime(date('Y-m-1',time());
 //         //  $lastestdatetopost;
 //         //  $now;
-//          	$dtStartdate = strtotime($rec->startdate);
-//          	$dtEnddate = strtotime(date('Y-m-d 23:59:59',strtotime($rec->enddate)));
+            $dtStartdate = strtotime($rec->startdate);
+            $dtEnddate = strtotime(date('Y-m-d 23:59:59',strtotime($rec->enddate)));
+            // dd(date('Y-m-d',$dtEnddate));
 //             // $lastposted_date = '2017-10-01';
 
 //             $pdate = date('Y-m-d',strtotime(date('Y-m-'.$recurringdate, strtotime('+1 month',strtotime($lastposted_date)))));
@@ -258,17 +265,17 @@ class RecurringController extends Controller
 
 
 
-//             if($rec->lastposted_date) {
-//             	$dtLastposted = strtotime($rec->lastposted_date);
-// 				$next2post = $this->get_next_pdate( $rec->cycle, $dtLastposted, $rec->recurringdate, $rec->recurringmonth );
+            if($rec->lastposted_date) {
+                $dtLastposted = strtotime($rec->lastposted_date);
+                $next2post = $this->get_next_pdate( $rec->cycle, $dtLastposted, $rec->recurringdate, $rec->recurringmonth );
 
-//             } else {
-//         		$dtPdate = $dtStartdate;
-//         		$next2post = [
-//         			'pdate' => $dtPdate, 
-//         			'clearing' => $this->get_clearing_from_date($rec->cycle,$dtPdate)
-//         		];
-//             }
+            } else {
+                $dtPdate = $dtStartdate;
+                $next2post = [
+                    'pdate' => $dtPdate, 
+                    'clearing' => $this->get_clearing_from_date($rec->cycle,$dtPdate)
+                ];
+            }
 
 // //         dd($pdate);
 
@@ -278,23 +285,27 @@ class RecurringController extends Controller
 // //         //  }
 
 //             // do while($dtStartdate <= $dtPdate && $lastposted_date <= $pdate && $pdate < $endate) {
-//             do while($next2post['pdate'] <= $dtEndate) {
-// echo $next2post['pdate'].','.$next2post['clearing'].','.$next2post['clearing'].','.$now.','.$now.','.$request->id[$i];
+            $j = 0;
+            while( $next2post['pdate'] <= $dtEnddate && $next2post['pdate'] <= $dtNow && $j < 20 ) {
+// echo $i.','.$j.','.date('Y-m-d',$next2post['pdate']).','.$next2post['clearing'].','.$next2post['clearing'].','.$now.','.$now.','.$request->id[$i];
 // echo "<br>";
-//         //         $res = DB::insert("INSERT INTO atr(tid,no,pdate,acc,amt,material,mp,clearing,ttype,fromdoc,remark,created_at,updated_at) SELECT a.aseq,r.id,?,a.acc,r.amt*a.dir*a.rate,r.material,r.vendor,?,r.type,a.fromdoc,concat(r.name,?),?,? FROM recurring r, apay2_acc a WHERE a.transaction_type = r.type AND a.amount_type = r.vendor AND a.amount_description = r.material AND id = ? AND a.fromdoc= 'recurring'", [$next2post['pdate'],$next2post['clearing'],$next2post['clearing'],$now,$now,$request->id[$i]]);
+                $res = DB::insert("INSERT INTO atr(tid,no,pdate,acc,amt,material,mp,clearing,ttype,fromdoc,remark,created_at,updated_at) SELECT a.aseq,r.id,?,a.acc,r.amt*a.dir*a.rate,r.material,r.vendor,?,r.type,a.fromdoc,concat(r.name,?),?,? FROM recurring r, apay2_acc a WHERE a.transaction_type = r.type AND a.amount_type = r.vendor AND a.amount_description = r.material AND id = ? AND a.fromdoc= 'recurring'", [date('Y-m-d H:i',$next2post['pdate']),$next2post['clearing'],$next2post['clearing'],$now,$now,$request->id[$i]]);
 
-//         //         if($res){
-//         //             DB::table('recurring')
-//         //                 ->where('id',$request->id[$i])
-//         //                 ->update([
-//         //                     'lastposted_date' => $next2post['pdate'] //\Carbon\Carbon::now(),  // \Datetime()
-//         //                 ]);
-//         //         }
-                
-// 				$dtLastposted = $next2post['pdate'];
-// 				$next2post = $this->get_next_pdate( $rec->cycle, $dtLastposted, $rec->recurringdate, $rec->recurringmonth );
-//             }
-//         }
-//         // return redirect('/recurring');
+                if($res){
+                    DB::table('recurring')
+                        ->where('id',$request->id[$i])
+                        ->update([
+                            'lastposted_date' => date('Y-m-d H:i',$next2post['pdate']) //\Carbon\Carbon::now(),  // \Datetime()
+                        ]);
+				    $dtLastposted = $next2post['pdate'];
+                    $next2post = $this->get_next_pdate( $rec->cycle, $dtLastposted, $rec->recurringdate, $rec->recurringmonth );
+                // dd($rec->cycle, date('Y-m-d',$dtLastposted, $rec->recurringdate, $rec->recurringmonth);
+                } else {
+                    break;
+                }
+                $j++;
+            }
+        }
+        return redirect('/recurring');
     }
 }

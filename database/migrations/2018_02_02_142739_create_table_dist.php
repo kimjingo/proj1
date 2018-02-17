@@ -14,22 +14,25 @@ class CreateTableDist extends Migration
     public function up()
     {
         //
-        Schema::create('dist', function (Blueprint $table) {
-            
-            $table->increments('id');
+        if (!Schema::hasTable('dist')) {
+     // create the tblCategory table
+            Schema::create('dist', function (Blueprint $table) {
+                
+                $table->increments('id');
 
-            $table->date('posted_at');
-            $table->integer('aid');
-            
-            $table->string('dd',1000);
+                $table->date('posted_at');
+                $table->integer('aid');
+                
+                $table->string('dd',1000);
 
-            $table->timestamps();
+                $table->timestamps();
 
-            // $table->integer('userid')->unsigned();
-            // $table->foreign('userid')->references('id')->on('users');
+                // $table->integer('userid')->unsigned();
+                // $table->foreign('userid')->references('id')->on('users');
 
-            $table->unique(['aid']);
-        });
+                $table->unique(['aid']);
+            });
+        }
     }
 
     /**

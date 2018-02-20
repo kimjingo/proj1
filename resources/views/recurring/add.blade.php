@@ -50,9 +50,11 @@
 
 		      	    @foreach($options[$col->Field] as $key => $val)
 
-	               <option value="{{$val}}" 
-                    @if($val == $rec->{$col->Field})
-                        selected
+	               <option value="{{$val}}"
+                    @if(!empty($rec)) 
+                        @if($val == $rec->{$col->Field})
+                            selected
+                        @endif
                     @endif
                     >{{$val}}
                     </option>

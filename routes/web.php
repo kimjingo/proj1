@@ -67,11 +67,15 @@ Route::get('/manualposts/post/{id}', 'ManualPostsController@manualpost');
 Route::put('/manualposts/post/{id}', 'ManualPostsController@post');
 Route::post('/manualposts/postbybatch', 'ManualPostsController@postbybatch');
 
+
 Route::get('/postingrules', 'PostingRulesController@index');
 Route::get('/postingrules/create', 'PostingRulesController@create');
 Route::get('/postingrules/duplicate/{id}', 'PostingRulesController@duplicate');
 Route::post('/postingrules/store', 'PostingRulesController@store');
 Route::get('/postingrules/addwithdata', 'PostingRulesController@addwithdata');
+Route::get('/postingrules/edit/{id}', 'PostingRulesController@edit');
+Route::put('/postingrules/update/{id}', 'PostingRulesController@update');
+
 
 Route::get('/bank', 'BankController@index');
 Route::get('/bank/edit/{id}', 'BankController@edit');

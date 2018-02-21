@@ -345,10 +345,10 @@ class PostingRulesController extends Controller
             }        
 
             if(!$checksum){
-
+                $att = ($request->att? $request->att:'');
                 for($i=0; $i < $len; $i++){
 
-                    DB::insert("INSERT IGNORE INTO apay2_acc(fromdoc, transaction_type, amount_type, amount_description, acc, dir, aseq, ttype, ba, created_at, updated_at) values (?,?,?,?,?,?,?,?,?,?,?)", [$request->fromdoc,$request->att,$request->aat,$request->aad,$request->acc[$i],$request->dir[$i],$request->seq[$i],$request->ttype[$i],$request->ba,$now,$now] ) ;
+                    DB::insert("INSERT IGNORE INTO apay2_acc(fromdoc, transaction_type, amount_type, amount_description, acc, dir, aseq, ttype, ba, created_at, updated_at) values (?,?,?,?,?,?,?,?,?,?,?)", [$request->fromdoc,$att,$request->aat,$request->aad,$request->acc[$i],$request->dir[$i],$request->seq[$i],$request->ttype[$i],$request->ba,$now,$now] ) ;
 
                 }
 

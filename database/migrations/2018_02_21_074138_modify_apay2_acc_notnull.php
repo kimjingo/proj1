@@ -13,10 +13,19 @@ class ModifyApay2AccNotnull extends Migration
      */
     public function up()
     {
-        Schema::table('apay2_acc', function (Blueprint $table) {
-            //
-            $table->string('transaction_type', 50)->nullable(false)->change();
-        });
+            //;
+            //alter table apay2_acc change amount_type amount_type varchar(20) default '';
+            //alter table apay2_acc change amount_description amount_description varchar(40) default '';
+            DB::statement('alter table apay2_acc change transaction_type transaction_type varchar(50) default ""');
+            DB::statement('alter table apay2_acc change amount_type amount_type varchar(20) default ""');
+            DB::statement('alter table apay2_acc change amount_description amount_description varchar(40) default ""');
+
+            //alter table manualposts change paidby paidby varchar(20) default '';
+            //alter table manualposts change mp mp varchar(20) default '';
+            //alter table manualposts change material material varchar(20) default '';
+            DB::statement('alter table manualposts change paidby paidby varchar(20) default ""');
+            DB::statement('alter table manualposts change mp mp varchar(20) default ""');
+            DB::statement('alter table manualposts change material material varchar(20) default ""');
     }
 
     /**
@@ -26,9 +35,6 @@ class ModifyApay2AccNotnull extends Migration
      */
     public function down()
     {
-        Schema::table('apay2_acc', function (Blueprint $table) {
-            //
-            $table->string('transaction_type', 50)->nullable()->change();
-        });
+        // 
     }
 }

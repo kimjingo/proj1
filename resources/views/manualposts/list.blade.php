@@ -139,8 +139,10 @@
                         <a href="/manualposts/delete/{{ $manualinput->id }}">X</a>
                         ||
                         <a href="/manualposts/edit/{{ $manualinput->id }}">=3</a> ||
-                        <a href="/manualposts/post/{{ $manualinput->id }}">=></a> ||
-                        <input type="checkbox" id="checkBox" name="id[]" value='{{$manualinput->id}}'>
+                        <a href="/manualposts/post/{{ $manualinput->id }}">=></a>
+                         || <input type="checkbox" id="checkBox" name="id[]" value='{{$manualinput->id}}'>{{$manualinput->cnt}}
+                        @if($manualinput->cnt)
+                        @endif
                     </td>
 
                 </tr>
@@ -149,7 +151,7 @@
         </tbody>
 
     </table>
-    <input type="submit" id="submit" class="btn btn-default" value="Post by Batch" />
+    <input type="submit" id="submit" class="btn btn-default" value="Post Selected" />
     </form>
 
 </div>

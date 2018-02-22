@@ -50,17 +50,17 @@ class ManualPostsController extends Controller
 
         $bas = [1,2];
         $vendors = DB::table('atr')
-            ->where('fromdoc', 'manualpost')
+            ->where('fromdoc', 'manualposts')
             ->when($ttype, function($query) use ($ttype) { return $query->where('ttype',$ttype);})
             ->distinct()->get(['mp as vendor']);
         
         $fromdocs = DB::table('atr')
-            ->where('fromdoc', 'manualpost')
+            ->where('fromdoc', 'manualposts')
             ->when($ttype, function($query) use ($ttype) { return $query->where('ttype',$ttype);})
             ->distinct()->get(['fromdoc']);
 
         $ttypes = DB::table('atr')
-            ->where('fromdoc', 'manualpost')
+            ->where('fromdoc', 'manualposts')
             ->when($ttype, function($query) use ($ttype) { return $query->where('ttype',$ttype);})
             ->distinct()->get(['ttype']);
         
@@ -70,26 +70,36 @@ class ManualPostsController extends Controller
 
         // dd($qtdate);
 
-        $manualinputs = DB::table('manualposts')
-            ->where('pdate', '>=', $fdate)->where('pdate', '<=', $qtdate)
-            ->where('created_at', '>=', $fdate)->where('created_at', '<=', $qctdate)
-            ->when($ba, function($query) use ($ba) { return $query->where('ba', $ba); })
-            ->when($vendor, function($query) use ($vendor) { return $query->where('mp', $vendor); })
-            ->when($material, function($query) use ($material) { return $query->where('material', $material); })
-            ->when($ttype, function($query) use ($ttype) { return $query->where('ttype', $ttype); })
-            ->when($amt, function($query) use ($amt) { return $query->whereRaw('abs(amt)=?', [$amt]); })
-            ->when($remark, function($query) use ($remark) { return $query->where('remark','LIKE', '%'.$remark.'%'); })
-            ->when($isPosted, function($query) use($isPosted) {
-                    if($isPosted == 1){
-                        return $query->whereNotNull('posting');
-                    }elseif($isPosted == 2){
-                        return $query->whereNull('posting');
-                    }
-                }
-            )
-            ->orderby('pdate')
-        ->orderby('created_at','desc')->simplePaginate(10);
-
+        $manualinputs = DB::table('manualposts AS m')
+            ->select('m.*','a.cnt')
+            ->leftjoin(DB::raw('(SELECT fromdoc,transaction_type,amount_type,amount_description,count(*) cnt FROM apay2_acc WHERE fromdoc="manualposts" group by fromdoc,transaction_type,amount_type,amount_description) a'), function($join)
+            {
+                $join->on('m.mp','=','a.amount_type')
+                ->on('m.material','=','a.amount_description')
+                // ->on('m.paidby','=','a.transaction_type') 
+                ;
+            })
+            ->where('m.id', 2364)
+            // ->where('m.pdate', '>=', $fdate)->where('m.pdate', '<=', $qtdate)
+            // ->where('m.created_at', '>=', $fdate)->where('m.created_at', '<=', $qctdate)
+            // ->when($ba, function($query) use ($ba) { return $query->where('m.ba', $ba); })
+            // ->when($vendor, function($query) use ($vendor) { return $query->where('m.mp', $vendor); })
+            // ->when($material, function($query) use ($material) { return $query->where('m.material', $material); })
+            // ->when($ttype, function($query) use ($ttype) { return $query->where('m.ttype', $ttype); })
+            // ->when($amt, function($query) use ($amt) { return $query->whereRaw('abs(m.amt)=?', [$amt]); })
+            // ->when($remark, function($query) use ($remark) { return $query->where('m.remark','LIKE', '%'.$remark.'%'); })
+            // ->when($isPosted, function($query) use($isPosted) {
+            //         if($isPosted == 1){
+            //             return $query->whereNotNull('posting');
+            //         }elseif($isPosted == 2){
+            //             return $query->whereNull('posting');
+            //         }
+            //     }
+            // )
+            ->orderby('m.pdate')
+            ->orderby('m.created_at','desc')
+            ->simplePaginate(10);
+dd($manualinputs);
             // ->when($amt, function($query) use ($amt) { return $query->where('amt', $amt)->orWhere('amt',$amt*-1); })
         return view('manualposts.list',compact('manualinputs','tdate','fdate','amt','material','vendor','ttype','remark','ba','isPosted','cfdate','ctdate','bas','ttypes','brand','vendors') );
 
@@ -331,7 +341,7 @@ class ManualPostsController extends Controller
         $accCalJSON = json_encode($accCal);
         // dd($accCalJSON);
 
-        $fromdoc = 'manualpost';
+        $fromdoc = 'manualposts';
         // $dr = 'abank';
         $dirs = [1,-1];
         $bas = DB::table('apay2_acc')->distinct()->get(['ba']);
@@ -426,7 +436,7 @@ class ManualPostsController extends Controller
         for($i=0;$i<count($request->id);$i++){
 
             $now = \Carbon\Carbon::now();
-            $fromdoc = 'manualpost';
+            $fromdoc = 'manualposts';
 
             $res = DB::insert("INSERT INTO atr(tid,no,pdate,acc,amt, mp,material, clearing,ttype,fromdoc, ba,remark,created_at,updated_at) SELECT ap.id,aa.aseq,ap.pdate,aa.acc,ap.amt*aa.dir, ap.mp,ap.material, if((ap.ttype='check' and aa.acc!='lck'), ap.dr_clearing, ap.checkno),ap.ttype,?, ap.ba,ap.remark,?,? FROM manualposts ap, apay2_acc aa WHERE  aa.fromdoc=? AND ap.posting IS NULL AND ap.mp=aa.transaction_type AND ap.material=aa.amount_type AND ap.ttype=aa.ttype AND ap.id=?", [$fromdoc,$now,$now,$fromdoc,$request->id[$i]]);
 

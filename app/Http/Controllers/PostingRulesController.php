@@ -44,7 +44,7 @@ class PostingRulesController extends Controller
             ->first();
 
         $rules = DB::table('apay2_acc as a1')
-            ->select('a1.fromdoc AS fromdoc', 'a1.transaction_type AS att', 'a1.amount_type AS aat', 'a1.amount_description AS aad', 'a1.acc', 'a1.dir', 'a1.aseq AS seq', 'a1.ttype', 'a1.no', 'a1.ba')
+            ->select('a1.fromdoc AS fromdoc', 'a1.transaction_type AS att', 'a1.amount_type AS aat', 'a1.amount_description AS aad', 'a1.acc', 'a1.dir', 'a1.rate', 'a1.aseq AS seq', 'a1.ttype', 'a1.no', 'a1.ba')
             ->join(DB::raw('(SELECT * FROM apay2_acc WHERE no='.$id.') a2'), function($join)
             {
                 $join->on('a1.fromdoc', '=', 'a2.fromdoc')

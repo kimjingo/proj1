@@ -76,30 +76,30 @@ class ManualPostsController extends Controller
             {
                 $join->on('m.mp','=','a.amount_type')
                 ->on('m.material','=','a.amount_description')
-                // ->on('m.paidby','=','a.transaction_type') 
+                ->on('m.paidby','=','a.transaction_type') 
                 ;
             })
-            ->where('m.id', 2364)
-            // ->where('m.pdate', '>=', $fdate)->where('m.pdate', '<=', $qtdate)
-            // ->where('m.created_at', '>=', $fdate)->where('m.created_at', '<=', $qctdate)
-            // ->when($ba, function($query) use ($ba) { return $query->where('m.ba', $ba); })
-            // ->when($vendor, function($query) use ($vendor) { return $query->where('m.mp', $vendor); })
-            // ->when($material, function($query) use ($material) { return $query->where('m.material', $material); })
-            // ->when($ttype, function($query) use ($ttype) { return $query->where('m.ttype', $ttype); })
-            // ->when($amt, function($query) use ($amt) { return $query->whereRaw('abs(m.amt)=?', [$amt]); })
-            // ->when($remark, function($query) use ($remark) { return $query->where('m.remark','LIKE', '%'.$remark.'%'); })
-            // ->when($isPosted, function($query) use($isPosted) {
-            //         if($isPosted == 1){
-            //             return $query->whereNotNull('posting');
-            //         }elseif($isPosted == 2){
-            //             return $query->whereNull('posting');
-            //         }
-            //     }
-            // )
+            // ->where('m.id', 2461)
+            ->where('m.pdate', '>=', $fdate)->where('m.pdate', '<=', $qtdate)
+            ->where('m.created_at', '>=', $fdate)->where('m.created_at', '<=', $qctdate)
+            ->when($ba, function($query) use ($ba) { return $query->where('m.ba', $ba); })
+            ->when($vendor, function($query) use ($vendor) { return $query->where('m.mp', $vendor); })
+            ->when($material, function($query) use ($material) { return $query->where('m.material', $material); })
+            ->when($ttype, function($query) use ($ttype) { return $query->where('m.ttype', $ttype); })
+            ->when($amt, function($query) use ($amt) { return $query->whereRaw('abs(m.amt)=?', [$amt]); })
+            ->when($remark, function($query) use ($remark) { return $query->where('m.remark','LIKE', '%'.$remark.'%'); })
+            ->when($isPosted, function($query) use($isPosted) {
+                    if($isPosted == 1){
+                        return $query->whereNotNull('posting');
+                    }elseif($isPosted == 2){
+                        return $query->whereNull('posting');
+                    }
+                }
+            )
             ->orderby('m.pdate')
             ->orderby('m.created_at','desc')
             ->simplePaginate(10);
-dd($manualinputs);
+// dd($manualinputs);
             // ->when($amt, function($query) use ($amt) { return $query->where('amt', $amt)->orWhere('amt',$amt*-1); })
         return view('manualposts.list',compact('manualinputs','tdate','fdate','amt','material','vendor','ttype','remark','ba','isPosted','cfdate','ctdate','bas','ttypes','brand','vendors') );
 
@@ -438,8 +438,8 @@ dd($manualinputs);
             $now = \Carbon\Carbon::now();
             $fromdoc = 'manualposts';
 
-            $res = DB::insert("INSERT INTO atr(tid,no,pdate,acc,amt, mp,material, clearing,ttype,fromdoc, ba,remark,created_at,updated_at) SELECT ap.id,aa.aseq,ap.pdate,aa.acc,ap.amt*aa.dir, ap.mp,ap.material, if((ap.ttype='check' and aa.acc!='lck'), ap.dr_clearing, ap.checkno),ap.ttype,?, ap.ba,ap.remark,?,? FROM manualposts ap, apay2_acc aa WHERE  aa.fromdoc=? AND ap.posting IS NULL AND ap.mp=aa.transaction_type AND ap.material=aa.amount_type AND ap.ttype=aa.ttype AND ap.id=?", [$fromdoc,$now,$now,$fromdoc,$request->id[$i]]);
-
+            $res = DB::insert("INSERT INTO atr(tid,no,pdate,acc,amt, mp,material, clearing,ttype,fromdoc, ba,remark,created_at,updated_at) SELECT ap.id,aa.aseq,ap.pdate,aa.acc,ap.amt*aa.dir*aa.rate amt, ap.mp,ap.material, if((ap.ttype='check' and aa.acc!='lck'), ap.dr_clearing, ap.checkno) clearing,ap.ttype,aa.fromdoc,ap.ba,ap.remark,?,? FROM manualposts ap, apay2_acc aa WHERE ap.posting IS NULL AND aa.fromdoc=? AND ap.mp= aa.amount_type AND ap.material= aa.amount_description AND ap.paidby = aa.transaction_type AND ap.ttype= aa.ttype AND ap.id=?", [$now,$now,$fromdoc,$request->id[$i]]);
+// dd($res);
             if($res){
                 DB::table('manualposts')
                     ->where('id',$request->id[$i])

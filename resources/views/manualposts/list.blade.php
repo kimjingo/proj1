@@ -36,7 +36,7 @@
         </select>
 
         <select id="vendor" name="vendor" class="form-control">
-            <option value=>Type</option>
+            <option value=>Vendor</option>
             @foreach($vendors as $val)
                 <option value="{{$val->vendor}}"
                     @if($val->vendor == $vendor)
@@ -136,12 +136,14 @@
                     <td>{{ $manualinput->created_at }}</td>
                     <td>{{ $manualinput->updated_at }}</td>
                     <td>
-                        <a href="/manualposts/delete/{{ $manualinput->id }}">X</a>
-                        ||
-                        <a href="/manualposts/edit/{{ $manualinput->id }}">=3</a> ||
-                        <a href="/manualposts/post/{{ $manualinput->id }}">=></a>
-                         || <input type="checkbox" id="checkBox" name="id[]" value='{{$manualinput->id}}'>{{$manualinput->cnt}}
-                        @if($manualinput->cnt)
+                        @if(!$manualinput->posting)
+                            <a href="/manualposts/delete/{{ $manualinput->id }}">X</a>
+                            ||
+                            <a href="/manualposts/edit/{{ $manualinput->id }}">=3</a> ||
+                            <a href="/manualposts/post/{{ $manualinput->id }}">=></a>
+                            @if($manualinput->cnt && !$manualinput->posting)
+                             || <input type="checkbox" id="checkBox" name="id[]" value='{{$manualinput->id}}'>
+                            @endif
                         @endif
                     </td>
 

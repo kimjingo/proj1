@@ -13,6 +13,7 @@ class DistributeController extends Controller
 {
     //
     public function index() {
+
         $ttdate = new Carbon('last day of last month');
         $now = \Carbon\Carbon::now();
         // dd($now);
@@ -46,8 +47,9 @@ class DistributeController extends Controller
         $ctdate = Input::get('ctdate', $snow);
 
         // dd($isPosted);
-        $isPosted = Input::get('isPosted',2);
 
+        $isPosted = Input::get('isPosted',2);
+        if( Input::get('submit') == 'BULKPOST' ) $isPosted = 2;
 
         $bas = [1,2];
         $mps = DB::table('atr')->distinct()->get(['mp']);
@@ -88,37 +90,46 @@ class DistributeController extends Controller
 
 // dd($qtdate,$qctdate);
         // $distribute = DB::table('atr')->where('fdate','=',$fdate)->orderby('fromdoc')->orderby('transaction_type')->orderby('amount_type')->orderby('tdate','desc')->simplePaginate(10);
-        $distribute = DB::table('dist as d')
-            ->Join('atr as a', 'd.aid','=','a.keyv')
-            ->when($isPosted, function($query) use($isPosted) {
-                if($isPosted == 1){
-                    return $query->whereNotNull('posted_at');
-                }elseif($isPosted == 2){
-                    return $query->whereNull('posted_at');
+            $distribute = DB::table('dist as d')
+                ->Join('atr as a', 'd.aid','=','a.keyv')
+                    ->when($isPosted, function($query) use($isPosted) {
+                        if($isPosted == 1){
+                            return $query->whereNotNull('posted_at');
+                        }elseif($isPosted == 2){
+                            return $query->whereNull('posted_at');
+                        }
+                    })
+                    ->where('pdate', '>=', $fdate)->where('pdate', '<=', $qtdate)
+                    ->where('a.created_at', '>=', $cfdate)->where('a.created_at', '<=', $qctdate)
+                    ->when($fromdoc, function($query) use ($fromdoc) { return $query->where('fromdoc', $fromdoc); })
+                    ->when($acc, function($query) use ($acc) { return $query->where('acc', $acc); })
+                    ->when($amt, function($query) use ($amt) { return $query->whereRaw('abs(amt)=?', [$amt]); })
+                    ->when($vendor, function($query) use ($vendor) { return $query->where('mp', $vendor); })
+                    ->when($material, function($query) use ($material) { return $query->where('material', $material); })
+                    ->when($clearing, function($query) use ($clearing) { return $query->where('clearing', $clearing); })
+                    ->when($ttype, function($query) use ($ttype) { return $query->where('ttype', $ttype); })
+                    ->when($remark, function($query) use ($remark) { return $query->where('remark','LIKE', '%'.$remark.'%'); })
+                    ->when($ba, function($query) use ($ba) { return $query->where('ba', $ba); })
+                    ->when($brand, function($query) use ($brand) { return $query->where('brand', $brand); })
+                ->orderby('pdate', 'desc')
+                ->orderby('keyv')
+                ->orderby('ba')
+                ->simplePaginate(10);
+            // dd($distribute);
+            if(Input::get('submit') == 'BULKPOST'){
+                // dd(Input::get('submit'));
+                foreach($distribute as $dist){
+                    // dd("aa");
+                    $this->postbyid($dist->aid);
+                    // echo $dist->aid;
+                    // echo "<br>";
                 }
-            })
-            ->where('pdate', '>=', $fdate)->where('pdate', '<=', $qtdate)
-            ->where('a.created_at', '>=', $cfdate)->where('a.created_at', '<=', $qctdate)
-            ->when($fromdoc, function($query) use ($fromdoc) { return $query->where('fromdoc', $fromdoc); })
-            ->when($acc, function($query) use ($acc) { return $query->where('acc', $acc); })
-            ->when($amt, function($query) use ($amt) { return $query->whereRaw('abs(amt)=?', [$amt]); })
-            ->when($vendor, function($query) use ($vendor) { return $query->where('mp', $vendor); })
-            ->when($material, function($query) use ($material) { return $query->where('material', $material); })
-            ->when($clearing, function($query) use ($clearing) { return $query->where('clearing', $clearing); })
-            ->when($ttype, function($query) use ($ttype) { return $query->where('ttype', $ttype); })
-            ->when($remark, function($query) use ($remark) { return $query->where('remark','LIKE', '%'.$remark.'%'); })
-            ->when($ba, function($query) use ($ba) { return $query->where('ba', $ba); })
-            ->when($brand, function($query) use ($brand) { return $query->where('brand', $brand); })
-            ->orderby('pdate', 'desc')
-            ->orderby('keyv')
-            ->orderby('ba')
-            ->simplePaginate(10);
-        // dd($distribute);
+            }
             // ->when($amt, function($query) use ($amt) { return $query->where('amt', $amt)->orWhere('amt',$amt*-1); })
 
         // return view('postingrules.list',compact('rules','fromdoc','fromdocs') );
         return view('distribute.list', compact('fdate','tdate','acc','amt','orderid','material','vendor','clearing','ttype','remark','fromdoc','ba','brand','cfdate','ctdate','bas','mps','fromdocs','ttypes','brands','vendors','accs','distribute','isPosted') );//
-	}
+    }
 
 
     private function &getMatFromFbasf($id,&$dd){
@@ -372,8 +383,7 @@ class DistributeController extends Controller
         // return ['matdata' => $matdata, 'todistribute' => $todistribute, 'columns' => $columns, 'originaltotal' => $originaltotal ];
     }
 
-
-    public function post($id)
+    public function postbyid($id)
     {
         //
         $now = \Carbon\Carbon::now();
@@ -398,8 +408,14 @@ class DistributeController extends Controller
                     ]);
 
             }
-		}
+        }
 
+    }
+
+    public function post($id)
+    {
+        //
+        $this->postbyid($id);
         return redirect('/distribute');
     }
 

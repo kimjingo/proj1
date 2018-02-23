@@ -110,7 +110,8 @@
         @endif
         >Not Posted
         
-        <input type="submit" id="submit" class="btn btn-default" value="SEARCH" />
+        <input type="submit" id="submit" name="submit" class="btn btn-default" value="SEARCH" />
+        <input type="submit" id="submit" name="submit" class="btn btn-danger" value="BULKPOST" />
 
     </div>
 </form>

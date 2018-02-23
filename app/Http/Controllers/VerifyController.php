@@ -15,7 +15,7 @@ class VerifyController extends Controller
         $zerosum = DB::table('atr AS a')
         	->select(DB::raw('sum(amt*dir*gdir) as result'))
             ->join('gacc as g', 'g.accid', '=', 'a.acc')
-            ->where('pdate','>=','2017-01-01')
+            // ->where('pdate','>=','2017-01-01')
             ->first();
 // dd($zerosum->result);
 

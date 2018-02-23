@@ -288,7 +288,9 @@ class RecurringController extends Controller
 //         //  $lastestdatetopost;
 //         //  $now;
             $dtStartdate = strtotime($rec->startdate);
-            $dtEnddate = strtotime(date('Y-m-d 23:59:59',strtotime($rec->enddate)));
+
+            $enddate = ($rec->enddate > '2038-01-17' )? '2038-01-17':$rec->enddate;
+            $dtEnddate = strtotime(date('Y-m-d 23:59:59',strtotime($enddate)));
             // dd(date('Y-m-d',$dtEnddate));
 //             // $lastposted_date = '2017-10-01';
 

@@ -382,7 +382,7 @@ class DistributeController extends Controller
         $i=0;
         foreach($d2d['matdata']['mats'] as $mat){
 
-            $res = DB::insert("INSERT INTO atr(tid,no,pdate,acc,amt,qty,orderid,itemid,mp,clearing,ttype,fromdoc,ba, remark, brand, material, created_at,updated_at) SELECT tid, ?,pdate,acc, ?, ?,orderid,itemid,mp,clearing,ttype, ?,ba,remark, ?, ?, ?, ? from atr where keyv=?", [$i, $mat['amt'], $mat['qty'], 'distribute', $mat['matid'], $mat['brand'], $now, $now, $id]);
+            $res = DB::insert("INSERT INTO atr(tid,no,pdate,acc,amt,qty,orderid,itemid,mp,clearing,ttype,fromdoc,ba, remark, brand, material, created_at,updated_at) SELECT tid, ?,pdate,acc, ?, ?,orderid,itemid,mp,clearing,ttype, ?,ba,remark, ?, ?, ?, ? from atr where keyv=?", [$i, $mat['amt'], $mat['qty'], 'distribute',  $mat['brand'],$mat['matid'], $now, $now, $id]);
             $i++;
         }
 

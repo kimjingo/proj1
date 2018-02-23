@@ -243,12 +243,13 @@ class RecurringController extends Controller
             $checksum += $request->rate[$i] * $request->dir[$i] * $accCal[$request->acc[$i]]['dir'] * $accCal[$request->acc[$i]]['gdir'] ;
 
         }        
+         $enddate = ($request->enddate > '2038-01-17' )? '2038-01-17':$request->enddate;
 
         if(!$checksum){
         	DB::table('recurring')->insert([
     			'name' => $request->name,
 				'startdate' => $request->startdate,
-				'enddate' => $request->enddate,
+				'enddate' => $enddate,
 				'recurringdate' => $request->recurringdate,
 				'cycle' => $request->cycle,
 				'type' => $request->type,

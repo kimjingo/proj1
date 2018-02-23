@@ -214,7 +214,7 @@ class DistributeController extends Controller
         // fbasf
         $totalofthemonth = DB::table('monthly_brand_mat_qty')
             ->select(DB::raw('SUM(qty) as total'))
-            ->where('snapshot_date',$key)
+            ->where('pdate',$key)
             ->first();
             // ->sum('fee6+fee12');
         // dd($totalofthemonth->total);

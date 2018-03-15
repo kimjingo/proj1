@@ -119,7 +119,7 @@
                 <th>item_id</th>
                 <th>CNT</th>
 
-                <th>Action</th>
+                <th>Action<input type="checkbox" class="selectall" /></th>
             </tr>
         </thead>
         <tbody>
@@ -149,7 +149,11 @@
                     @endif
                     <a class="link" data-href="/postingrules/addwithdata?fromdoc=apay2&att={{urlencode($apay->transaction_type)}}&aat={{urlencode($apay->amount_type)}}&aad={{urlencode($apay->amount_description)}}">Make a rule</a> 
                     ||
-                    <input type="checkbox" id="checkBox" name="no[]" value='{{$apay->no}}'>
+                    @if($apay->cnt2)
+                        <input type="checkbox" id="checkBox" class="apay" name="no[]" value='{{$apay->no}}'>
+                    @else
+                        <input type="checkbox" id="checkBox" name="no[]" value='{{$apay->no}}'>
+                    @endif
                 </td>
 
             </tr>
@@ -200,6 +204,27 @@ $(document).ready(function() {
 
         }
 
+    });
+
+    $('.selectall').click(function(event) {
+        if(this.checked) {
+        // Iterate each checkbox
+            $('.apay').each(function() {
+                this.checked = true;
+            });
+        } else {
+            $('.apay').each(function() {
+                this.checked = false;
+            });
+        }
+
+
+        // if(this.checked) {
+        //     // Iterate each checkbox
+        //     $('.apay').each(function() {
+        //         this.checked = true;                        
+        //     });
+        // }
     });
 
 });

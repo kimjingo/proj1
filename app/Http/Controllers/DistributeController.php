@@ -249,7 +249,7 @@ class DistributeController extends Controller
         // dd($totalofthemonth->total);
 
         $fbasfs = DB::table('monthly_brand_mat_qty as f')
-            ->select(DB::raw('brand, mat matid, sum(qty) qty, sum(qty) as rate'))
+            ->select(DB::raw('brand, mat matid, sum(qty/DAY(LAST_DAY(pdate))) qty, sum(qty) as rate'))
             ->where('pdate',$key)
             ->groupBy('brand', 'matid')
             ->orderBy('rate', 'desc')
@@ -358,12 +358,14 @@ class DistributeController extends Controller
 
         }
 
+        $remainingrtotal = $matdata_ref['total'];
         $matdata['rtotal'] = $matdata_ref['total'];
         $remainingtotal = $todistribute->amt;
 
         foreach($matdata_ref['mats'] as $key => $rval){
             // ceil($todistribute->amt * 100 / $dlen)/100
-            $amtperm = ceil($todistribute->amt * 100 * $rval->rate / $matdata_ref['total'])/100;
+            $amtperm = ceil( $todistribute->amt * 100 * $rval->rate / $remainingrtotal ) / 100;
+            // $amtperm = ceil($todistribute->amt * 100 * $rval->rate / $matdata_ref['total'])/100;
 
             if($remainingtotal){
                 if($remainingtotal > $amtperm){
@@ -376,6 +378,7 @@ class DistributeController extends Controller
                     );
 
                     $remainingtotal = $remainingtotal - $amtperm;
+                    $remainingrtotal = $remainingrtotal - $rval->rate;
 
                 }else{
                     $matdata['mats'][] = array(

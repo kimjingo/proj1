@@ -87,6 +87,7 @@ Route::get('/apay/edit/{id}', 'ApayController@edit');
 Route::post('/apay/singlepost', 'ApayController@singlepost');
 Route::get('apay/post', 'ApayController@post');
 Route::get('/apay/showall', 'ApayController@index');
+Route::get('/apay/showdeposit', 'ApayController@showdeposit');
 
 Route::get('/verify', 'VerifyController@index');
 Route::get('/verify/bal', 'VerifyController@bal');

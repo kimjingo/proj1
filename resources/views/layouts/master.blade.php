@@ -90,7 +90,13 @@
     <script src="http://getbootstrap.com/2.3.2/assets/js/bootstrap-collapse.js"></script>
     <script src="http://getbootstrap.com/2.3.2/assets/js/bootstrap-carousel.js"></script>
     <script src="http://getbootstrap.com/2.3.2/assets/js/bootstrap-typeahead.js"></script>
-    
+    <script>
+      $(".nav a").on("click", function(){
+        console.log("aa");
+        $(".nav").find(".active").removeClass("active");
+        $(this).parent().addClass("active");
+      });
+    </script>
     @yield('footer')
   
   </body>

@@ -1,0 +1,9 @@
+select p.plantname,sloc,boxid
+from b2s b
+join numberrange r on r.fromno <= b.sloc and b.sloc < r.tono
+join plant p on p.plantno=r.target
+left outer join (select storage from mm where pdate >= '2018-01-01' group by storage) m on m.storage=b.boxid  
+where 
+p.plantno=0
+and m.storage is null
+;

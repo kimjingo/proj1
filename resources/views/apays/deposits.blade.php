@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('content')
-<h1>Amazon Payments</h1>
+<h1>Amazon Deposits</h1>
 <form class="form-inline" id="searchForm" method="get">
 <!--<form class="form-inline" id="searchForm" method="get" onsubmit="return false;">-->
     <div class="form-group ">
@@ -103,23 +103,16 @@
 <div class="col-sm-8 blog-main">
     <a class="btn btn-primary" href="/postingrules/create" role="button">Add</a>
     <a class="btn btn-warning" href="/apay/showall" role="button">Show all</a>
-    <a class="btn btn-success" href="/apay/showdeposit" role="button">Show deposit</a>
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
                 <th>Settlement_id</th>
                 <th>B/A</th>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Atype</th>
-                <th>Description</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Deposit Date</th>
                 <th>amt</th>
-                <th>sku</th>
-                <th>qty</th>
-                <th>order_id</th>
-                <th>item_id</th>
-                <th>CNT</th>
-
+                <th>Posted at</th>
                 <th>Action<input type="checkbox" class="selectall" /></th>
             </tr>
         </thead>
@@ -133,17 +126,11 @@
             >
                 <td>{{ $apay->settlement_id }}</td>
                 <td>{{ $apay->ba }}</td>
-                <td>{{ $apay->posted_date }}</td>
-                <td>{{ $apay->transaction_type }}</td>
-                <td>{{ $apay->amount_type }}</td>
-                <td>{{ $apay->amount_description }}</td>
-                <td>{{ $apay->amount }}</td>
-                <td>{{ $apay->sku }}</td>
-                <td>{{ $apay->quantity_purchased }}</td>
-                <td>{{ $apay->order_id }}</td>
-                <td>{{ $apay->order_item_code }}</td>
-                <td>{{ $apay->cnt}}</td>
-
+                <td>{{ $apay->settlement_start_date }}</td>
+                <td>{{ $apay->settlement_end_date }}</td>
+                <td>{{ $apay->deposit_date }}</td>
+                <td>{{ $apay->total_amount }}</td>
+                <td>{{ $apay->postingflag }}</td>
                 <td>
                     @if($apay->cnt2)
                         <a class="link" href="/apay/post?fromdoc=apay2&ttype={{ urlencode($apay->transaction_type) }}&atype={{ urlencode($apay->amount_type) }}&adesc={{ urlencode($apay->amount_description) }}&fdate={{ $fdate }}&tdate={{ $tdate }}">Post</a> ||

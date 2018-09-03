@@ -1,27 +1,20 @@
-<div class="container-fluid">
-  <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-    <span class="icon-bar"></span>
-    <span class="icon-bar"></span>
-    <span class="icon-bar"></span>
-  </button>
-  <a class="brand" href="/">Acounting</a>
-  <div class="nav-collapse collapse">
-    <p class="navbar-text pull-right">
-      Logged in as <a href="#" class="navbar-link">Username</a>
-    </p>
-    <ul class="nav">
-    <!-- <li class="active"><a href="/">Home</a></li> -->
-    <li><a href="/bscompares">Compare</a></li>
-    <li><a href="/manualposts">Manual Input</a></li>
-    <li><a href="/apay">Amazon pay</a></li>
-    <li><a href="/bank">Bank</a></li>
-    <li><a href="/postingrules">Posting Rules</a></li>
-    <li><a href="/fitransactions">Finance</a></li>
-    <li><a href="/distribute">Distribute</a></li>
-    <li><a href="/recurring">Recurring</a></li>
-    <li><a href="/verify">Verify</a></li>
-
-    </ul>
-
-  </div><!--/.nav-collapse -->
-</div>
+    <!-- <li class="nav-item"><a class="nav-link" href="/bscompares">Compare</a></li> -->
+    <li class="nav-item dropdown">
+	    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	      Compare
+	    </a>
+	    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+	      <a class="dropdown-item" href="bscompares">Sys vs Act</a>
+	      <div class="dropdown-divider"></div>
+	      <a class="dropdown-item" href="bscheckpoint">Check Point</a>
+	      <a class="dropdown-item" href="reconcile">Reconcile</a>
+	    </div>
+	</li>
+    <li class="nav-item"><a class="nav-link" href="/manualposts">Manual Input</a></li>
+    <li class="nav-item"><a class="nav-link" href="/apay">Amazon pay</a></li>
+    <li class="nav-item"><a class="nav-link" href="/bank">Bank</a></li>
+    <li class="nav-item"><a class="nav-link" href="/postingrules">Posting Rules</a></li>
+    <li class="nav-item"><a class="nav-link" href="/fitransactions">Finance</a></li>
+    <li class="nav-item"><a class="nav-link" href="/distribute">Distribute</a></li>
+    <li class="nav-item"><a class="nav-link" href="/recurring">Recurring</a></li>
+    <li class="nav-item"><a class="nav-link" href="/verify">Verify</a></li>

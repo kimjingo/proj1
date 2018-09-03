@@ -4,8 +4,6 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" href="/img/favicon_1.ico">
-
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -36,10 +34,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
-                        @guest
-                        @else
-                            @include('layouts.nav')
-                        @endguest
+
                     </ul>
 
                     <!-- Right Side Of Navbar -->

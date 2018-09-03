@@ -10,6 +10,7 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+Auth::routes();
 
 // Route::get('/tasks', 'TasksController@index');
 
@@ -28,7 +29,7 @@ Route::get('/', function(){
 	// 	]);
 
 	return view('index',compact('sidemenus'));
-});
+})->name('home');
 
 // PATCH 
 // DELETE
@@ -111,3 +112,6 @@ Route::get('/recurring/duplicate/{id}', 'RecurringController@duplicate');
 
 Route::post('/recurring/post', 'RecurringController@post');
 Route::post('/recurring/store', 'RecurringController@store');
+
+
+Route::get('/home', 'HomeController@index')->name('home');
